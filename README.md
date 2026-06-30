@@ -65,6 +65,12 @@ Expected behavior:
 
 This demo is intentionally lightweight and does not require restricted micro-CT data or trained checkpoints.
 
+A notebook version of this workflow is available at:
+
+```text
+notebooks/tutorials/0001-basic-usage-synthetic-rock.ipynb
+```
+
 ## Main Manuscript Workflow
 
 See [docs/reproducibility.md](docs/reproducibility.md) and [docs/user_guide.md](docs/user_guide.md) for the full workflow.

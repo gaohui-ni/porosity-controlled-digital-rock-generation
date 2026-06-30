@@ -41,6 +41,12 @@ python scripts/demo_quantile_binarization.py
 
 This checks the adaptive binarization step without requiring trained models.
 
+The same workflow is also available as a notebook tutorial:
+
+```text
+notebooks/tutorials/0001-basic-usage-synthetic-rock.ipynb
+```
+
 ## Build Real Porosity Groups
 
 ```bash
