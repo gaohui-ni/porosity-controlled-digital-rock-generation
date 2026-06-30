@@ -48,6 +48,10 @@ def write_summary(summary, out_json, out_csv):
 
     with open(out_json, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
+    if Path(out_json).name == "results_summary.json":
+        summary_alias = Path(out_json).with_name("summary.json")
+        with open(summary_alias, "w", encoding="utf-8") as f:
+            json.dump(summary, f, indent=2)
 
     with open(out_csv, "w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["path", "rows", "columns"])
