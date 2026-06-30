@@ -121,9 +121,10 @@ Typical commands:
 ```bash
 python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml
 python src/metrics/summarize_all.py --root results
+python scripts/plot_all.py
 ```
 
-The summary command writes `results/results_summary.json` and `results/results_summary.csv`.
+The summary command writes `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`. A short manuscript-to-code map is provided in [docs/figure_mapping.md](docs/figure_mapping.md).
 
 ## Main Manuscript Workflow
 
