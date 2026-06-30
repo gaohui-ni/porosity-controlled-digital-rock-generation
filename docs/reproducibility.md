@@ -4,11 +4,11 @@ This repository is organized to support review of the computational workflow for
 
 ## Reproducibility Levels
 
-Because the raw micro-CT training volume and trained checkpoints are not redistributed, the repository supports three levels of reproducibility:
+Because trained checkpoints are not redistributed, the repository supports three levels of reproducibility:
 
 1. **Lightweight functional test**: run the synthetic quantile-binarization demo.
-2. **Workflow reproduction with user-provided data**: run data preparation, training, generation, and evaluation on a binary raw volume supplied by the user.
-3. **Manuscript-scale reproduction**: reproduce the reported figures and tables when the restricted raw data and trained checkpoints are available locally.
+2. **Workflow reproduction with published or user-provided data**: run data preparation, training, generation, and evaluation on a binary raw volume from https://doi.org/10.17632/yp2yw9c7jj or another user-supplied source.
+3. **Manuscript-scale reproduction**: reproduce the reported figures and tables when the same raw data, trained checkpoints, and random seeds are available locally.
 
 ## Lightweight Functional Test
 
@@ -124,7 +124,6 @@ python scripts/generate_batch.py \
 
 ## Current Limitations
 
-- Restricted raw micro-CT volumes are not included.
 - Large trained checkpoints are not included.
 - Manuscript-scale permeability and pore-network results require `porespy`, `openpnm`, and substantial compute time.
 - Some exact manuscript figures require the same raw data, checkpoints, and random seeds used in the manuscript experiments.

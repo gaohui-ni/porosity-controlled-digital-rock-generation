@@ -80,7 +80,11 @@ At a high level:
 
 ## Data Availability
 
-The raw micro-CT data used in the manuscript are not redistributed in this repository because of institutional data restrictions and file size. The repository includes synthetic examples and scripts that allow reviewers and users to test the workflow on provided or user-supplied binary 3D volumes.
+The training data used in the manuscript are available from Mendeley Data:
+
+https://doi.org/10.17632/yp2yw9c7jj
+
+The repository also includes synthetic examples and scripts that allow reviewers and users to test the workflow on provided or user-supplied binary 3D volumes.
 
 See [docs/data_availability.md](docs/data_availability.md).
 

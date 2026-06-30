@@ -1,6 +1,8 @@
 # Data Availability
 
-The raw micro-CT digital rock volume used in the manuscript is not redistributed in this repository because of institutional data restrictions and file size.
+The training data used in the manuscript are available from Mendeley Data:
+
+https://doi.org/10.17632/yp2yw9c7jj
 
 This repository therefore provides:
 
@@ -34,6 +36,6 @@ The scripts accept alternative paths through command-line arguments.
 
 Suggested wording for the manuscript:
 
-> The raw micro-CT digital rock volume used in this study is not publicly redistributed because of institutional data restrictions and file size. The code repository provides the complete model implementation, training and inference scripts, evaluation workflows, and synthetic examples for testing. Users may reproduce the workflow using their own binary micro-CT volumes following the documented `0=solid, 1=pore` raw-volume convention.
+> The training data used in this study are available from Mendeley Data at https://doi.org/10.17632/yp2yw9c7jj. The code repository provides the complete model implementation, training and inference scripts, evaluation workflows, and synthetic examples for testing. Users may reproduce the workflow using the published binary micro-CT data or their own binary 3D volumes following the documented `0=solid, 1=pore` raw-volume convention.
 
 If a public source is later available for the Fontainebleau sandstone volume or any other validation data, add the URL and license here and cite it in the manuscript.
