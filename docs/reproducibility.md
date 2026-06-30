@@ -7,7 +7,7 @@ This repository is organized to support review of the computational workflow for
 Because trained checkpoints are not redistributed, the repository supports three levels of reproducibility:
 
 1. **Lightweight functional test**: run the synthetic quantile-binarization demo.
-2. **Workflow reproduction with published or user-provided data**: run data preparation, training, generation, and evaluation on a binary raw volume from https://doi.org/10.17632/yp2yw9c7jj or another user-supplied source.
+2. **Workflow reproduction with published or user-provided data**: run data preparation, training, generation, and evaluation on a binary raw volume from https://doi.org/10.17632/yp2yw9c7jj.1 or another user-supplied source.
 3. **Manuscript-scale reproduction**: reproduce the reported figures and tables when the same raw data, trained checkpoints, and random seeds are available locally.
 
 ## Lightweight Functional Test

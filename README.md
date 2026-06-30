@@ -80,9 +80,9 @@ At a high level:
 
 ## Data Availability
 
-The training data used in the manuscript are available from Mendeley Data:
+The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data:
 
-https://doi.org/10.17632/yp2yw9c7jj
+https://doi.org/10.17632/yp2yw9c7jj.1
 
 The repository also includes synthetic examples and scripts that allow reviewers and users to test the workflow on provided or user-supplied binary 3D volumes.
 
