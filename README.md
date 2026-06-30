@@ -68,7 +68,28 @@ This demo is intentionally lightweight and does not require restricted micro-CT 
 A notebook version of this workflow is available at:
 
 ```text
+notebooks/tutorials/0001-basic-usage.ipynb
 notebooks/tutorials/0001-basic-usage-synthetic-rock.ipynb
+```
+
+## One-Command Pipeline
+
+For a lightweight reviewer check:
+
+```bash
+python scripts/run_pipeline.py --mode demo --config configs/experiment_main.yaml
+```
+
+For manuscript-scale reproduction on a GPU workstation or server:
+
+```bash
+python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml
+```
+
+Use `--dry-run` to print all commands without executing training or evaluation:
+
+```bash
+python scripts/run_pipeline.py --mode full --dry-run
 ```
 
 ## Tests
@@ -81,6 +102,25 @@ pytest tests/
 ```
 
 The tests cover quantile-based porosity matching, porosity calculation, and two-point correlation output shapes.
+
+## Reproduce Manuscript Figures
+
+The main experiment is configured in [configs/experiment_main.yaml](configs/experiment_main.yaml). The pipeline writes figure-oriented outputs under `results/`:
+
+- `results/fig_s2/`: two-point correlation, lineal-path, and EDT pore-size curves.
+- `results/fig_perm/`: permeability-related tables and plots.
+- `results/fig_pnm/`: topology and pore-network descriptors.
+- `results/fig_fontainebleau/`: Fontainebleau validation outputs.
+- `results/tables/`: CSV tables used for manuscript plots.
+
+Typical commands:
+
+```bash
+python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml
+python src/metrics/summarize_all.py --root results
+```
+
+The summary command writes `results/results_summary.json` and `results/results_summary.csv`.
 
 ## Main Manuscript Workflow
 
