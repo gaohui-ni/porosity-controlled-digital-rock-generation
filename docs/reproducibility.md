@@ -18,7 +18,27 @@ python scripts/demo_quantile_binarization.py
 
 This validates the porosity-matching step and writes example arrays under `examples/`.
 
+The same check can be run through the pipeline orchestrator:
+
+```bash
+python scripts/run_pipeline.py --mode demo --config configs/experiment_main.yaml
+```
+
+To inspect the manuscript-scale command sequence without launching training:
+
+```bash
+python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml --dry-run
+```
+
 ## Main Workflow
+
+The full pipeline is configured in `configs/experiment_main.yaml` and can be launched with:
+
+```bash
+python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml
+```
+
+The equivalent step-by-step commands are:
 
 ```bash
 python scripts/build_real_phi_groups.py \
@@ -89,6 +109,12 @@ python scripts/evaluate_pore_network_6panel.py
 ```
 
 Before running `evaluate_pore_network_6panel.py`, review the configuration block at the top of the script and adjust paths, target folders, voxel size, and sample limits.
+
+Summarize generated result files:
+
+```bash
+python src/metrics/summarize_all.py --root results
+```
 
 ## Fontainebleau Workflow
 
