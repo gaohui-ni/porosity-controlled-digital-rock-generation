@@ -1,8 +1,8 @@
 # Data Availability
 
-The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data:
+The laboratory sandstone micro-CT volume data and associated metadata used in this study should be cited using the finalized public data DOI given in the manuscript.
 
-https://doi.org/10.17632/yp2yw9c7jj.1
+Before submission, verify that the public data record resolves correctly and corresponds to the manuscript-scale sandstone micro-CT volume used for the main experiments.
 
 The Fontainebleau sandstone digital rock samples used for validation were obtained from a previously reported Australian National University (ANU) digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not redistributed by the authors. This dataset contains four three-dimensional sandstone samples, each with a size of 480 x 480 x 480 voxels and a spatial resolution of 5.68 um/voxel. The corresponding porosities are 0.1743, 0.1263, 0.0853, and 0.2045. Derived statistical results and analysis data supporting the findings of this study are available from the corresponding author upon reasonable request.
 
@@ -36,6 +36,6 @@ The scripts accept alternative paths through command-line arguments.
 
 ## Manuscript Data Availability Statement
 
-Suggested wording for the manuscript:
+Suggested wording for the manuscript after the public DOI has been verified:
 
-> The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data at https://doi.org/10.17632/yp2yw9c7jj.1. The Fontainebleau sandstone digital rock samples used for validation were obtained from a previously reported Australian National University (ANU) digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not redistributed by the authors. Derived statistical results and analysis data supporting the findings of this study are available from the corresponding author upon reasonable request.
+> The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data at [FINAL VERIFIED DOI]. The Fontainebleau sandstone digital rock samples used for validation were obtained from a previously reported Australian National University (ANU) digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not redistributed by the authors. Derived statistical results and analysis data supporting the findings of this study are available from the corresponding author upon reasonable request.
