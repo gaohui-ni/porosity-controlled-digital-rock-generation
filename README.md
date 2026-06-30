@@ -71,6 +71,17 @@ A notebook version of this workflow is available at:
 notebooks/tutorials/0001-basic-usage-synthetic-rock.ipynb
 ```
 
+## Tests
+
+Install the lightweight test dependency and run:
+
+```bash
+pip install -r requirements_dev.txt
+pytest tests/
+```
+
+The tests cover quantile-based porosity matching, porosity calculation, and two-point correlation output shapes.
+
 ## Main Manuscript Workflow
 
 See [docs/reproducibility.md](docs/reproducibility.md) and [docs/user_guide.md](docs/user_guide.md) for the full workflow.
