@@ -1,0 +1,23 @@
+name: digitalrock
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - scikit-image
+  - pyyaml
+  - tqdm
+  - h5py
+  - pytorch
+  - torchvision
+  - tifffile
+  - imageio
+  - pip
+  - pip:
+      - porespy
+      - openpnm

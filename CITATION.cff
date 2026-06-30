@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the associated manuscript."
+title: "Porosity-Controlled 3D Digital Rock Generation"
+authors:
+  - family-names: Ni
+    given-names: Gaohui
+version: 0.1.0
+date-released: 2026-06-30
+license: MIT
+repository-code: "https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation"
+preferred-citation:
+  type: article
+  title: "Porosity-controlled 3D digital rock generation using discrete latent diffusion"
+  authors:
+    - family-names: Ni
+      given-names: Gaohui
+  year: 2026
+  journal: "Submitted"

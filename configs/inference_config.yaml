@@ -1,0 +1,20 @@
+patch_size: 256
+downsample_factor: 4
+embedding_dim: 32
+num_embeddings: 1024
+
+n_steps: 1000
+beta_start: 1.0e-4
+beta_end: 0.02
+
+target_porosity: 0.13
+sample_seed: 0
+poro_center: 0.13
+poro_scale: 0.02
+poro_clip: 5.0
+clamp_x: 15.0
+eps_clip: 5.0
+use_quantile_threshold: true
+
+save_dir: "./ckpt_lat64_vq80_ddpm150_light96"
+device: "cuda"

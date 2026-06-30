@@ -1,0 +1,25 @@
+raw_path: "data/raw/S1.raw"
+raw_shape: [800, 800, 800]
+patch_size: 256
+n_samples: 1000
+min_porosity: 0.0
+max_tries: 50
+
+embedding_dim: 32
+num_embeddings: 1024
+commitment_cost: 0.25
+lr_vae: 2.0e-4
+epochs_vae: 80
+batch_size_vae: 1
+amp: true
+
+vae_base_ch: 32
+vae_max_ch: 96
+bce_weight: 1.0
+dice_weight: 0.2
+pos_weight_mode: "batch"
+pos_weight_clip: 20.0
+
+save_dir: "./ckpt_lat64_vq80_ddpm150_light96"
+device: "cuda"
+seed: 123

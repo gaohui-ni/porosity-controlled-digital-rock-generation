@@ -1,0 +1,12 @@
+# Fontainebleau sandstone example configuration.
+# Raw volume must be uint8 with 0=solid and 1=pore.
+raw_path: "data/fontainebleau/fontainebleau_phi0p2045.raw"
+raw_shape: [480, 480, 480]
+voxel_size_um: 5.68
+patch_size: 256
+training_porosity: 0.2045
+unseen_targets: [0.1743, 0.1263, 0.0853]
+validation_targets: [0.2045, 0.1743, 0.1263, 0.0853]
+n_per_target: 50
+poro_center: 0.2045
+poro_scale: 0.02

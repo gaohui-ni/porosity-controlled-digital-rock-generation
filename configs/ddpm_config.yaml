@@ -1,0 +1,27 @@
+raw_path: "data/raw/S1.raw"
+raw_shape: [800, 800, 800]
+patch_size: 256
+n_samples: 1000
+min_porosity: 0.0
+max_tries: 50
+
+downsample_factor: 4
+embedding_dim: 32
+num_embeddings: 1024
+
+lr_ddpm: 1.0e-4
+epochs_ddpm: 150
+batch_size_ddpm: 1
+n_steps: 1000
+beta_start: 1.0e-4
+beta_end: 0.02
+
+unet_base: 64
+unet_time_dim: 128
+poro_center: 0.13
+poro_scale: 0.02
+poro_clip: 5.0
+
+save_dir: "./ckpt_lat64_vq80_ddpm150_light96"
+device: "cuda"
+seed: 123
