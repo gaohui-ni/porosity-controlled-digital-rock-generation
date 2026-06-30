@@ -27,3 +27,8 @@ jobs:
 
       - name: Check full pipeline commands
         run: python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml --dry-run
+
+      - name: Check top-level reviewer entrypoints
+        run: |
+          python run_pipeline.py --mode full --config configs/main.yaml --dry-run
+          python scripts/evaluate_all.py --config configs/main.yaml --dry-run
