@@ -77,18 +77,21 @@ notebooks/tutorials/0001-basic-usage-synthetic-rock.ipynb
 For a lightweight reviewer check:
 
 ```bash
+python run_demo.py
 python scripts/run_pipeline.py --mode demo --config configs/experiment_main.yaml
 ```
 
 For manuscript-scale reproduction on a GPU workstation or server:
 
 ```bash
+python run_pipeline.py --mode full --config configs/main.yaml
 python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml
 ```
 
 Use `--dry-run` to print all commands without executing training or evaluation:
 
 ```bash
+python run_pipeline.py --mode full --config configs/main.yaml --dry-run
 python scripts/run_pipeline.py --mode full --dry-run
 ```
 
