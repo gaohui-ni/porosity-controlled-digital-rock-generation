@@ -1,0 +1,10 @@
+targets: [0.11, 0.12, 0.13, 0.14, 0.15]
+shape: [256, 256, 256]
+r_max: 128
+voxel_size_um: 3.5
+real_root: data/real256_sets_from_S1_strict
+generated_root: data/generated_phi_sets
+curve_results: results/fig_s2
+table_results: results/tables
+topology_results: results/fig_pnm
+summary_root: results
