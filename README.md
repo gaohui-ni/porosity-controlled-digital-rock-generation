@@ -97,9 +97,9 @@ At a high level:
 
 ## Data Availability
 
-The laboratory sandstone micro-CT volume data and associated metadata used in this study should be cited using the finalized public data DOI given in the manuscript.
+The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data:
 
-Before submission, verify that the public data record resolves correctly and corresponds to the manuscript-scale sandstone micro-CT volume used for the main experiments.
+https://doi.org/10.17632/vp2yw9c7jj.1
 
 The repository also includes synthetic examples and scripts that allow reviewers and users to test the workflow on provided or user-supplied binary 3D volumes.
 
