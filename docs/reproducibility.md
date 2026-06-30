@@ -116,6 +116,8 @@ Summarize generated result files:
 python src/metrics/summarize_all.py --root results
 ```
 
+For a figure-oriented mapping from manuscript result groups to commands and output folders, see `docs/figure_reproduction.md`.
+
 ## Fontainebleau Workflow
 
 Prepare the volume:
