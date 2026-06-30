@@ -105,7 +105,7 @@ The tests cover quantile-based porosity matching, porosity calculation, and two-
 
 ## Reproduce Manuscript Figures
 
-The main experiment is configured in [configs/experiment_main.yaml](configs/experiment_main.yaml). The pipeline writes figure-oriented outputs under `results/`:
+The main experiment is configured in [configs/experiment_main.yaml](configs/experiment_main.yaml). See [docs/figure_reproduction.md](docs/figure_reproduction.md) for a command-by-command figure reproduction map. The pipeline writes figure-oriented outputs under `results/`:
 
 - `results/fig_s2/`: two-point correlation, lineal-path, and EDT pore-size curves.
 - `results/fig_perm/`: permeability-related tables and plots.
