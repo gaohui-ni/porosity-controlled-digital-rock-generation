@@ -6,7 +6,7 @@ def test_run_pipeline_full_dry_run():
     completed = subprocess.run(
         [
             sys.executable,
-            "scripts/run_pipeline.py",
+            "run_pipeline.py",
             "--mode",
             "full",
             "--config",
