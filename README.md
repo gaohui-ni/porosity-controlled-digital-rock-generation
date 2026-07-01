@@ -138,6 +138,14 @@ python scripts/plot_all.py
 
 The summary command writes `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`. A short manuscript-to-code map is provided in [docs/figure_mapping.md](docs/figure_mapping.md).
 
+For a figure-oriented helper command:
+
+```bash
+python scripts/reproduce_figures.py --config configs/main.yaml
+```
+
+Before submission, use [docs/submission_checklist.md](docs/submission_checklist.md) for the final repository audit. Precomputed summary files are intentionally not bundled before the final full run.
+
 ## Main Manuscript Workflow
 
 See [docs/reproducibility.md](docs/reproducibility.md) and [docs/user_guide.md](docs/user_guide.md) for the full workflow.
