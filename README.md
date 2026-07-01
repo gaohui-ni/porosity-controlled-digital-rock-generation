@@ -65,11 +65,13 @@ Expected behavior:
 
 This demo is intentionally lightweight and does not require restricted micro-CT data or trained checkpoints.
 
-A notebook version of this workflow is available at:
+Notebook tutorials are available at:
 
 ```text
 notebooks/tutorials/0001-basic-usage.ipynb
 notebooks/tutorials/0001-basic-usage-synthetic-rock.ipynb
+notebooks/tutorials/0002-porosity-control.ipynb
+notebooks/tutorials/0003-fontainebleau-validation.ipynb
 ```
 
 ## One-Command Pipeline
