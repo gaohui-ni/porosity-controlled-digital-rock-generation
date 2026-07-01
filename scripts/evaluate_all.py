@@ -25,7 +25,7 @@ def main():
     run(
         [
             sys.executable,
-            "scripts/run_pipeline.py",
+            "run_pipeline.py",
             "--mode",
             "full",
             "--config",
