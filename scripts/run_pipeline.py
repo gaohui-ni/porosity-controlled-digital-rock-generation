@@ -1,3 +1,10 @@
+"""Internal modular implementation for the reproduction pipeline.
+
+Reviewer-facing manuscript reproduction should use the top-level
+``run_pipeline.py`` entry point. This module builds and executes the ordered
+workflow used by that wrapper.
+"""
+
 import argparse
 import json
 import subprocess
@@ -244,10 +251,19 @@ def full_pipeline(cfg):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run the digital-rock reproduction pipeline.")
+    parser = argparse.ArgumentParser(
+        description=(
+            "Internal implementation for the digital-rock reproduction pipeline. "
+            "Use top-level run_pipeline.py for official manuscript reproduction."
+        )
+    )
     parser.add_argument("--config", default="configs/experiment_main.yaml")
     parser.add_argument("--mode", choices=["demo", "full"], default="demo")
-    parser.add_argument("--dry-run", action="store_true", help="Print commands without running them")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Validate pipeline logic and write the manifest without training, generation, or evaluation.",
+    )
     args = parser.parse_args()
 
     cfg = load_config(ROOT / args.config)
