@@ -23,12 +23,13 @@ jobs:
         run: pytest tests/
 
       - name: Run demo pipeline
-        run: python scripts/run_pipeline.py --mode demo --config configs/experiment_main.yaml
+        run: python run_pipeline.py --mode demo --config configs/experiment_main.yaml
 
       - name: Check full pipeline commands
-        run: python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml --dry-run
+        run: python run_pipeline.py --mode full --config configs/main.yaml --dry-run
 
       - name: Check top-level reviewer entrypoints
         run: |
           python run_pipeline.py --mode full --config configs/main.yaml --dry-run
           python scripts/evaluate_all.py --config configs/main.yaml --dry-run
+          python scripts/reproduce_figures.py --config configs/main.yaml --dry-run
