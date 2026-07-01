@@ -7,13 +7,25 @@ This file maps manuscript-style result groups to the commands and output folders
 The main configuration file is:
 
 ```bash
-configs/experiment_main.yaml
+configs/main.yaml
+```
+
+The full manuscript-scale workflow is reproduced through the official top-level entry point:
+
+```bash
+python run_pipeline.py --mode full --config configs/main.yaml
 ```
 
 The full workflow can be inspected without running training:
 
 ```bash
-python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml --dry-run
+python run_pipeline.py --mode full --config configs/main.yaml --dry-run
+```
+
+For a single figure-oriented helper command:
+
+```bash
+python scripts/reproduce_figures.py --config configs/main.yaml
 ```
 
 ## Spatial Statistics Figures
@@ -96,3 +108,5 @@ This writes:
 results/results_summary.json
 results/results_summary.csv
 ```
+
+Precomputed summary files are not bundled before the final full run. They should be generated from the released data and configuration.
