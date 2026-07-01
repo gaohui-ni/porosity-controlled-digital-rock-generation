@@ -65,7 +65,7 @@ Expected behavior:
 
 This demo is intentionally lightweight and does not require restricted micro-CT data or trained checkpoints.
 
-Notebook tutorials are available at:
+A notebook version of this workflow is available at:
 
 ```text
 notebooks/tutorials/0001-basic-usage.ipynb
@@ -74,28 +74,38 @@ notebooks/tutorials/0002-porosity-control.ipynb
 notebooks/tutorials/0003-fontainebleau-validation.ipynb
 ```
 
-## One-Command Pipeline
+## Official Reproduction Entry Point
 
-For a lightweight reviewer check:
+`run_pipeline.py` is the ONLY official entry point for reproducing the manuscript workflow.
+`scripts/run_pipeline.py` is the internal modular implementation called by the top-level entry point and should not be used directly for reviewer reproduction.
 
-```bash
-python run_demo.py
-python scripts/run_pipeline.py --mode demo --config configs/experiment_main.yaml
-```
-
-For manuscript-scale reproduction on a GPU workstation or server:
+All experiments in this paper can be reproduced via:
 
 ```bash
 python run_pipeline.py --mode full --config configs/main.yaml
-python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml
 ```
 
-Use `--dry-run` to print all commands without executing training or evaluation:
+For a lightweight reviewer sanity check:
+
+```bash
+python run_demo.py
+```
+
+To validate the full pipeline logic without launching training, generation, or evaluation:
 
 ```bash
 python run_pipeline.py --mode full --config configs/main.yaml --dry-run
-python scripts/run_pipeline.py --mode full --dry-run
 ```
+
+`--dry-run` is a pipeline logic test. It builds the same ordered command sequence as the full reproduction run and writes `results/pipeline_full_manifest.json`, but it does not train models, generate samples, or evaluate outputs.
+
+The full run writes a standardized execution trace and result structure:
+
+- command manifest: `results/pipeline_full_manifest.json`;
+- checkpoint and model outputs: `outputs/main_sandstone/`;
+- figure-oriented outputs: `results/fig_s2/`, `results/fig_perm/`, `results/fig_pnm/`, and `results/fig_fontainebleau/`;
+- manuscript tables: `results/tables/`;
+- summary files: `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`.
 
 ## Tests
 
@@ -121,7 +131,7 @@ The main experiment is configured in [configs/experiment_main.yaml](configs/expe
 Typical commands:
 
 ```bash
-python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml
+python run_pipeline.py --mode full --config configs/main.yaml
 python src/metrics/summarize_all.py --root results
 python scripts/plot_all.py
 ```
