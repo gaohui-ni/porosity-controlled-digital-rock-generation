@@ -36,6 +36,9 @@ savedmodels/*.pt
 
 # temporary analysis outputs
 results/temp/
+results/*.json
+results/*.csv
+results/pipeline_*_manifest.json
 *.tmp
 
 # system
