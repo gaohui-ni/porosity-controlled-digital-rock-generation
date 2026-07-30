@@ -4,12 +4,13 @@ This repository is organized to support review of the computational workflow for
 
 ## Reproducibility Levels
 
-Because large trained checkpoints are not stored in GitHub, the repository supports three levels of reproducibility:
+This repository supports the following levels of reproducibility:
 
-1. **Lightweight functional test**: run the synthetic quantile-binarization demo.
-2. **Workflow reproduction with published or user-provided data**: run data preparation, training, generation, and evaluation on a binary raw volume from https://doi.org/10.17632/vp2yw9c7jj.1 or another user-supplied source.
-3. **Manuscript-scale workflow reproduction**: reproduce the full training, generation, evaluation, and summarization workflow from the released raw data and configuration.
-4. **Exact generated-sample reproduction**: reproduce the exact reported generated samples and downstream figures after downloading the externally archived final checkpoints and verifying their SHA256 checksums.
+1. **Lightweight functional reproduction**: run the synthetic demonstration and unit tests without raw micro-CT data or trained checkpoints.
+2. **Full workflow reproduction through retraining**: use the public raw data, supplied configuration files, and training scripts to retrain the VQ-VAE and latent DDPM, generate porosity-controlled samples, and rerun the evaluation workflow.
+3. **Statistical manuscript-result reproduction**: independently retrained models are expected to reproduce the reported porosity-control accuracy, structural statistics, pore-network characteristics, and permeability trends within normal stochastic variation.
+
+The final trained checkpoints used to produce the manuscript figures are not distributed. Therefore, exact sample-level, bitwise, or numerically identical reproduction of the published generated volumes is not supported.
 
 ## Lightweight Functional Test
 
@@ -173,6 +174,6 @@ python scripts/generate_batch.py \
 
 ## Current Limitations
 
-- Large trained checkpoints are not stored in GitHub. They should be archived separately in Mendeley Data, Zenodo, or a GitHub Release for exact generated-sample reproduction. See `docs/checkpoints.md`.
+- Trained checkpoints are not distributed with this release. The complete workflow can be reproduced through model retraining using the released code, configurations, and public raw data. See `docs/checkpoints.md`.
 - Manuscript-scale permeability and pore-network results require `porespy`, `openpnm`, and substantial compute time.
-- Some exact manuscript figures require the same raw data, externally archived checkpoints, and random seeds used in the manuscript experiments.
+- Because training and sampling are stochastic, exact generated volumes and numerically identical outputs are not guaranteed.
