@@ -227,6 +227,8 @@ def full_pipeline(cfg):
                 "gen",
                 "--shape",
                 *as_str_list([data["patch_size"]] * 3),
+                "--voxel_size",
+                str(data["voxel_size_m"]),
                 "--recursive",
             ],
         ),
