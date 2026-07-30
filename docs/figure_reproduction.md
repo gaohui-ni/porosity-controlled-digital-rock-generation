@@ -16,6 +16,18 @@ The full manuscript-scale workflow is reproduced through the official top-level 
 python run_pipeline.py --mode full --config configs/main.yaml
 ```
 
+For only the main laboratory sandstone figures, use:
+
+```bash
+python run_pipeline.py --mode main --config configs/main.yaml
+```
+
+For only the independent Fontainebleau validation figures, use:
+
+```bash
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
+```
+
 The full workflow can be inspected without running training:
 
 ```bash
@@ -87,7 +99,7 @@ For the six-panel pore-network analysis:
 python scripts/evaluate_pore_network_6panel.py --config configs/main.yaml
 ```
 
-Before running the six-panel script, check the configuration block at the top of the file and adjust local paths. The manuscript-scale voxel size is read from `configs/main.yaml` as `data.voxel_size_m = 3.5e-6`.
+This PNM six-panel step is included in `python run_pipeline.py --mode main --config configs/main.yaml` and therefore also in `--mode full`. Before running the six-panel script directly, check the configuration block at the top of the file and adjust local paths. The manuscript-scale voxel size is read from `configs/main.yaml` as `data.voxel_size_m = 3.5e-6`.
 
 ## Fontainebleau Validation Figures
 
@@ -96,6 +108,15 @@ See `docs/fontainebleau_protocol.md` for the validation protocol. The default ou
 ```text
 results/fig_fontainebleau/
 ```
+
+The Fontainebleau validation is included in:
+
+```bash
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
+python run_pipeline.py --mode full --config configs/main.yaml
+```
+
+The prepared Fontainebleau raw volume must exist at the path configured in `configs/fontainebleau_config.yaml`.
 
 ## Summary Tables
 
