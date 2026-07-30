@@ -22,16 +22,19 @@ def run(command, dry_run=False):
 
 def main():
     args = parse_args()
+    pipeline_cmd = [
+        sys.executable,
+        "run_pipeline.py",
+        "--mode",
+        "main",
+        "--config",
+        args.config,
+    ]
+    if args.dry_run:
+        pipeline_cmd.append("--dry-run")
+
     run(
-        [
-            sys.executable,
-            "run_pipeline.py",
-            "--mode",
-            "full",
-            "--config",
-            args.config,
-            "--dry-run",
-        ],
+        pipeline_cmd,
         dry_run=args.dry_run,
     )
     run([sys.executable, "src/metrics/summarize_all.py", "--root", "results"], dry_run=args.dry_run)
