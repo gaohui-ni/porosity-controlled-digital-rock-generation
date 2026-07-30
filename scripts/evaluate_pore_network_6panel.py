@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
@@ -58,7 +58,7 @@ EDT_NBINS = 60
 
 # -------- PNM parameters --------
 DO_PNM = True
-VOXEL_SIZE = 3.0e-6
+VOXEL_SIZE = 3.5e-6
 PNM_ACCURACY = "standard"   # "high" more accurate but slower
 SHAPE_FACTOR_MAX = 0.12
 PNM_MAX_PORE_RADIUS = 30.0
@@ -69,6 +69,79 @@ PNM_NBINS = 60
 # -------- Tortuosity parameters --------
 DO_TORTUOSITY = True
 
+
+def parse_scalar(value):
+    value = value.strip()
+    if value.startswith("[") and value.endswith("]"):
+        body = value[1:-1].strip()
+        if not body:
+            return []
+        return [parse_scalar(item) for item in body.split(",")]
+    if value.lower() in {"true", "false"}:
+        return value.lower() == "true"
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    try:
+        return float(value)
+    except ValueError:
+        return value.strip('"').strip("'")
+
+
+def load_simple_yaml(path):
+    data = {}
+    current = None
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            if not line.strip() or line.lstrip().startswith("#"):
+                continue
+            if not line.startswith(" "):
+                key = line.split(":", 1)[0].strip()
+                value = line.split(":", 1)[1].strip()
+                if value:
+                    data[key] = parse_scalar(value)
+                    current = None
+                else:
+                    data[key] = {}
+                    current = key
+            elif current is not None:
+                key, value = line.strip().split(":", 1)
+                data[current][key.strip()] = parse_scalar(value)
+    return data
+
+
+def load_config(path):
+    try:
+        import yaml
+
+        with open(path, "r", encoding="utf-8") as f:
+            return yaml.safe_load(f)
+    except ImportError:
+        return load_simple_yaml(path)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Generate EDT/PNM/tortuosity six-panel comparisons.")
+    parser.add_argument("--config", default="configs/main.yaml", help="YAML config with data.voxel_size_m.")
+    parser.add_argument("--voxel_size", type=float, default=None, help="Override voxel size in meters.")
+    return parser.parse_args()
+
+
+def configure_from_args(args):
+    global VOXEL_SIZE
+
+    if args.config:
+        config_path = Path(args.config)
+        if config_path.exists():
+            cfg = load_config(config_path)
+            data_cfg = cfg.get("data", {}) if cfg else {}
+            if "voxel_size_m" in data_cfg:
+                VOXEL_SIZE = float(data_cfg["voxel_size_m"])
+
+    if args.voxel_size is not None:
+        VOXEL_SIZE = float(args.voxel_size)
+
 # =========================================================
 # 2) Basic functions
 # =========================================================
@@ -77,7 +150,7 @@ def ensure_3d(arr, path=""):
     arr = np.asarray(arr)
     arr = np.squeeze(arr)
     if arr.ndim != 3:
-        raise ValueError(f"{path} is not 3D data，shape={arr.shape}")
+        raise ValueError(f"{path} is not 3D data, shape={arr.shape}")
     return arr
 
 
@@ -98,7 +171,7 @@ def load_npz(path: Path, npz_key=None):
         raise ValueError(f"{path} contains no arrays")
     if npz_key is not None:
         if npz_key not in data:
-            raise KeyError(f"{path} does not contain key={npz_key}，available keys={keys}")
+            raise KeyError(f"{path} does not contain key={npz_key}, available keys={keys}")
         arr = data[npz_key]
     else:
         arr = data[keys[0]]
@@ -674,6 +747,7 @@ def run_one_target(folder_name, target_value):
         "gen_skipped": gen["skipped"],
         "do_pnm": DO_PNM,
         "do_tortuosity": DO_TORTUOSITY,
+        "voxel_size_m": VOXEL_SIZE,
         "pnm_saved": pnm_saved,
         "tau_saved": tau_saved,
         "figure_saved": True,
@@ -691,6 +765,9 @@ def run_one_target(folder_name, target_value):
 # =========================================================
 
 def main():
+    args = parse_args()
+    configure_from_args(args)
+
     out_root = Path(OUT_ROOT)
     out_root.mkdir(parents=True, exist_ok=True)
 
@@ -702,6 +779,7 @@ def main():
     print(f"REAL_ROOT       : {REAL_ROOT}")
     print(f"GEN_ROOT        : {GEN_ROOT}")
     print(f"OUT_ROOT        : {OUT_ROOT}")
+    print(f"VOXEL_SIZE      : {VOXEL_SIZE} m")
     print(f"DO_PNM          : {DO_PNM}")
     print(f"DO_TORTUOSITY   : {DO_TORTUOSITY}")
     print(f"MAX_REAL_FILES  : {MAX_REAL_FILES}")
