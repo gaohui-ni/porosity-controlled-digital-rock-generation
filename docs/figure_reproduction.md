@@ -22,11 +22,13 @@ The full workflow can be inspected without running training:
 python run_pipeline.py --mode full --config configs/main.yaml --dry-run
 ```
 
-For a single figure-oriented helper command:
+For a lightweight figure-output sanity check:
 
 ```bash
 python scripts/reproduce_figures.py --config configs/main.yaml
 ```
+
+This helper validates the output path and can generate a synthetic demo slice/S2 figure. Manuscript-scale figures require the full evaluation outputs listed below.
 
 ## Spatial Statistics Figures
 
