@@ -50,7 +50,7 @@ def write_placeholder_png(path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate lightweight reviewer demo figures and summary files.")
+    parser = argparse.ArgumentParser(description="Generate lightweight reviewer demo figures and a demo manifest.")
     parser.add_argument("--summary", default="results/summary.json")
     parser.add_argument("--figure", default="results/figures/demo_synthetic_s2.png")
     args = parser.parse_args()
