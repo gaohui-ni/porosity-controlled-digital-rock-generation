@@ -257,7 +257,7 @@ def main():
             "Use top-level run_pipeline.py for official manuscript reproduction."
         )
     )
-    parser.add_argument("--config", default="configs/experiment_main.yaml")
+    parser.add_argument("--config", default="configs/main.yaml")
     parser.add_argument("--mode", choices=["demo", "full"], default="demo")
     parser.add_argument(
         "--dry-run",
