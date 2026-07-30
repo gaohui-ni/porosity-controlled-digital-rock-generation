@@ -24,6 +24,7 @@ The repository supports a manuscript at the interface of computing and geoscienc
 | Tutorials / how-to files | `notebooks/tutorials/`, `docs/user_guide.md`, `docs/reproducibility.md` |
 | User guide with inputs and outputs | `docs/user_guide.md` |
 | Data availability and redistribution limits | `docs/data_availability.md` |
+| External checkpoint archive and checksums | `docs/checkpoints.md` |
 | Figure/result reproduction map | `docs/figure_mapping.md`, `docs/figure_reproduction.md` |
 | Automated lightweight checks | `.github/workflows/tests.yml`, `tests/` |
 
@@ -49,7 +50,7 @@ python run_pipeline.py --mode full --config configs/main.yaml
 
 ## Data and Model Limitations
 
-Large raw micro-CT data are referenced through Mendeley Data rather than stored in GitHub. Large trained checkpoints are not bundled in the repository. The repository provides synthetic examples, configuration files, and full training/generation/evaluation scripts so that reviewers can inspect the workflow and rerun it when the released data and compute environment are available.
+Large raw micro-CT data are referenced through Mendeley Data rather than stored in GitHub. Large trained checkpoints are not bundled in the repository; final checkpoints for exact generated-sample reproduction should be archived externally and listed with SHA256 checksums in `docs/checkpoints.md`. The repository provides synthetic examples, configuration files, and full training/generation/evaluation scripts so that reviewers can inspect the workflow and rerun it when the released data and compute environment are available.
 
 ## Computational Requirements
 
@@ -63,4 +64,5 @@ Large raw micro-CT data are referenced through Mendeley Data rather than stored 
 - Confirm the repository remains public during review.
 - Confirm `configs/main.yaml` matches the manuscript experiments.
 - Confirm final figure numbers in the manuscript match `docs/figure_mapping.md`.
+- Confirm final checkpoint archive URLs and SHA256 checksums are filled in `docs/checkpoints.md`.
 - Generate final `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv` only after the full run.
