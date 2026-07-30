@@ -13,7 +13,7 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 
 - [x] Synthetic demo can run without raw micro-CT data.
 - [x] Notebook tutorials are available under `notebooks/tutorials/`.
-- [x] Unit tests cover porosity matching, porosity calculation, S2 output shape, and pipeline dry-run.
+- [x] Unit tests cover porosity matching, porosity calculation, directional two-point probability-function output shape, and pipeline dry-run.
 - [x] Unit tests verify that the official training script contains the model definitions, training stages, and command-line entry point.
 - [x] GitHub Actions runs lightweight tests and dry-run checks.
 
@@ -43,6 +43,8 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 - [ ] Confirm final manuscript figure numbers match `docs/figure_mapping.md`.
 - [ ] Confirm Mendeley Data version and DOI are final in README, manuscript, and `docs/data_availability.md`.
 - [ ] Confirm that all reported parameters match the manuscript.
+- [ ] Export and record exact dependency versions from the final experiment environment.
+- [ ] Confirm `torch`, `porespy`, `openpnm`, `numpy`, and `scipy` versions match the manuscript-scale run.
 - [ ] Tag a release after final manuscript/code synchronization.
 
 Note: Precomputed summary files are intentionally not bundled before the final full run. They should be generated from the released data and configuration.
