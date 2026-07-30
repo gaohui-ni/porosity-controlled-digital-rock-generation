@@ -16,7 +16,7 @@ The repository supports a manuscript at the interface of computing and geoscienc
 | Public repository | `https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation` |
 | Clear license | `LICENSE` |
 | English README with installation and usage | `README.md` |
-| Dependencies and computational requirements | `requirements.txt`, `requirements_optional.txt`, `environment.yml`, `README.md` |
+| Dependencies and computational requirements | `requirements.txt`, `requirements_optional.txt`, `environment.yml`, `README.md`, `docs/dependency_versions.md` |
 | Code for the scientific workflow | `src/`, `scripts/`, `pipelines/` |
 | Official reproduction entry point | `run_pipeline.py` |
 | Lightweight reproducible example | `run_demo.py`, `scripts/demo_quantile_binarization.py`, `examples/` |
@@ -65,4 +65,5 @@ Large raw micro-CT data are referenced through Mendeley Data rather than stored 
 - Confirm `configs/main.yaml` matches the manuscript experiments.
 - Confirm final figure numbers in the manuscript match `docs/figure_mapping.md`.
 - Confirm the checkpoint non-distribution policy remains consistent across `README.md`, `docs/checkpoints.md`, and the manuscript.
+- Confirm exact dependency versions from the final experiment environment are recorded before release.
 - Generate final `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv` only after the full run.
