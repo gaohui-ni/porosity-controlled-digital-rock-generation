@@ -16,4 +16,4 @@ python src/metrics/summary.py --root results
 python scripts/plot_all.py
 ```
 
-The full workflow can train checkpoints from the published sandstone micro-CT data. Exact generated-sample reproduction requires the final externally archived checkpoints listed in `docs/checkpoints.md`.
+The complete workflow can be reproduced through model retraining using the released code, configurations, and public raw data. Because training and sampling are stochastic, exact generated volumes and numerically identical outputs are not guaranteed.
