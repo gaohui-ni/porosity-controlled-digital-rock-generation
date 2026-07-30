@@ -14,6 +14,7 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 - [x] Synthetic demo can run without raw micro-CT data.
 - [x] Notebook tutorials are available under `notebooks/tutorials/`.
 - [x] Unit tests cover porosity matching, porosity calculation, S2 output shape, and pipeline dry-run.
+- [x] Unit tests verify that the official training script contains the model definitions, training stages, and command-line entry point.
 - [x] GitHub Actions runs lightweight tests and dry-run checks.
 
 ## Data Availability
