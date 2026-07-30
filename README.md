@@ -49,6 +49,13 @@ pip install -e .
 
 `porespy` and `openpnm` are optional but required for pore-network and permeability workflows. GPU training requires a CUDA-compatible PyTorch installation.
 
+## Computational Requirements
+
+- Lightweight demo, notebooks, and unit tests: CPU only; no raw micro-CT data or trained checkpoint is required.
+- Manuscript-scale training and generation: CUDA-capable PyTorch installation recommended; default generated/comparison sample size is `256 x 256 x 256` voxels.
+- Pore-network and permeability workflows: install `requirements_optional.txt`; these steps can be memory- and time-intensive.
+- Raw data: the default full configuration expects `data/raw/S1.raw` with shape `800 x 800 x 800`, following the data convention in [docs/data_availability.md](docs/data_availability.md).
+
 ## Minimal Demo
 
 Run the synthetic porosity-matching demo:
@@ -118,9 +125,9 @@ pytest tests/
 
 The tests cover quantile-based porosity matching, porosity calculation, and two-point correlation output shapes.
 
-## Reproduce Manuscript Figures
+## Reproduce Manuscript Outputs
 
-The main experiment is configured in [configs/experiment_main.yaml](configs/experiment_main.yaml). See [docs/figure_reproduction.md](docs/figure_reproduction.md) for a command-by-command figure reproduction map. The pipeline writes figure-oriented outputs under `results/`:
+The official manuscript-scale experiment is configured in [configs/main.yaml](configs/main.yaml). [configs/experiment_main.yaml](configs/experiment_main.yaml) is retained as a backward-compatible copy/example. See [docs/figure_reproduction.md](docs/figure_reproduction.md) for a command-by-command figure reproduction map. The pipeline writes figure-oriented outputs under `results/`:
 
 - `results/fig_s2/`: two-point correlation, lineal-path, and EDT pore-size curves.
 - `results/fig_perm/`: permeability-related tables and plots.
@@ -138,13 +145,15 @@ python scripts/plot_all.py
 
 The summary command writes `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`. A short manuscript-to-code map is provided in [docs/figure_mapping.md](docs/figure_mapping.md).
 
-For a figure-oriented helper command:
+For a lightweight figure-output sanity check and figure-path helper:
 
 ```bash
 python scripts/reproduce_figures.py --config configs/main.yaml
 ```
 
-Before submission, use [docs/submission_checklist.md](docs/submission_checklist.md) for the final repository audit. Precomputed summary files are intentionally not bundled before the final full run.
+The helper validates the figure-output path and can generate a synthetic demo slice/S2 figure after running `python run_demo.py`. Manuscript-scale figures are generated from the full evaluation outputs listed in [docs/figure_reproduction.md](docs/figure_reproduction.md).
+
+Before submission, use [docs/submission_checklist.md](docs/submission_checklist.md) and [docs/journal_compliance.md](docs/journal_compliance.md) for the final repository audit. Precomputed summary files are intentionally not bundled before the final full run.
 
 ## Main Manuscript Workflow
 
