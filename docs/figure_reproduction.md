@@ -40,11 +40,11 @@ For a lightweight figure-output sanity check:
 python scripts/reproduce_figures.py --config configs/main.yaml
 ```
 
-This helper validates the output path and can generate a synthetic demo slice/S2 figure. Manuscript-scale figures require the full evaluation outputs listed below.
+This helper validates the output path and can generate a synthetic demo slice/two-point-probability figure. Manuscript-scale figures require the full evaluation outputs listed below.
 
 ## Spatial Statistics Figures
 
-Use these outputs for S2, lineal-path, and EDT pore-size figures.
+Use these outputs for directional two-point probability function `S2`, lineal-path, and EDT pore-size figures.
 
 ```bash
 python scripts/evaluate_s2_lineal_edt.py \
