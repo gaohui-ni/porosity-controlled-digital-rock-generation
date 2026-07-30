@@ -59,6 +59,7 @@ python scripts/evaluate_voxel_and_perm.py \
   --output_csv results/tables/generated_voxel_perm.csv \
   --group_name gen \
   --shape 256 256 256 \
+  --voxel_size 3.5e-6 \
   --recursive
 ```
 
@@ -83,10 +84,10 @@ python scripts/evaluate_coordination_euler.py \
 For the six-panel pore-network analysis:
 
 ```bash
-python scripts/evaluate_pore_network_6panel.py
+python scripts/evaluate_pore_network_6panel.py --config configs/main.yaml
 ```
 
-Before running the six-panel script, check the configuration block at the top of the file and adjust local paths.
+Before running the six-panel script, check the configuration block at the top of the file and adjust local paths. The manuscript-scale voxel size is read from `configs/main.yaml` as `data.voxel_size_m = 3.5e-6`.
 
 ## Fontainebleau Validation Figures
 
