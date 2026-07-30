@@ -9,6 +9,7 @@ The main workflows expect binary 3D volumes:
 - format: `.raw`, `.npy`, or `.npz`;
 - default manuscript-scale shape: `256 256 256` for generated and comparison samples;
 - raw training volume shape is supplied by `--raw_shape`;
+- manuscript-scale laboratory sandstone voxel size: `3.5e-6` m/voxel;
 - phase convention: `0=solid`, `1=pore`.
 
 ## Outputs
@@ -97,6 +98,7 @@ python scripts/evaluate_voxel_and_perm.py \
   --output_csv results/tables/generated_voxel_perm.csv \
   --group_name gen \
   --shape 256 256 256 \
+  --voxel_size 3.5e-6 \
   --recursive
 ```
 
