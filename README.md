@@ -190,13 +190,17 @@ See [docs/data_availability.md](docs/data_availability.md).
 
 ## Checkpoints
 
-Large trained checkpoints are not included. Training scripts save:
+Large trained checkpoints are not stored in the GitHub repository. This keeps the code repository lightweight and avoids placing large binary files under version control.
+
+Training scripts save:
 
 - `vqvae_final.pth`
 - `unet_final.pth`
 - `latent_stats.npz`
 
 Generation scripts expect these files under the checkpoint directory passed by `--ckpt_dir`.
+
+For exact reproduction of the final manuscript figures, the final trained checkpoints should be archived separately in Mendeley Data, Zenodo, or a GitHub Release, with SHA256 checksums. See [docs/checkpoints.md](docs/checkpoints.md). Until the checkpoint archive URL is added, reviewers can reproduce the workflow by training from the released raw data and configuration rather than by directly regenerating the exact reported samples.
 
 ## Citation
 
