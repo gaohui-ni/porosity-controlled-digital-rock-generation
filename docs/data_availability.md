@@ -24,11 +24,11 @@ See `docs/fontainebleau_protocol.md` for the validation protocol.
 
 ## Derived Results
 
-Derived statistical results, figure source tables, and analysis data can be regenerated with the scripts in this repository when the raw data and trained checkpoints are available locally.
+Derived statistical results, figure source tables, and analysis data can be regenerated with the scripts in this repository after the raw data are available locally and the models have been retrained.
 
 Typical derived outputs include:
 
-- `results/fig_s2/`: S2, lineal-path, and EDT curves;
+- `results/fig_s2/`: directional two-point probability function `S2`, lineal-path, and EDT curves;
 - `results/tables/`: porosity, voxel, pore-network, and permeability tables;
 - `results/fig_pnm/`: topology and pore-network summaries;
 - `results/summary.json` and `results/results_summary.csv`: compact result manifests.
