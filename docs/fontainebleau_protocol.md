@@ -58,7 +58,7 @@ python scripts/generate_batch.py \
 Use the same metrics as the main sandstone experiment:
 
 - Achieved porosity
-- Two-point correlation `S2`
+- Directional two-point probability function `S2`
 - Lineal-path statistics
 - Euclidean distance transform pore-size statistics
 - Connectivity and Euler characteristic
