@@ -20,3 +20,6 @@ def test_run_pipeline_full_dry_run():
 
     assert "Train VQ-VAE" in completed.stdout
     assert "Generate controlled samples" in completed.stdout
+    assert "Evaluate PNM six-panel descriptors" in completed.stdout
+    assert "Train Fontainebleau VQ-VAE and latent DDPM" in completed.stdout
+    assert "Generate Fontainebleau validation samples" in completed.stdout
