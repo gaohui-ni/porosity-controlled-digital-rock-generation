@@ -29,6 +29,7 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 - [x] Command-level figure reproduction notes are documented in `docs/figure_reproduction.md`.
 - [x] `scripts/reproduce_figures.py` provides a reviewer-facing figure reproduction helper.
 - [x] Metrics are summarized through `src/metrics/summarize_all.py`.
+- [x] Journal code, data, and reproducibility requirements are mapped in `docs/journal_compliance.md`.
 
 ## Final Checks Before Submission
 
