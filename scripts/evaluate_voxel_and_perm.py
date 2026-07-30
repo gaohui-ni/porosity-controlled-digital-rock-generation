@@ -1,4 +1,4 @@
-﻿import os
+import os
 import re
 import csv
 import json
@@ -361,7 +361,7 @@ def main():
     ap.add_argument("--pore_value", type=float, default=1, help="Treat values equal to this value as pore voxels.")
     ap.add_argument("--threshold", type=float, default=0.5, help="Use this threshold when pore_value=None.")
     ap.add_argument("--invert", action="store_true")
-    ap.add_argument("--voxel_size", type=float, default=3.0e-6, help="Voxel size in meters.")
+    ap.add_argument("--voxel_size", type=float, default=3.5e-6, help="Voxel size in meters.")
     ap.add_argument("--perm_accuracy", choices=["standard", "high"], default="standard")
     ap.add_argument("--recursive", action="store_true", help="Recursively search subdirectories.")
     ap.add_argument("--limit", type=int, default=None, help="Process only the first N files for debugging.")
