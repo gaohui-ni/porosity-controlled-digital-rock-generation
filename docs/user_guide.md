@@ -48,6 +48,17 @@ The same workflow is also available as a notebook tutorial:
 notebooks/tutorials/0001-basic-usage-synthetic-rock.ipynb
 ```
 
+## Official Pipeline Modes
+
+```bash
+python run_pipeline.py --mode demo --config configs/main.yaml
+python run_pipeline.py --mode main --config configs/main.yaml
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
+python run_pipeline.py --mode full --config configs/main.yaml
+```
+
+`main` covers the primary laboratory sandstone workflow, including the PNM six-panel analysis. `fontainebleau` covers the independent validation workflow using `configs/fontainebleau_config.yaml`. `full` runs both workflows in sequence.
+
 ## Build Real Porosity Groups
 
 ```bash
