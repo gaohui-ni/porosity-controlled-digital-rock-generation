@@ -16,11 +16,11 @@ The output folder is organized as:
 
 ```text
 generated_phi_sets/
-├── phi0p11/
-├── phi0p12/
-├── phi0p13/
-├── phi0p14/
-└── phi0p15/
+|-- phi0p11/
+|-- phi0p12/
+|-- phi0p13/
+|-- phi0p14/
+`-- phi0p15/
 ```
 
 Each target folder contains `.npz`, `.raw`, `metadata_*.csv`, `metadata_*.json`, and `summary_*.json` files.
@@ -64,4 +64,4 @@ python scripts/generate_batch.py \
   --device cuda
 ```
 
-The generated samples can then be evaluated using the same S2, pore-network, and OpenPNM permeability scripts used for the main sandstone experiment.
+The generated samples can then be evaluated using the same directional two-point probability function `S2`, pore-network, and OpenPNM permeability scripts used for the main sandstone experiment.
