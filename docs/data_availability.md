@@ -46,6 +46,7 @@ Unless otherwise specified, binary volumes follow this convention:
 - `0` = solid matrix;
 - `1` = pore space;
 - raw files are stored as `uint8`;
+- primary laboratory sandstone voxel size is `3.5e-6` m/voxel;
 - default manuscript-scale generated samples use shape `256 256 256`.
 
 ## User-Provided Data Layout
