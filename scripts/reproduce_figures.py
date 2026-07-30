@@ -1,8 +1,10 @@
-"""Reviewer-facing figure reproduction helper.
+"""Reviewer-facing lightweight figure-output helper.
 
 This script provides one command that points reviewers from the official
-pipeline to figure-oriented outputs. It does not ship precomputed manuscript
-metrics; summary files are generated only after users run the workflow.
+pipeline to figure-oriented outputs and validates the demo plotting path. It
+does not claim to regenerate every manuscript figure from precomputed results;
+manuscript-scale figures require the full evaluation outputs documented in
+``docs/figure_reproduction.md``.
 """
 
 import argparse
@@ -22,7 +24,7 @@ def run(command, dry_run=False):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Reproduce manuscript-style figures from the configured workflow."
+        description="Run a lightweight figure-output check from the configured workflow."
     )
     parser.add_argument("--config", default="configs/main.yaml")
     parser.add_argument("--results-root", default="results")
@@ -80,7 +82,7 @@ def main():
     if args.dry_run:
         print("\nDry run only: no figures or summary files were written.")
     else:
-        print(f"\nFigure-oriented outputs are under: {results_root}")
+        print(f"\nLightweight figure-oriented outputs are under: {results_root}")
 
 
 if __name__ == "__main__":
