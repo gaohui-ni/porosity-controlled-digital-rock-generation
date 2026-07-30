@@ -1,6 +1,6 @@
 # Data Availability
 
-This repository separates raw experimental data, external validation data, derived results, and lightweight synthetic examples.
+This repository separates raw experimental data, external validation data, trained checkpoints, derived results, and lightweight synthetic examples.
 
 ## Primary Laboratory Sandstone Data
 
@@ -35,6 +35,19 @@ Typical derived outputs include:
 
 Derived statistical results supporting the findings of the study are available from the corresponding author upon reasonable request.
 
+## Trained Checkpoints
+
+Large trained checkpoints are not stored in GitHub. For exact generated-sample reproduction, the final checkpoint files should be uploaded to an external archive such as Mendeley Data, Zenodo, or a GitHub Release and listed with SHA256 checksums in `docs/checkpoints.md`.
+
+Expected final checkpoint files are:
+
+- `outputs/main_sandstone/vqvae_final.pth`;
+- `outputs/main_sandstone/unet_final.pth`;
+- `outputs/main_sandstone/latent_stats.npz`;
+- `outputs/fontainebleau_phi0p2045/vqvae_final.pth`;
+- `outputs/fontainebleau_phi0p2045/unet_final.pth`;
+- `outputs/fontainebleau_phi0p2045/latent_stats.npz`.
+
 ## Lightweight Synthetic Examples
 
 The repository includes small synthetic 64^3 examples for testing the code path without downloading restricted or large raw data. These files are not used as manuscript-scale training data.
@@ -65,4 +78,4 @@ The scripts accept alternative paths through command-line arguments.
 
 Suggested wording for the manuscript:
 
-> The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data at https://doi.org/10.17632/vp2yw9c7jj.1. The Fontainebleau sandstone digital rock samples used for validation were obtained from a previously reported Australian National University (ANU) digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not redistributed by the authors. Derived statistical results and analysis data supporting the findings of this study are available from the corresponding author upon reasonable request.
+> The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data at https://doi.org/10.17632/vp2yw9c7jj.1. The final trained model checkpoints used for exact generated-sample reproduction are archived externally and documented with SHA256 checksums in the accompanying code repository. The Fontainebleau sandstone digital rock samples used for validation were obtained from a previously reported Australian National University (ANU) digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not redistributed by the authors. Derived statistical results and analysis data supporting the findings of this study are available from the corresponding author upon reasonable request.
