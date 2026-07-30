@@ -87,11 +87,18 @@ notebooks/tutorials/0003-fontainebleau-validation.ipynb
 `run_pipeline.py` is the ONLY official entry point for reproducing the manuscript workflow.
 `scripts/run_pipeline.py` is the internal modular implementation called by the top-level entry point and should not be used directly for reviewer reproduction.
 
-All experiments in this paper can be reproduced via:
+All manuscript experiments can be reproduced via the full pipeline when the required raw data are present at the paths configured in `configs/main.yaml` and `configs/fontainebleau_config.yaml`:
 
 ```bash
 python run_pipeline.py --mode full --config configs/main.yaml
 ```
+
+Available modes:
+
+- `demo`: lightweight synthetic porosity-control check;
+- `main`: main laboratory sandstone workflow, including training, generation, spatial statistics, permeability, topology, and PNM six-panel descriptors;
+- `fontainebleau`: independent Fontainebleau validation workflow;
+- `full`: `main` followed by `fontainebleau`.
 
 For a lightweight reviewer sanity check:
 
@@ -105,7 +112,7 @@ To validate the full pipeline logic without launching training, generation, or e
 python run_pipeline.py --mode full --config configs/main.yaml --dry-run
 ```
 
-`--dry-run` is a pipeline logic test. It builds the same ordered command sequence as the full reproduction run and writes `results/pipeline_full_manifest.json`, but it does not train models, generate samples, or evaluate outputs.
+`--dry-run` is a pipeline logic test. It builds the same ordered command sequence as the selected reproduction run and writes `results/pipeline_<mode>_manifest.json`, but it does not train models, generate samples, or evaluate outputs.
 
 The full run writes a standardized execution trace and result structure:
 
@@ -140,6 +147,8 @@ Typical commands:
 
 ```bash
 python run_pipeline.py --mode full --config configs/main.yaml
+python run_pipeline.py --mode main --config configs/main.yaml
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 python src/metrics/summarize_all.py --root results
 python scripts/plot_all.py
 ```
