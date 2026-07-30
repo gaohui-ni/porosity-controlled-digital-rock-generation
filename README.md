@@ -87,7 +87,7 @@ notebooks/tutorials/0003-fontainebleau-validation.ipynb
 `run_pipeline.py` is the ONLY official entry point for reproducing the manuscript workflow.
 `scripts/run_pipeline.py` is the internal modular implementation called by the top-level entry point and should not be used directly for reviewer reproduction.
 
-All manuscript experiments can be reproduced via the full pipeline when the required raw data are present at the paths configured in `configs/main.yaml` and `configs/fontainebleau_config.yaml`:
+The complete manuscript workflow can be reproduced through model retraining using the released code, configurations, and public data:
 
 ```bash
 python run_pipeline.py --mode full --config configs/main.yaml
@@ -190,17 +190,19 @@ See [docs/data_availability.md](docs/data_availability.md).
 
 ## Checkpoints
 
-Large trained checkpoints are not stored in the GitHub repository. This keeps the code repository lightweight and avoids placing large binary files under version control.
+Trained model checkpoints are not distributed with this repository.
 
-Training scripts save:
+The complete VQ-VAE and latent-DDPM training workflow is provided, and users can retrain the models using the publicly available raw data and `configs/main.yaml`.
+
+A completed training run produces:
 
 - `vqvae_final.pth`
 - `unet_final.pth`
 - `latent_stats.npz`
 
-Generation scripts expect these files under the checkpoint directory passed by `--ckpt_dir`.
+Because model training and diffusion sampling are stochastic, retrained models should reproduce the reported workflow and statistical behavior, but the exact generated samples and numerical values may differ from those reported in the manuscript.
 
-For exact reproduction of the final manuscript figures, the final trained checkpoints should be archived separately in Mendeley Data, Zenodo, or a GitHub Release, with SHA256 checksums. See [docs/checkpoints.md](docs/checkpoints.md). Until the checkpoint archive URL is added, reviewers can reproduce the workflow by training from the released raw data and configuration rather than by directly regenerating the exact reported samples.
+See [docs/checkpoints.md](docs/checkpoints.md) for details.
 
 ## Citation
 
