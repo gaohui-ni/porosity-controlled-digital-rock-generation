@@ -12,4 +12,4 @@ The repository includes the 3D VQ-VAE, FiLM-conditioned latent DDPM, quantile-ba
 
 ## Notes for Review
 
-Large raw micro-CT volumes and trained checkpoints are not stored in the repository. Their expected locations and file names are documented in `README.md`, `docs/data_availability.md`, and `docs/reproducibility.md`.
+Large raw micro-CT volumes and trained checkpoints are not stored in the repository. Raw data availability is documented in `docs/data_availability.md`; final checkpoint archive locations and SHA256 checksums should be documented in `docs/checkpoints.md` before submission.
