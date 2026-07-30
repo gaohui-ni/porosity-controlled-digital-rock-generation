@@ -17,7 +17,7 @@ python scripts/reproduce_figures.py --config configs/main.yaml
 | Manuscript result group | Code entry point | Output folder |
 | --- | --- | --- |
 | Porosity-controlled generation demo | `python run_demo.py` | `examples/` |
-| S2, lineal-path, and EDT curves | `python scripts/evaluate_s2_lineal_edt.py ...` | `results/fig_s2/` |
+| Directional two-point probability function `S2`, lineal-path, and EDT curves | `python scripts/evaluate_s2_lineal_edt.py ...` | `results/fig_s2/` |
 | Permeability and voxel metrics | `python scripts/evaluate_voxel_and_perm.py ...` | `results/tables/`, `results/fig_perm/` |
 | Topology and pore-network metrics | `python scripts/evaluate_coordination_euler.py ...` | `results/fig_pnm/` |
 | Fontainebleau validation | `docs/fontainebleau_protocol.md` | `results/fig_fontainebleau/` |
