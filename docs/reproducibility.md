@@ -87,7 +87,7 @@ python scripts/generate_batch.py \
 
 ## Evaluation Workflow
 
-Spatial statistics:
+Directional two-point probability function `S2`, lineal-path statistics, and EDT pore-size statistics:
 
 ```bash
 python scripts/evaluate_s2_lineal_edt.py \
