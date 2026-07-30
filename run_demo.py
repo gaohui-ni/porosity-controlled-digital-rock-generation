@@ -8,7 +8,7 @@ if __name__ == "__main__":
     subprocess.run(
         [
             sys.executable,
-            "scripts/run_pipeline.py",
+            "run_pipeline.py",
             "--mode",
             "demo",
             "--config",
