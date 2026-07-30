@@ -16,4 +16,4 @@ python src/metrics/summary.py --root results
 python scripts/plot_all.py
 ```
 
-The full workflow requires the published sandstone micro-CT data and trained checkpoints generated locally.
+The full workflow can train checkpoints from the published sandstone micro-CT data. Exact generated-sample reproduction requires the final externally archived checkpoints listed in `docs/checkpoints.md`.
