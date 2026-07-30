@@ -96,7 +96,7 @@ def demo_pipeline(cfg):
     ]
 
 
-def full_pipeline(cfg):
+def main_pipeline(cfg, config_path="configs/main.yaml"):
     data = cfg["data"]
     train = cfg["training"]
     gen = cfg["generation"]
@@ -246,10 +246,117 @@ def full_pipeline(cfg):
             ],
         ),
         (
+            "Evaluate PNM six-panel descriptors",
+            [
+                sys.executable,
+                "scripts/evaluate_pore_network_6panel.py",
+                "--config",
+                config_path,
+            ],
+        ),
+        (
             "Summarize result files",
             command_report(paths["results_root"]),
         ),
     ]
+
+
+def fontainebleau_pipeline(cfg):
+    fb_cfg_path = ROOT / "configs" / "fontainebleau_config.yaml"
+    fb = load_config(fb_cfg_path)
+    train = cfg["training"]
+    model = cfg["model"]
+    paths = cfg["paths"]
+
+    out_root = "data/generated_fontainebleau_sets"
+    save_dir = "outputs/fontainebleau_phi0p2045"
+
+    return [
+        (
+            "Train Fontainebleau VQ-VAE and latent DDPM",
+            [
+                sys.executable,
+                "scripts/train_fontainebleau.py",
+                "--stage",
+                "all",
+                "--raw_path",
+                fb["raw_path"],
+                "--raw_shape",
+                *as_str_list(fb["raw_shape"]),
+                "--patch_size",
+                str(fb["patch_size"]),
+                "--save_dir",
+                save_dir,
+                "--device",
+                train["device"],
+                "--epochs_vae",
+                str(train["epochs_vae"]),
+                "--epochs_ddpm",
+                str(train["epochs_ddpm"]),
+                "--batch_vae",
+                str(train["batch_vae"]),
+                "--batch_ddpm",
+                str(train["batch_ddpm"]),
+                "--poro_center",
+                str(fb["poro_center"]),
+                "--target_porosity",
+                str(fb["training_porosity"]),
+                "--poro_scale",
+                str(fb["poro_scale"]),
+            ],
+        ),
+        (
+            "Generate Fontainebleau validation samples",
+            [
+                sys.executable,
+                "scripts/generate_batch.py",
+                "--ckpt_dir",
+                save_dir,
+                "--out_root",
+                out_root,
+                "--targets",
+                *as_str_list(fb["validation_targets"]),
+                "--n_per_target",
+                str(fb["n_per_target"]),
+                "--seed_start",
+                "0",
+                "--device",
+                train["device"],
+                "--poro_center",
+                str(fb["poro_center"]),
+                "--poro_scale",
+                str(fb["poro_scale"]),
+                "--n_steps",
+                str(model["n_steps"]),
+            ],
+        ),
+        (
+            "Evaluate Fontainebleau voxel metrics and permeability",
+            [
+                sys.executable,
+                "scripts/evaluate_voxel_and_perm.py",
+                "--input_root",
+                out_root,
+                "--output_csv",
+                str(Path(paths["table_results"]) / "fontainebleau_voxel_perm.csv"),
+                "--group_name",
+                "fontainebleau",
+                "--shape",
+                *as_str_list([fb["patch_size"]] * 3),
+                "--voxel_size",
+                str(float(fb["voxel_size_um"]) * 1.0e-6),
+                "--recursive",
+            ],
+        ),
+        (
+            "Summarize Fontainebleau result files",
+            command_report(paths["results_root"]),
+        ),
+    ]
+
+
+def full_pipeline(cfg, config_path="configs/main.yaml"):
+    return main_pipeline(cfg, config_path=config_path) + fontainebleau_pipeline(cfg)
 
 
 def main():
@@ -260,7 +367,7 @@ def main():
         )
     )
     parser.add_argument("--config", default="configs/main.yaml")
-    parser.add_argument("--mode", choices=["demo", "full"], default="demo")
+    parser.add_argument("--mode", choices=["demo", "main", "fontainebleau", "full"], default="demo")
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -269,7 +376,14 @@ def main():
     args = parser.parse_args()
 
     cfg = load_config(ROOT / args.config)
-    steps = demo_pipeline(cfg) if args.mode == "demo" else full_pipeline(cfg)
+    if args.mode == "demo":
+        steps = demo_pipeline(cfg)
+    elif args.mode == "main":
+        steps = main_pipeline(cfg, config_path=args.config)
+    elif args.mode == "fontainebleau":
+        steps = fontainebleau_pipeline(cfg)
+    else:
+        steps = full_pipeline(cfg, config_path=args.config)
 
     manifest = {"mode": args.mode, "config": args.config, "steps": []}
     for name, command in steps:
