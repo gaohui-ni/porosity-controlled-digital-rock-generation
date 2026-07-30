@@ -23,6 +23,8 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 - [x] Synthetic/demo data are distinguished from manuscript-scale raw data.
 - [x] Fontainebleau validation data are identified as external data and are not redistributed.
 - [x] Data availability details are documented in `docs/data_availability.md`.
+- [ ] Upload final checkpoints to Mendeley Data, Zenodo, or GitHub Release.
+- [ ] Add checkpoint URLs/DOIs and SHA256 checksums to `docs/checkpoints.md`.
 
 ## Figure and Metric Reproduction
 
@@ -38,6 +40,7 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 - [ ] Inspect generated `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`.
 - [ ] Confirm final manuscript figure numbers match `docs/figure_mapping.md`.
 - [ ] Confirm Mendeley Data version and DOI are final in README, manuscript, and `docs/data_availability.md`.
+- [ ] Confirm final checkpoint archive URLs and SHA256 values are final in README and `docs/checkpoints.md`.
 - [ ] Tag a release after final manuscript/code synchronization.
 
 Note: Precomputed summary files are intentionally not bundled before the final full run. They should be generated from the released data and configuration.
