@@ -18,24 +18,24 @@ python scripts/demo_quantile_binarization.py
 
 This validates the porosity-matching step and writes example arrays under `examples/`.
 
-The same check can be run through the pipeline orchestrator:
+The same check can be run through the official pipeline entry point:
 
 ```bash
-python scripts/run_pipeline.py --mode demo --config configs/experiment_main.yaml
+python run_pipeline.py --mode demo --config configs/main.yaml
 ```
 
 To inspect the manuscript-scale command sequence without launching training:
 
 ```bash
-python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml --dry-run
+python run_pipeline.py --mode full --config configs/main.yaml --dry-run
 ```
 
 ## Main Workflow
 
-The full pipeline is configured in `configs/experiment_main.yaml` and can be launched with:
+The official full pipeline is configured in `configs/main.yaml` and can be launched with:
 
 ```bash
-python scripts/run_pipeline.py --mode full --config configs/experiment_main.yaml
+python run_pipeline.py --mode full --config configs/main.yaml
 ```
 
 The equivalent step-by-step commands are:
