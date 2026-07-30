@@ -2,4 +2,4 @@
 
 If you use this repository, please cite the related manuscript:
 
-Ni, G., et al. Porosity-controlled 3D digital rock generation using discrete latent diffusion. Submitted.
+Ni, G., Ma, Y., Ma, S., Yang, Y., Liu, X., and Ni, H. A Porosity-Controllable Generative Framework for Three-Dimensional Porous Media Based on Discrete Latent-Space Diffusion. Submitted.
