@@ -30,12 +30,25 @@ To inspect the manuscript-scale command sequence without launching training:
 python run_pipeline.py --mode full --config configs/main.yaml --dry-run
 ```
 
+Available pipeline modes are:
+
+- `demo`: lightweight synthetic porosity-control check;
+- `main`: main laboratory sandstone workflow, including PNM six-panel descriptors;
+- `fontainebleau`: independent Fontainebleau validation workflow;
+- `full`: `main` followed by `fontainebleau`.
+
 ## Main Workflow
 
 The official full pipeline is configured in `configs/main.yaml` and can be launched with:
 
 ```bash
 python run_pipeline.py --mode full --config configs/main.yaml
+```
+
+To reproduce only the main laboratory sandstone results:
+
+```bash
+python run_pipeline.py --mode main --config configs/main.yaml
 ```
 
 The equivalent step-by-step commands are:
@@ -120,6 +133,12 @@ python src/metrics/summarize_all.py --root results
 For a figure-oriented mapping from manuscript result groups to commands and output folders, see `docs/figure_reproduction.md`.
 
 ## Fontainebleau Workflow
+
+The Fontainebleau validation can be launched through the official entry point after the prepared raw volume exists at the path configured in `configs/fontainebleau_config.yaml`:
+
+```bash
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
+```
 
 Prepare the volume:
 
