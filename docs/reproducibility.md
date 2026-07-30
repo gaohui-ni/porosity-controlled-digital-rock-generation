@@ -18,7 +18,7 @@ python scripts/demo_quantile_binarization.py
 
 This validates the porosity-matching step and writes example arrays under `examples/`.
 
-The same check can be run through the official pipeline entry point:
+The same check can be run through the pipeline orchestrator:
 
 ```bash
 python run_pipeline.py --mode demo --config configs/main.yaml
@@ -90,6 +90,7 @@ python scripts/evaluate_voxel_and_perm.py \
   --output_csv results/tables/generated_voxel_perm.csv \
   --group_name gen \
   --shape 256 256 256 \
+  --voxel_size 3.5e-6 \
   --recursive
 ```
 
@@ -105,10 +106,10 @@ python scripts/evaluate_coordination_euler.py \
 Pore-network six-panel analysis:
 
 ```bash
-python scripts/evaluate_pore_network_6panel.py
+python scripts/evaluate_pore_network_6panel.py --config configs/main.yaml
 ```
 
-Before running `evaluate_pore_network_6panel.py`, review the configuration block at the top of the script and adjust paths, target folders, voxel size, and sample limits.
+Before running `evaluate_pore_network_6panel.py`, review the configuration block at the top of the script and adjust paths, target folders, and sample limits. The manuscript-scale voxel size is read from `configs/main.yaml`.
 
 Summarize generated result files:
 
