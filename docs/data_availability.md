@@ -42,8 +42,9 @@ Derived statistical results supporting the findings of the study are available f
 
 The final trained VQ-VAE and latent-DDPM checkpoints are publicly distributed
 under `savedmodels/` through Git LFS. File sizes and SHA256 checksums are listed
-in `docs/model_manifest.md`. The repository also provides the complete training
-workflow for independently retraining the models from the released data.
+in `docs/model_manifest.md`. The repository also provides the complete
+main-sandstone training workflow for independently retraining the models from
+the released Mendeley Data volume.
 
 ## Lightweight Synthetic Examples
 
@@ -82,4 +83,15 @@ configuration files.
 
 Suggested wording for the manuscript:
 
-> The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data at https://doi.org/10.17632/vp2yw9c7jj.1. The final trained VQ-VAE and latent-DDPM checkpoint layout and SHA256 checksums are documented in the public repository. The repository also provides the complete training workflow for independently retraining the models from the released data. The Fontainebleau sandstone digital rock samples used for validation were obtained from a previously reported Australian National University (ANU) digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not redistributed by the authors. Derived statistical results and analysis data supporting the findings of this study are available from the corresponding author upon reasonable request.
+> The laboratory sandstone micro-CT volume data and associated metadata used in
+> this study are available in Mendeley Data at
+> https://doi.org/10.17632/vp2yw9c7jj.1. The source code, pretrained
+> checkpoints, model checksums, and reproduction instructions are publicly
+> available at
+> https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation.
+> The Fontainebleau sandstone digital rock samples used for validation were
+> obtained from a previously reported Australian National University (ANU)
+> digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not
+> redistributed by the authors. Derived statistical results and analysis data
+> supporting the findings of this study are available from the corresponding
+> author upon reasonable request.

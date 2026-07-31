@@ -57,7 +57,10 @@ python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 python run_pipeline.py --mode full --config configs/main.yaml
 ```
 
-`main` covers the primary laboratory sandstone workflow, including the PNM six-panel analysis. `fontainebleau` covers the independent validation workflow using `configs/fontainebleau_config.yaml`. `full` runs both workflows in sequence.
+`main` covers the primary laboratory sandstone workflow. `fontainebleau`
+covers the independent validation workflow using external ANU volumes and
+`configs/fontainebleau_config.yaml`. `full` runs both workflows in sequence and
+therefore requires both datasets.
 
 ## Build Real Porosity Groups
 
@@ -78,8 +81,16 @@ python scripts/build_real_phi_groups.py \
 python scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py \
   --stage all \
   --raw_path data/raw/Bei_800x800x800.raw \
+  --raw_shape 800 800 800 \
   --save_dir outputs/main_sandstone \
+  --batch_vae 1 \
+  --batch_ddpm 1 \
+  --epochs_vae 50 \
+  --epochs_ddpm 300 \
+  --n_samples 1000 \
   --target_porosity 0.13 \
+  --poro_center 0.13 \
+  --poro_scale 0.02 \
   --device cuda
 ```
 
@@ -101,8 +112,17 @@ python scripts/generate_batch.py \
 python scripts/evaluate_s2_lineal_edt.py \
   --real_root data/real256_sets_from_S1_strict \
   --gen_root data/generated_phi_sets \
-  --out_root results/curves \
+  --out_root results/fig_s2 \
   --targets 0.11 0.12 0.13 0.14 0.15
+
+python scripts/evaluate_voxel_and_perm.py \
+  --input_root data/real256_sets_from_S1_strict \
+  --output_csv results/tables/real_voxel_perm.csv \
+  --group_name real \
+  --shape 256 256 256 \
+  --voxel_size 3.5e-6 \
+  --recursive \
+  --extensions .raw
 
 python scripts/evaluate_voxel_and_perm.py \
   --input_root data/generated_phi_sets \
@@ -110,7 +130,13 @@ python scripts/evaluate_voxel_and_perm.py \
   --group_name gen \
   --shape 256 256 256 \
   --voxel_size 3.5e-6 \
-  --recursive
+  --recursive \
+  --extensions .npz
+
+python scripts/compare_metric_tables.py \
+  --real-csv results/tables/real_voxel_perm.csv \
+  --gen-csv results/tables/generated_voxel_perm.csv \
+  --output-csv results/tables/permeability_comparison.csv
 ```
 
 ## Hardware Notes

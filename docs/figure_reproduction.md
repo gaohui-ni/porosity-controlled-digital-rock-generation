@@ -1,6 +1,6 @@
 # Figure Reproduction Map
 
-This file maps manuscript-style result groups to the commands and output folders used in this repository. Exact figure numbers can be adjusted to match the final accepted manuscript layout.
+This document follows the current submitted-manuscript numbering for Figures 1–9.
 
 ## Overview
 
@@ -10,7 +10,9 @@ The main configuration file is:
 configs/main.yaml
 ```
 
-The full manuscript-scale workflow is reproduced through the official top-level entry point:
+The complete two-dataset workflow is run through the official top-level entry
+point. It requires the public main-sandstone volume and access to the external
+ANU Fontainebleau volumes:
 
 ```bash
 python run_pipeline.py --mode full --config configs/main.yaml
@@ -156,12 +158,18 @@ For the extended six-panel pore-network diagnostic analysis:
 This extended diagnostic output is not identical to manuscript Fig. 7.
 Manuscript Fig. 7 combines pore radius, throat radius, throat shape factor,
 EDT radius, and coordination number from the corresponding evaluation outputs.
+Manuscript Fig. 7 uses the `phi0p15` group and excludes throat length,
+tortuosity, and Euler-characteristic outputs.
 
 ```bash
 python scripts/evaluate_pore_network_6panel.py --config configs/main.yaml
 ```
 
-This PNM six-panel step is included in `python run_pipeline.py --mode main --config configs/main.yaml` and therefore also in `--mode full`. Before running the six-panel script directly, check the configuration block at the top of the file and adjust local paths. The manuscript-scale voxel size is read from `configs/main.yaml` as `data.voxel_size_m = 3.5e-6`.
+This PNM six-panel step is included in `python run_pipeline.py --mode main
+--config configs/main.yaml` and therefore also in `--mode full`. Verify paths
+and target values in `configs/main.yaml`; modification of the Python source
+file is not required. The manuscript-scale voxel size is read from
+`configs/main.yaml` as `data.voxel_size_m = 3.5e-6`.
 
 ## Fontainebleau Validation Figures
 

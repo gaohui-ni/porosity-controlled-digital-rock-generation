@@ -6,11 +6,17 @@ https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation
 
 The repository includes the 3D VQ-VAE, FiLM-conditioned latent DDPM, quantile-based porosity matching, configuration files, training scripts, batch generation scripts, evaluation scripts, and synthetic examples.
 
-## Suggested Manuscript Statement
+## Manuscript Code Availability Statement
 
-> The code developed for this study is available at https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation. The repository contains the implementation of the 3D VQ-VAE, the FiLM-conditioned latent DDPM, quantile-based porosity matching, configuration files, training and inference scripts, evaluation workflows, and synthetic examples for reproducibility.
+> The source code and pretrained model checkpoints used in this study are
+> publicly available in the GitHub repository *Porosity-Controlled 3D Digital
+> Rock Generation*. The final checkpoints are distributed through Git LFS,
+> with file sizes and SHA-256 checksums documented in the repository. The
+> repository also provides configuration files, synthetic examples,
+> documentation, and workflows for both checkpoint-based inference and
+> independent model retraining. The code is released under the MIT License.
 
-## Detailed Manuscript Code Availability Statement
+## Repository Details
 
 Name of code/library: Porosity-Controlled 3D Digital Rock Generation
 
@@ -29,8 +35,9 @@ https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation
 The final trained VQ-VAE and latent-DDPM checkpoints are distributed under
 `savedmodels/` through Git LFS. After cloning, users must run `git lfs pull`
 before checkpoint-based inference. The repository also provides the complete
-training workflow for independently retraining the models from the publicly
-available raw data.
+main-sandstone training workflow for independently retraining the models from
+the publicly available raw data. Complete Fontainebleau validation additionally
+requires the external ANU volumes, which are not redistributed.
 
 The released checkpoints enable reproduction of the reported model inference
 and analysis workflow. Due to stochastic sampling and hardware- or

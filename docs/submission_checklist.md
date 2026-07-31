@@ -1,6 +1,7 @@
 # Submission Checklist
 
-This checklist is intended for the final Computers & Geosciences / Energy & Fuels repository audit before manuscript submission.
+This checklist is intended for the final Computers & Geosciences repository
+audit before manuscript submission.
 
 ## Reviewer Entry Points
 
@@ -45,6 +46,8 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 
 ## Final Checks Before Submission
 
+- [ ] Lock the exact sample IDs, seeds, slice indices, and views used in Figs. 4 and 5.
+- [ ] Confirm that manuscript Code availability and Data availability statements exactly match `docs/code_availability.md` and `docs/data_availability.md`.
 - [ ] Run the complete workflow from the released data and final configuration.
 - [ ] Inspect generated `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`.
 - [ ] Confirm final manuscript figure numbers match `docs/figure_mapping.md`.

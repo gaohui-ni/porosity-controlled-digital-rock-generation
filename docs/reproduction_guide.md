@@ -18,13 +18,20 @@ python run_pipeline.py --mode full --config configs/main.yaml --dry-run
 
 This prints the data preparation, training, generation, evaluation, and summary commands without launching GPU training.
 
-## Full Manuscript-Scale Workflow
+## Main-Sandstone Manuscript Workflow
+
+```bash
+python run_pipeline.py --mode main --config configs/main.yaml
+```
+
+This requires the published sandstone micro-CT data, a CUDA-capable PyTorch installation, and enough memory for 256^3 training.
+
+The complete `full` workflow additionally requires access to the external ANU
+Fontainebleau volumes, which are not redistributed:
 
 ```bash
 python run_pipeline.py --mode full --config configs/main.yaml
 ```
-
-This requires the published sandstone micro-CT data, a CUDA-capable PyTorch installation, and enough memory for 256^3 training.
 
 ## Result Summary
 

@@ -111,6 +111,32 @@ def test_figure_registry_maps_all_manuscript_figures():
     assert "(d) S/V comparison" in registry
     assert "used in the Supplementary Material" in registry
     assert "not a panel of main-text Fig. 6" in registry
+    assert "At phi=0.15" in registry
+    assert "manuscript panels exclude throat length, tortuosity, and Euler-characteristic" in registry
+    assert "(a) Kx, Ky, Kz, and Kgeom at phi=0.15" in registry
+    assert "Fontainebleau Kx, Ky, Kz, and Kgeom at phi=0.2045" in registry
+
+
+def test_documented_main_workflow_matches_canonical_configuration():
+    reproducibility = (ROOT / "docs" / "reproducibility.md").read_text(encoding="utf-8")
+    user_guide = (ROOT / "docs" / "user_guide.md").read_text(encoding="utf-8")
+    combined = reproducibility + user_guide
+
+    for expected in (
+        "--epochs_vae 50",
+        "--epochs_ddpm 300",
+        "--out_root results/fig_s2",
+        "real_voxel_perm.csv",
+        "generated_voxel_perm.csv",
+        "permeability_comparison.csv",
+    ):
+        assert expected in combined
+
+    for stale in ("results/curves", "results/topology"):
+        assert stale not in combined
+
+    assert "external ANU Fontainebleau volumes" in reproducibility
+    assert "not redistributed" in reproducibility
 
 
 def test_pnm_requires_generated_seg_key():

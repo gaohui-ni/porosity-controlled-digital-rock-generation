@@ -5,7 +5,7 @@
 ```bash
 python scripts/generate_batch.py \
   --ckpt_dir outputs/main_sandstone \
-  --out_root generated_phi_sets \
+  --out_root data/generated_phi_sets \
   --targets 0.11 0.12 0.13 0.14 0.15 \
   --n_per_target 100 \
   --poro_center 0.13 \
@@ -17,7 +17,7 @@ To generate from the final supplied main-sandstone checkpoint package instead of
 ```bash
 python scripts/generate_batch.py \
   --ckpt_dir savedmodels/main_sandstone \
-  --out_root generated_phi_sets \
+  --out_root data/generated_phi_sets \
   --targets 0.11 0.12 0.13 0.14 0.15 \
   --n_per_target 100 \
   --poro_center 0.13 \
@@ -27,7 +27,7 @@ python scripts/generate_batch.py \
 The output folder is organized as:
 
 ```text
-generated_phi_sets/
+data/generated_phi_sets/
 |-- phi0p11/
 |-- phi0p12/
 |-- phi0p13/
@@ -40,6 +40,11 @@ Each target folder contains `.npz`, `.raw`, `metadata_*.csv`, `metadata_*.json`,
 ## 2. Prepare Fontainebleau data
 
 The input volume should be converted to uint8 raw format where `0=solid` and `1=pore`.
+
+Prepare all four validation volumes separately. The expected outputs are
+`phi0p2045.raw`, `phi0p1743.raw`, `phi0p1263.raw`, and `phi0p0853.raw` under
+`data/fontainebleau/`. The command below illustrates one volume; repeat it for
+each source volume with the corresponding output filename.
 
 ```bash
 python scripts/prepare_fontainebleau_data.py \

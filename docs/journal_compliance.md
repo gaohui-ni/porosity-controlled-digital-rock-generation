@@ -20,11 +20,11 @@ The repository supports a manuscript at the interface of computing and geoscienc
 | Code for the scientific workflow | `src/`, `scripts/`, `pipelines/` |
 | Official reproduction entry point | `run_pipeline.py` |
 | Lightweight reproducible example | `run_demo.py`, `scripts/demo_quantile_binarization.py`, `examples/` |
-| Synthetic test case when full data/checkpoints are not bundled | `examples/`, `notebooks/tutorials/0001-basic-usage.ipynb` |
+| Synthetic test case when full raw experimental data are not bundled | `examples/`, `notebooks/tutorials/0001-basic-usage.ipynb` |
 | Tutorials / how-to files | `notebooks/tutorials/`, `docs/user_guide.md`, `docs/reproducibility.md` |
 | User guide with inputs and outputs | `docs/user_guide.md` |
 | Data availability and redistribution limits | `docs/data_availability.md` |
-| Trained checkpoints | Final model layout and checksums are documented in `docs/checkpoints.md` and `docs/model_manifest.md`; large files require Git LFS or release assets |
+| Trained checkpoints | Large checkpoint files are distributed through Git LFS; layout and checksums are documented in `docs/checkpoints.md` and `docs/model_manifest.md` |
 | Figure/result reproduction map | `docs/figure_mapping.md`, `docs/figure_reproduction.md` |
 | Automated lightweight checks | `.github/workflows/tests.yml`, `tests/` |
 
@@ -42,15 +42,24 @@ python run_demo.py
 python run_pipeline.py --mode full --config configs/main.yaml --dry-run
 ```
 
-3. **Full manuscript-scale workflow with released data**
+3. **Main-sandstone workflow with the released Mendeley Data volume**
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml
+python run_pipeline.py --mode main --config configs/main.yaml
 ```
+
+The complete `full` workflow additionally requires the external ANU
+Fontainebleau volumes, which are not redistributed in this repository.
 
 ## Data and Model Limitations
 
-Large raw micro-CT data are referenced through Mendeley Data rather than stored in GitHub. The repository supports complete workflow reproduction through retraining from public data and documents the final model layout and checksums for checkpoint-level reuse. Large checkpoint files require Git LFS or release assets. The repository provides synthetic examples, configuration files, and full training/generation/evaluation scripts so that reviewers can inspect the workflow and rerun it when the released data and compute environment are available.
+The main sandstone micro-CT volume is referenced through Mendeley Data rather
+than stored in GitHub. The external ANU Fontainebleau volumes are not
+redistributed. Final checkpoints are distributed through Git LFS. The
+repository provides synthetic examples, configurations, and
+training/generation/evaluation scripts so reviewers can inspect the workflow
+and rerun the portions for which they have the required data and compute
+environment.
 
 ## Computational Requirements
 
