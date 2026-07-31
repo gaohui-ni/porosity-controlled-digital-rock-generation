@@ -52,8 +52,12 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 - [ ] Confirm that all reported parameters match the manuscript.
 - [x] Confirm final model files are published through Git LFS, GitHub Release, Zenodo, or Mendeley as stated in the manuscript.
 - [x] Verify final model SHA256 values against `docs/model_manifest.md`.
-- [x] Export and record exact dependency versions from the final experiment environment.
-- [x] Confirm `torch`, `porespy`, `openpnm`, `numpy`, and `scipy` versions match the manuscript-scale run.
+- [x] Record core `torch`, `porespy`, `openpnm`, `numpy`, and `scipy` versions from the manuscript-scale run.
+- [ ] Export `environment/pip-freeze-full.txt` from the original experiment environment.
+- [ ] Export `environment/conda-export-full.yml` from the original experiment environment.
+- [ ] Rebuild a clean environment from `environment/environment-lock.yml` and run the test/demo checks.
+- [ ] Load both final checkpoint sets and generate one GPU smoke-test sample from each.
+- [ ] Verify both smoke-test NPZ files contain a valid `seg` array and enter the post-processing workflow.
 - [ ] Tag a release after final manuscript/code synchronization.
 
 Note: Precomputed summary files are intentionally not bundled before the final full run. They should be generated from the released data and configuration.

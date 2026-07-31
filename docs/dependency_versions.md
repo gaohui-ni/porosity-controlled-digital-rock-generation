@@ -1,6 +1,6 @@
 # Dependency Versions
 
-The exact core package versions reported by the manuscript-scale experiment
+The core direct dependency versions reported by the manuscript-scale experiment
 environment are recorded in:
 
 - `environment/environment-lock.yml`
@@ -42,3 +42,30 @@ pip install -e .
 The shorter `requirements.txt`, `requirements_optional.txt`, and
 `environment.yml` remain convenient, unpinned setup files. Use the files under
 `environment/` for manuscript reproduction.
+
+## Reproducibility Status
+
+- Core direct dependency versions: recorded.
+- Complete transitive environment snapshot: pending server export.
+- Clean-environment reconstruction: pending server validation.
+- GPU checkpoint inference smoke test: pending server validation.
+
+The two current lock files are intentionally concise and are not represented as
+the complete output of `pip freeze` or `conda env export`.
+
+From the original experiment server, export:
+
+```bash
+pip freeze > environment/pip-freeze-full.txt
+conda env export --no-builds > environment/conda-export-full.yml
+```
+
+Then validate from a new environment:
+
+```bash
+conda env create -f environment/environment-lock.yml -n vq256_release_test
+conda activate vq256_release_test
+pip install -e .
+pytest tests/
+python run_pipeline.py --mode demo --config configs/main.yaml
+```

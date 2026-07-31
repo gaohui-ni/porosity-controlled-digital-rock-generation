@@ -214,3 +214,41 @@ After `git lfs pull`, use
   can also be reproduced through model retraining. See `docs/checkpoints.md`.
 - Manuscript-scale permeability and pore-network results require `porespy`, `openpnm`, and substantial compute time.
 - Because training and sampling are stochastic, exact generated volumes and numerically identical outputs are not guaranteed.
+
+## Release GPU Smoke Test
+
+Run these commands in the original GPU environment before tagging the release:
+
+```bash
+python scripts/generate_batch.py \
+  --ckpt_dir savedmodels/main_sandstone \
+  --out_root outputs/release_smoke/main \
+  --targets 0.13 \
+  --n_per_target 1 \
+  --seed_start 0 \
+  --device cuda \
+  --poro_center 0.13 \
+  --poro_scale 0.02 \
+  --n_steps 1000
+
+python scripts/generate_batch.py \
+  --ckpt_dir savedmodels/fontainebleau_phi0p2045 \
+  --out_root outputs/release_smoke/fontainebleau \
+  --targets 0.2045 \
+  --n_per_target 1 \
+  --seed_start 0 \
+  --device cuda \
+  --poro_center 0.13 \
+  --poro_scale 0.02 \
+  --n_steps 1000
+
+python scripts/validate_smoke_outputs.py \
+  --main-root outputs/release_smoke/main \
+  --fontainebleau-root outputs/release_smoke/fontainebleau \
+  --output results/release_smoke_validation.json
+```
+
+Successful generation demonstrates checkpoint loading, latent-statistics
+loading, UNet sampling, VQ-VAE decoding, and NPZ writing. The validation command
+then verifies that both outputs contain readable, three-dimensional binary
+`seg` arrays with consistent porosity metadata.

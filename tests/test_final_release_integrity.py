@@ -12,6 +12,7 @@ from src.utils.quality_gate import quality_gate_message
 from scripts.compare_metric_tables import aggregate
 from scripts.export_source_data import export_pnm
 from scripts.prepare_fontainebleau_real_sets import select_patches
+from scripts.validate_smoke_outputs import validate_npz
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -76,6 +77,18 @@ def test_generated_npz_reader_selects_seg_and_validates_porosity(tmp_path):
     assert float(loaded.mean()) == 0.25
 
 
+def test_release_smoke_output_validator(tmp_path):
+    path = tmp_path / "sample.npz"
+    segmentation = np.zeros((4, 4, 4), dtype=np.uint8)
+    segmentation[:2] = 1
+    np.savez(path, seg=segmentation, seg_porosity=np.float64(0.5))
+
+    result = validate_npz(path)
+
+    assert result["shape"] == [4, 4, 4]
+    assert result["seg_porosity"] == 0.5
+
+
 def test_pnm_requires_generated_seg_key():
     source = (ROOT / "scripts" / "evaluate_pore_network_6panel.py").read_text(encoding="utf-8")
 
@@ -86,6 +99,12 @@ def test_pnm_requires_generated_seg_key():
     assert '"--allow-partial"' in source
     assert 'quality_gate_message(' in source
     assert '"gate_status"' in source
+    assert '"n_valid_tau_directions"' in source
+    assert '"tau_status_x"' in source
+    assert '"tau_status_y"' in source
+    assert '"tau_status_z"' in source
+    assert '"n_real_tau_partial"' in source
+    assert '"n_real_tau_failed"' in source
 
 
 def test_pnm_outputs_preserve_full_target_porosity(tmp_path):

@@ -65,6 +65,7 @@ Large raw micro-CT data are referenced through Mendeley Data rather than stored 
 - Confirm `configs/main.yaml` matches the manuscript experiments.
 - Confirm final figure numbers in the manuscript match `docs/figure_mapping.md`.
 - Confirm the final checkpoint distribution route remains consistent across `README.md`, `docs/checkpoints.md`, `docs/model_manifest.md`, and the manuscript.
-- Exact dependency versions from the final experiment environment are recorded
-  under `environment/` and summarized in `docs/dependency_versions.md`.
+- Core direct dependency versions from the final experiment environment are
+  recorded under `environment/`. A complete transitive environment export and
+  clean-environment reconstruction remain pending release checks.
 - Generate final `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv` only after the full run.

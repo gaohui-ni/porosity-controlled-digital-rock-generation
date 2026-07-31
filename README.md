@@ -49,9 +49,11 @@ pip install -e .
 ```
 
 `porespy` and `openpnm` are optional for the lightweight demo but required for
-pore-network and permeability workflows. The manuscript environment is locked
-in `environment/environment-lock.yml` and
-`environment/requirements-lock.txt`; see
+pore-network and permeability workflows. Core direct dependency versions from
+the manuscript environment are pinned in
+`environment/environment-lock.yml` and `environment/requirements-lock.txt`.
+A complete package-manager snapshot and clean-environment reconstruction remain
+release-validation steps; see
 [docs/dependency_versions.md](docs/dependency_versions.md).
 
 ## Computational Requirements

@@ -78,6 +78,8 @@ PNM_NBINS = 60
 
 # -------- Tortuosity parameters --------
 DO_TORTUOSITY = True
+MIN_SUCCESS_RATE = 0.9
+ALLOW_PARTIAL = False
 
 
 def parse_scalar(value):
@@ -156,6 +158,7 @@ def parse_args():
 
 def configure_from_args(args):
     global VOXEL_SIZE, REAL_ROOT, GEN_ROOT, OUT_ROOT, TARGETS, RAW_SHAPE, GEN_NPZ_KEY
+    global MIN_SUCCESS_RATE, ALLOW_PARTIAL
 
     if args.config:
         config_path = Path(args.config)
@@ -178,6 +181,8 @@ def configure_from_args(args):
     if args.raw_shape is not None:
         RAW_SHAPE = tuple(args.raw_shape)
     GEN_NPZ_KEY = args.gen_npz_key
+    MIN_SUCCESS_RATE = args.min_success_rate
+    ALLOW_PARTIAL = args.allow_partial
 
 # =========================================================
 # 2) Basic functions
@@ -259,6 +264,31 @@ def aggregate_xyz_dicts(items):
         mean = np.nanmean(arr, axis=0)
         std = np.nanstd(arr, axis=0, ddof=0)
     return mean, std, arr
+
+
+def tortuosity_status_records(items, skipped):
+    records = []
+    for item in items:
+        records.append(
+            {
+                "file": item["file"],
+                "n_valid_tau_directions": item["n_valid_tau_directions"],
+                "tau_status_x": item["tau_status_x"],
+                "tau_status_y": item["tau_status_y"],
+                "tau_status_z": item["tau_status_z"],
+            }
+        )
+    for item in skipped:
+        records.append(
+            {
+                "file": item["file"],
+                "n_valid_tau_directions": 0,
+                "tau_status_x": f"not_computed: {item['error']}",
+                "tau_status_y": f"not_computed: {item['error']}",
+                "tau_status_z": f"not_computed: {item['error']}",
+            }
+        )
+    return records
 
 
 def edt_radius_curve(pore_mask, bin_edges):
@@ -372,9 +402,18 @@ def tortuosity_xyz_from_image(pore_mask):
     for ax, name in zip([0, 1, 2], ["tau_x", "tau_y", "tau_z"]):
         try:
             res = ps.simulations.tortuosity_fd(im=pore_mask, axis=ax)
-            out[name] = float(res.tortuosity)
-        except Exception:
+            value = float(res.tortuosity)
+            if not np.isfinite(value):
+                raise ValueError(f"invalid tortuosity value: {value}")
+            out[name] = value
+            out[f"tau_status_{name[-1]}"] = "ok"
+        except Exception as exc:
             out[name] = np.nan
+            out[f"tau_status_{name[-1]}"] = f"error: {type(exc).__name__}: {exc}"
+
+    out["n_valid_tau_directions"] = int(
+        np.isfinite([out["tau_x"], out["tau_y"], out["tau_z"]]).sum()
+    )
 
     return out
 
@@ -642,11 +681,31 @@ def run_one_target(folder_name, target_value):
     # ---------- Tortuosity ----------
     tau_saved = False
     if DO_TORTUOSITY:
-        if len(real["tau_list"]) == 0 or len(gen["tau_list"]) == 0:
-            raise RuntimeError(f"{folder_name}:  tortuosity result is empty and cannot be plotted as six panels.")
+        real_tau_valid = [
+            tau for tau in real["tau_list"]
+            if tau["n_valid_tau_directions"] == 3
+        ]
+        gen_tau_valid = [
+            tau for tau in gen["tau_list"]
+            if tau["n_valid_tau_directions"] == 3
+        ]
 
-        real_tau_mean, real_tau_std, real_tau_arr = aggregate_xyz_dicts(real["tau_list"])
-        gen_tau_mean, gen_tau_std, gen_tau_arr = aggregate_xyz_dicts(gen["tau_list"])
+        for group_name, total, successful in (
+            ("real", len(real_files), len(real_tau_valid)),
+            ("generated", len(gen_files), len(gen_tau_valid)),
+        ):
+            warning = quality_gate_message(
+                f"{folder_name} tortuosity {group_name}",
+                total,
+                successful,
+                MIN_SUCCESS_RATE,
+                ALLOW_PARTIAL,
+            )
+            if warning:
+                print(f"[WARN] {warning}")
+
+        real_tau_mean, real_tau_std, real_tau_arr = aggregate_xyz_dicts(real_tau_valid)
+        gen_tau_mean, gen_tau_std, gen_tau_arr = aggregate_xyz_dicts(gen_tau_valid)
         tau_saved = True
 
     # ---------- Draw combined figure ----------
@@ -771,8 +830,14 @@ def run_one_target(folder_name, target_value):
         "n_gen_files": len(gen_files),
         "n_real_edt_ok": len(real["edt_curves"]),
         "n_gen_edt_ok": len(gen["edt_curves"]),
-        "n_real_tau_ok": len(real["tau_list"]),
-        "n_gen_tau_ok": len(gen["tau_list"]),
+        "n_real_tau_ok": len(real_tau_valid),
+        "n_gen_tau_ok": len(gen_tau_valid),
+        "n_real_tau_partial": sum(0 < tau["n_valid_tau_directions"] < 3 for tau in real["tau_list"]),
+        "n_gen_tau_partial": sum(0 < tau["n_valid_tau_directions"] < 3 for tau in gen["tau_list"]),
+        "n_real_tau_failed": len(real_files) - len(real_tau_valid) - sum(0 < tau["n_valid_tau_directions"] < 3 for tau in real["tau_list"]),
+        "n_gen_tau_failed": len(gen_files) - len(gen_tau_valid) - sum(0 < tau["n_valid_tau_directions"] < 3 for tau in gen["tau_list"]),
+        "real_tau_status": tortuosity_status_records(real["tau_list"], real["skipped"]),
+        "gen_tau_status": tortuosity_status_records(gen["tau_list"], gen["skipped"]),
         "n_real_skipped": len(real["skipped"]),
         "n_gen_skipped": len(gen["skipped"]),
         "real_skipped": real["skipped"],
