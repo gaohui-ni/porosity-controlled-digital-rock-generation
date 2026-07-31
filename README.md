@@ -192,6 +192,26 @@ See [docs/data_availability.md](docs/data_availability.md).
 
 ## Final Models and Checkpoints
 
+### Download pretrained checkpoints
+
+The final checkpoints are tracked under `savedmodels/` with Git LFS. Clone the
+repository and retrieve the model files before running checkpoint-based
+inference:
+
+```bash
+git lfs install
+git clone https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation.git
+cd porosity-controlled-digital-rock-generation
+git lfs pull
+```
+
+Verify the downloaded files against the SHA256 values in
+[docs/model_manifest.md](docs/model_manifest.md), then run:
+
+```bash
+python run_pipeline.py --mode final --config configs/main.yaml
+```
+
 The final trained model layout is:
 
 ```text
@@ -206,7 +226,10 @@ savedmodels/
     `-- latent_stats.npz
 ```
 
-The two `unet_final.pth` files exceed the normal GitHub 100 MB single-file limit. When publishing these final models through GitHub, use Git LFS or release assets. Checksums are provided in [docs/model_manifest.md](docs/model_manifest.md).
+The two `unet_final.pth` files exceed the normal GitHub 100 MB single-file limit
+and therefore require Git LFS. A release archive may also be provided as a
+browser-download alternative. Checksums are provided in
+[docs/model_manifest.md](docs/model_manifest.md).
 
 The complete VQ-VAE and latent-DDPM training workflow is also provided, so users can retrain the models using the publicly available raw data and `configs/main.yaml`.
 
@@ -216,7 +239,12 @@ A completed training run produces:
 - `unet_final.pth`
 - `latent_stats.npz`
 
-Because model training and diffusion sampling are stochastic, retrained models should reproduce the reported workflow and statistical behavior, but exact generated samples and numerical values may differ unless the same final checkpoint files are used.
+The released checkpoints enable reproduction of the reported model inference
+and analysis workflow. Because diffusion sampling is stochastic and numerical
+results can depend on hardware and software versions, generated volumes may not
+be bitwise identical across computational environments. Independently retrained
+models are expected to reproduce the workflow and statistical behavior rather
+than identical samples.
 
 See [docs/checkpoints.md](docs/checkpoints.md) for details.
 

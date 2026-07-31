@@ -26,7 +26,18 @@ The source code, configuration files, synthetic examples, documentation, and rep
 
 https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation
 
-The final trained VQ-VAE and latent-DDPM checkpoint layout is provided under `savedmodels/` when the checkpoint package is included locally or published through Git LFS / release assets. The repository also provides the complete training workflow for independently retraining the models from the publicly available raw data. Because model training and diffusion sampling are stochastic, independently reproduced results may differ in exact generated structures and numerical values while retaining the reported methodological and statistical behavior.
+The final trained VQ-VAE and latent-DDPM checkpoints are distributed under
+`savedmodels/` through Git LFS. After cloning, users must run `git lfs pull`
+before checkpoint-based inference. The repository also provides the complete
+training workflow for independently retraining the models from the publicly
+available raw data.
+
+The released checkpoints enable reproduction of the reported model inference
+and analysis workflow. Due to stochastic sampling and hardware- or
+software-dependent numerical differences, generated volumes may not be bitwise
+identical across computational environments. Independently retrained models are
+expected to reproduce the reported methodological and statistical behavior
+rather than identical generated samples.
 
 ## Notes for Review
 
