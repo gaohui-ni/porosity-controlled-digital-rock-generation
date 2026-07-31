@@ -182,7 +182,7 @@ without running even the demo, use `--skip-pipeline`. Manuscript-scale figures
 are generated from the full evaluation outputs listed in
 [docs/figure_reproduction.md](docs/figure_reproduction.md).
 
-Before submission, use [docs/submission_checklist.md](docs/submission_checklist.md) and [docs/journal_compliance.md](docs/journal_compliance.md) for the final repository audit. Precomputed summary files are intentionally not bundled before the final full run.
+Before submission, use [docs/journal_compliance.md](docs/journal_compliance.md) for the final repository audit. Precomputed summary files are intentionally not bundled before the final full run.
 
 ## Main Manuscript Workflow
 
