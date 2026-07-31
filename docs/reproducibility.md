@@ -92,7 +92,8 @@ python scripts/generate_batch.py \
   --device cuda
 ```
 
-If the final checkpoint package is available locally, use `--ckpt_dir savedmodels/main_sandstone` for main-sandstone generation.
+After `git lfs pull`, use `--ckpt_dir savedmodels/main_sandstone` for
+main-sandstone generation.
 
 ## Evaluation Workflow
 
@@ -181,7 +182,8 @@ python scripts/generate_batch.py \
   --device cuda
 ```
 
-If the final Fontainebleau checkpoint package is available locally, use `--ckpt_dir savedmodels/fontainebleau_phi0p2045`.
+After `git lfs pull`, use
+`--ckpt_dir savedmodels/fontainebleau_phi0p2045`.
 
 ## Current Limitations
 

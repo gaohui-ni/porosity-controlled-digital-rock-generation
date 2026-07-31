@@ -1,11 +1,19 @@
 import os
 import json
 import argparse
+import sys
 from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import ndimage as ndi
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.utils.naming import phi_tag
 
 
 # =========================
@@ -188,10 +196,6 @@ def pore_size_hist(vol01, bins=80, r_max=10.0):
 # =========================
 # Helpers
 # =========================
-def phi_tag(phi):
-    return f"{phi:.2f}".replace(".", "p")
-
-
 def collect_files_for_target(root, target_tag, use_mode="raw", recursive=False):
     """
     use_mode:

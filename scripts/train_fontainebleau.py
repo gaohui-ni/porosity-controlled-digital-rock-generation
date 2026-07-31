@@ -30,7 +30,12 @@ def parse_args():
     p.add_argument("--batch_vae", type=int, default=1)
     p.add_argument("--batch_ddpm", type=int, default=1)
 
-    p.add_argument("--poro_center", type=float, default=0.2045, help="Use the training-rock porosity as FiLM normalization center")
+    p.add_argument(
+        "--poro_center",
+        type=float,
+        default=0.13,
+        help="Center used to normalize the porosity condition before FiLM injection.",
+    )
     p.add_argument("--target_porosity", type=float, default=0.2045)
     p.add_argument("--poro_scale", type=float, default=0.02)
     p.add_argument("--poro_clip", type=float, default=5.0)

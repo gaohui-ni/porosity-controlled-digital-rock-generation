@@ -4,11 +4,25 @@ import numpy as np
 import pandas as pd
 
 from src.utils.volume_io import load_npz_array
+from src.utils.naming import phi_tag
 from scripts.compare_metric_tables import aggregate
 from scripts.prepare_fontainebleau_real_sets import select_patches
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_phi_tag_preserves_significant_porosity_digits():
+    expected = {
+        0.11: "0p11",
+        0.13: "0p13",
+        0.2045: "0p2045",
+        0.1743: "0p1743",
+        0.1263: "0p1263",
+        0.0853: "0p0853",
+    }
+
+    assert {value: phi_tag(value) for value in expected} == expected
 
 
 def test_generated_npz_reader_selects_seg_and_validates_porosity(tmp_path):
@@ -50,6 +64,14 @@ def test_final_model_configuration_and_pipeline_are_separate():
     assert "poro_center: 0.13" in fontainebleau
     assert 'str(fb["epochs_vae"])' in pipeline
     assert 'str(fb["epochs_ddpm"])' in pipeline
+    assert 'target_folders = [f"phi{phi_tag(value)}"' in pipeline
+
+
+def test_fontainebleau_training_script_default_matches_checkpoint():
+    source = (ROOT / "scripts" / "train_fontainebleau.py").read_text(encoding="utf-8")
+
+    assert 'default=0.13' in source
+    assert "Center used to normalize the porosity condition before FiLM injection." in source
 
 
 def test_pipeline_contains_real_generated_comparisons():

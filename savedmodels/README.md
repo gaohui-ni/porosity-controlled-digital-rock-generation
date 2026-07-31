@@ -1,6 +1,7 @@
 # savedmodels
 
-This directory stores final trained model files when the checkpoint package is included locally or distributed through Git LFS / release assets.
+This directory contains the final trained model files publicly distributed
+through Git LFS.
 
 Expected layout:
 

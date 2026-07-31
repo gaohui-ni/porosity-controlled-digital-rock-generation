@@ -1,6 +1,8 @@
 # Checkpoint Policy
 
-Final trained model checkpoints are arranged under `savedmodels/` when the checkpoint package is included locally or published through Git LFS / release assets.
+The final trained checkpoints are publicly distributed under `savedmodels/`
+through Git LFS. File sizes and SHA256 checksums are listed in
+`docs/model_manifest.md`.
 
 The expected final model layout is:
 
@@ -16,7 +18,8 @@ savedmodels/
     `-- latent_stats.npz
 ```
 
-The two `unet_final.pth` files are larger than 100 MB, so they should be published with Git LFS or as release/archive assets rather than ordinary GitHub blob files. File sizes and SHA256 checksums are listed in `docs/model_manifest.md`.
+The two `unet_final.pth` files are larger than 100 MB and are therefore stored
+as Git LFS objects rather than ordinary GitHub blobs.
 
 The repository also provides the complete source code, configuration files, public raw-data reference, random-seed settings, and documentation required to retrain the 3D VQ-VAE and the FiLM-conditioned latent DDPM. New training runs write checkpoints under `outputs/` by default:
 

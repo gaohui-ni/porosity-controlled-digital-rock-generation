@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from src.utils.naming import phi_tag
 from src.utils.volume_io import load_npz_array
 
 
@@ -166,7 +167,7 @@ def configure_from_args(args):
     if args.out_root is not None:
         OUT_ROOT = args.out_root
     if args.targets is not None:
-        TARGETS = [(f"phi{value:.2f}".replace(".", "p"), float(value)) for value in args.targets]
+        TARGETS = [(f"phi{phi_tag(value)}", float(value)) for value in args.targets]
     if args.raw_shape is not None:
         RAW_SHAPE = tuple(args.raw_shape)
     GEN_NPZ_KEY = args.gen_npz_key

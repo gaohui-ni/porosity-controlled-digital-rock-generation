@@ -12,10 +12,7 @@ from src.models.vqvae3d import VQVAE256Down4Light
 from src.models.unet3d_film import UNetLatentCond
 from src.training.latent_stats import load_latent_stats
 from src.sampling.quantile_binarization import quantile_binarize
-
-
-def phi_tag(phi: float) -> str:
-    return f"{float(phi):.4f}".rstrip("0").rstrip(".").replace(".", "p")
+from src.utils.naming import phi_tag
 
 
 def ensure_dir(path: str | Path) -> Path:

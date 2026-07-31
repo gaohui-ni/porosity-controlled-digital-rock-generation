@@ -3,6 +3,7 @@ import re
 import csv
 import json
 import argparse
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +11,13 @@ from scipy import ndimage as ndi
 
 import openpnm as op
 import porespy as ps
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.utils.naming import phi_tag
 
 
 DARCY_IN_M2 = 9.869233e-13
@@ -270,7 +278,7 @@ def infer_target_info(path_str):
         if m:
             tag = m.group(2)
             val = float(tag.replace("p", "."))
-            return val, tag
+            return val, phi_tag(val)
 
     return None, None
 

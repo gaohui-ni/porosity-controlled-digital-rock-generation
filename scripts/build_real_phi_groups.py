@@ -2,7 +2,16 @@
 import csv
 import json
 import argparse
+import sys
+from pathlib import Path
 import numpy as np
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.utils.naming import phi_tag
 
 
 def read_raw_uint8(path, shape):
@@ -54,10 +63,6 @@ def make_starts(L, p, stride):
     if starts[-1] != L - p:
         starts.append(L - p)
     return starts
-
-
-def phi_tag(phi):
-    return f"{phi:.2f}".replace(".", "p")
 
 
 def chebyshev_dist(a, b):

@@ -13,6 +13,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.utils.naming import phi_tag
 
 
 def parse_scalar(value):
@@ -349,7 +353,7 @@ def fontainebleau_pipeline(cfg, train_models=True):
     real_perm_csv = str(table_root / "fontainebleau_real_voxel_perm.csv")
     gen_perm_csv = str(table_root / "fontainebleau_generated_voxel_perm.csv")
     comparison_csv = str(table_root / "fontainebleau_permeability_comparison.csv")
-    target_folders = [f"phi{float(value):.2f}".replace(".", "p") for value in fb["validation_targets"]]
+    target_folders = [f"phi{phi_tag(value)}" for value in fb["validation_targets"]]
     save_dir = "outputs/fontainebleau_phi0p2045" if train_models else fb.get("final_checkpoint_dir", "savedmodels/fontainebleau_phi0p2045")
 
     volume_args = []

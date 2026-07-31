@@ -37,7 +37,10 @@ Derived statistical results supporting the findings of the study are available f
 
 ## Trained Checkpoints
 
-The final trained VQ-VAE and latent-DDPM checkpoints are arranged under `savedmodels/` when the checkpoint package is included locally or published through Git LFS / release assets. File sizes and SHA256 checksums are listed in `docs/model_manifest.md`. The repository also provides the complete training workflow for independently retraining the models from the released data.
+The final trained VQ-VAE and latent-DDPM checkpoints are publicly distributed
+under `savedmodels/` through Git LFS. File sizes and SHA256 checksums are listed
+in `docs/model_manifest.md`. The repository also provides the complete training
+workflow for independently retraining the models from the released data.
 
 ## Lightweight Synthetic Examples
 
