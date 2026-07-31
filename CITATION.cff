@@ -15,7 +15,7 @@ authors:
   - family-names: Ni
     given-names: Hao
 version: 0.1.0
-date-released: 2026-06-30
+date-released: 2026-07-31
 license: MIT
 repository-code: "https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation"
 preferred-citation:
