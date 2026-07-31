@@ -6,23 +6,24 @@ porosity-extrapolation workflow.
 ## Dataset
 
 The validation data are four Fontainebleau sandstone digital rock samples from
-a previously reported Australian National University dataset. They are not
-redistributed in this repository.
+a previously reported Australian National University dataset.
+
+The Fontainebleau volumes are third-party data and are not redistributed
+because the authors do not hold redistribution rights. Users must obtain the
+data from the original data provider. Before analysis, the locally obtained
+volumes were standardized to binary `uint8` format using the convention
+`0 = solid` and `1 = pore` and resized or cropped, where necessary, to a common
+volume size of `480 × 480 × 480` voxels. Original file packaging and
+phase-label conventions may vary depending on the version supplied by the data
+provider.
 
 - Volume size: `480 x 480 x 480` voxels
 - Voxel resolution: `5.68 um/voxel`
 - Porosities: `0.2045`, `0.1743`, `0.1263`, and `0.0853`
 
-Place the four binary `uint8` volumes at the paths declared under
-`real_volumes` in `configs/fontainebleau_config.yaml`:
-
-```text
-data/fontainebleau/
-|-- phi0p2045.raw
-|-- phi0p1743.raw
-|-- phi0p1263.raw
-`-- phi0p0853.raw
-```
+Declare the local paths to the four standardized volumes under `real_volumes`
+in `configs/fontainebleau_config.yaml`. Specific original filenames and phase
+labels are not documented because packaging varies by provider version.
 
 ## Training And Conditioning
 

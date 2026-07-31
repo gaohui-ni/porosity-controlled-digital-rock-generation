@@ -68,13 +68,14 @@ environment.
 - Pore-network and permeability analysis require optional dependencies listed in `requirements_optional.txt`.
 - Default manuscript-scale raw data path and shape are defined in `configs/main.yaml`.
 
-## Notes Before Submission
+## Release Record
 
-- Confirm the repository remains public during review.
-- Confirm `configs/main.yaml` matches the manuscript experiments.
-- Confirm final figure numbers in the manuscript match `docs/figure_mapping.md`.
-- Confirm the final checkpoint distribution route remains consistent across `README.md`, `docs/checkpoints.md`, `docs/model_manifest.md`, and the manuscript.
-- Core direct dependency versions from the final experiment environment are
-  recorded under `environment/`. A complete transitive environment export and
-  clean-environment reconstruction remain pending release checks.
-- Generate final `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv` only after the full run.
+- The public workflow configuration is `configs/main.yaml`.
+- Manuscript figure numbering is mapped in `docs/figure_mapping.md`.
+- Checkpoints are distributed through Git LFS as documented consistently in
+  `README.md`, `docs/checkpoints.md`, and `docs/model_manifest.md`.
+- Core direct dependency versions from the experiment environment and
+  reconstruction instructions are recorded under `environment/`.
+- `results/results_summary.json`, `results/summary.json`, and
+  `results/results_summary.csv` are generated locally by the evaluation
+  workflow and are not distributed in the public repository.

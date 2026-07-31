@@ -10,9 +10,26 @@ https://doi.org/10.17632/vp2yw9c7jj.1
 
 The released dataset contains the binary sandstone digital core volume used for training-sample construction, together with metadata describing the voxel convention and image resolution.
 
+The dataset was published under an earlier working title using the term
+“porous geomaterials.” The formal manuscript title is **A
+Porosity-Controllable Generative Framework for Three-Dimensional Porous Media
+Based on Discrete Latent-Space Diffusion**. When citing the dataset, use its
+published title, *Laboratory Sandstone Micro-CT Volume Data for
+Porosity-Controllable Generation of Three-Dimensional Porous Geomaterials*,
+version 1, and DOI https://doi.org/10.17632/vp2yw9c7jj.1.
+
 ## External Fontainebleau Validation Data
 
-The Fontainebleau sandstone digital rock samples used for validation were obtained from a previously reported Australian National University (ANU) digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not redistributed by the authors.
+The Fontainebleau sandstone digital rock samples used for validation were obtained from a previously reported Australian National University (ANU) digital rock dataset (Arns et al., 2007; Xiao et al., 2024).
+
+The Fontainebleau volumes are third-party data and are not redistributed
+because the authors do not hold redistribution rights. Users must obtain the
+data from the original data provider. Before analysis, the locally obtained
+volumes were standardized to binary `uint8` format using the convention
+`0 = solid` and `1 = pore` and resized or cropped, where necessary, to a common
+volume size of `480 × 480 × 480` voxels. Original file packaging and
+phase-label conventions may vary depending on the version supplied by the data
+provider.
 
 The validation dataset contains four three-dimensional sandstone samples:
 
@@ -60,24 +77,13 @@ Unless otherwise specified, binary volumes follow this convention:
 - primary laboratory sandstone voxel size is `3.5e-6` m/voxel;
 - default manuscript-scale generated samples use shape `256 256 256`.
 
-## User-Provided Data Layout
+## User-Provided Data Configuration
 
-```text
-data/
-  raw/
-    Bei_800x800x800.raw
-  fontainebleau/
-    phi0p2045.raw
-    phi0p1743.raw
-    phi0p1263.raw
-    phi0p0853.raw
-```
-
-`Bei_800x800x800.raw` is the original filename in the released Mendeley
-dataset, so no renaming is required. The Fontainebleau files are not
-redistributed; the names above are the local paths expected by
-`configs/fontainebleau_config.yaml`. Alternative paths can be set in the
-configuration files.
+The released main-sandstone volume and user-obtained Fontainebleau volumes are
+kept outside version control. Users declare their local paths in the repository
+configuration files. Local Fontainebleau packaging and original phase-label
+values are intentionally not prescribed here because they depend on the
+version obtained from the original provider.
 
 ## Manuscript Data Availability Statement
 

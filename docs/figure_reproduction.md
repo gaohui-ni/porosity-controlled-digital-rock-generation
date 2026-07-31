@@ -55,6 +55,16 @@ Manuscript-scale figures require the full evaluation outputs listed below.
 
 ## Fig. 5: Slice-Wise Porosity
 
+Fig. 4 shows representative generated volumes and orthogonal slices selected
+for qualitative visualization. The displayed samples are illustrative;
+quantitative conclusions are based on the complete generated ensembles and the
+statistical evaluations reported in Figs. 6–9.
+
+Fig. 5 is an example slice-wise porosity comparison between a real and a
+generated volume at the same target porosity. Users may provide any
+corresponding real/generated pair to reproduce this qualitative visualization.
+The exact displayed pair is not used in the group-level quantitative analysis.
+
 ```bash
 python scripts/plot_slice_porosity.py \
   --real data/real256_sets_from_S1_strict/phi0p15/REAL_SAMPLE.raw \
@@ -64,8 +74,11 @@ python scripts/plot_slice_porosity.py \
   --output results/figures/fig5_slice_porosity.png
 ```
 
-Replace the two sample placeholders with the representative files used in the
-manuscript. The command writes both the PNG and an adjacent CSV locally.
+`REAL_SAMPLE.raw` and `GENERATED_SAMPLE.npz` are example input placeholders
+that users must replace with any corresponding real/generated pair. This
+template reproduces the qualitative visualization workflow; it does not claim
+pixel-for-pixel reproduction of the displayed manuscript example. The command
+writes both the PNG and an adjacent CSV locally.
 
 ## Fig. 6 and Supplementary Spatial Statistics
 
@@ -203,4 +216,5 @@ results/results_summary.json
 results/results_summary.csv
 ```
 
-Precomputed summary files are not bundled before the final full run. They should be generated from the released data and configuration.
+Summary files are generated locally from the released configuration and the
+data available to the user; they are not distributed in the public repository.

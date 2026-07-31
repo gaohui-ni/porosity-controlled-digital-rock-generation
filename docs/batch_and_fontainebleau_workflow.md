@@ -39,36 +39,18 @@ Each target folder contains `.npz`, `.raw`, `metadata_*.csv`, `metadata_*.json`,
 
 ## 2. Prepare Fontainebleau data
 
-The input volume should be converted to uint8 raw format where `0=solid` and `1=pore`.
-
-Prepare all four validation volumes separately. The expected outputs are
-`phi0p2045.raw`, `phi0p1743.raw`, `phi0p1263.raw`, and `phi0p0853.raw` under
-`data/fontainebleau/`. The command below illustrates one volume; repeat it for
-each source volume with the corresponding output filename.
-
-```bash
-python scripts/prepare_fontainebleau_data.py \
-  --input /path/to/fontainebleau_volume.raw \
-  --output_raw data/fontainebleau/phi0p2045.raw \
-  --raw_shape 480 480 480 \
-  --pore_value 1
-```
-
-If the input semantics are reversed, add `--invert`. If the input is grayscale or probability-like, use `--threshold`.
+The Fontainebleau volumes are third-party data and are not redistributed
+because the authors do not hold redistribution rights. Users must obtain them
+from the original provider. Before analysis, standardize the locally obtained
+volumes to binary `uint8` format with `0 = solid`, `1 = pore`, and a common
+size of `480 x 480 x 480` voxels. Original file packaging and phase-label
+conventions may vary by provider version. Declare the four standardized local
+paths in `configs/fontainebleau_config.yaml`.
 
 ## 3. Train on Fontainebleau
 
 ```bash
-python scripts/train_fontainebleau.py \
-  --stage all \
-  --raw_path data/fontainebleau/phi0p2045.raw \
-  --raw_shape 480 480 480 \
-  --save_dir outputs/fontainebleau_phi0p2045 \
-  --epochs_vae 80 \
-  --epochs_ddpm 150 \
-  --poro_center 0.13 \
-  --target_porosity 0.2045 \
-  --device cuda
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
 ## 4. Generate Fontainebleau validation samples

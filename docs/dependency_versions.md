@@ -46,21 +46,12 @@ The shorter `requirements.txt`, `requirements_optional.txt`, and
 ## Reproducibility Status
 
 - Core direct dependency versions: recorded.
-- Complete transitive environment snapshot: pending server export.
-- Clean-environment reconstruction: pending server validation.
-- GPU checkpoint inference smoke test: pending server validation.
+- Dual-model GPU checkpoint inference smoke test: passed.
+- Main-sandstone generated output post-processing smoke test: passed.
 
 The two current lock files are intentionally concise and are not represented as
-the complete output of `pip freeze` or `conda env export`.
-
-From the original experiment server, export:
-
-```bash
-pip freeze > environment/pip-freeze-full.txt
-conda env export --no-builds > environment/conda-export-full.yml
-```
-
-Then validate from a new environment:
+the complete output of `pip freeze` or `conda env export`. They record the core
+runtime used for the manuscript workflow. A reconstruction can be created with:
 
 ```bash
 conda env create -f environment/environment-lock.yml -n vq256_release_test

@@ -56,9 +56,8 @@ pip install -e .
 pore-network and permeability workflows. Core direct dependency versions from
 the manuscript environment are pinned in
 `environment/environment-lock.yml` and `environment/requirements-lock.txt`.
-A complete package-manager snapshot and clean-environment reconstruction remain
-release-validation steps; see
-[docs/dependency_versions.md](docs/dependency_versions.md).
+Environment reconstruction guidance and the recorded runtime versions are
+provided in [docs/dependency_versions.md](docs/dependency_versions.md).
 
 ## Computational Requirements
 
@@ -186,7 +185,10 @@ without running even the demo, use `--skip-pipeline`. Manuscript-scale figures
 are generated from the full evaluation outputs listed in
 [docs/figure_reproduction.md](docs/figure_reproduction.md).
 
-Before submission, use [docs/journal_compliance.md](docs/journal_compliance.md) for the final repository audit. Precomputed summary files are intentionally not bundled before the final full run.
+The repository-to-journal requirements map is provided in
+[docs/journal_compliance.md](docs/journal_compliance.md). Summary files are
+generated locally by the evaluation workflow and are not distributed in the
+public repository.
 
 ## Main Manuscript Workflow
 

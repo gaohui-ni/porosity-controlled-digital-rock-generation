@@ -201,38 +201,27 @@ For a figure-oriented mapping from manuscript result groups to commands and outp
 ## Fontainebleau Workflow
 
 The Fontainebleau validation can be launched through the official entry point
-after all four prepared raw volumes exist at the paths configured in
-`configs/fontainebleau_config.yaml`. These external ANU volumes are not
-redistributed in this repository:
+after the four user-obtained, standardized volumes exist at the paths declared
+in `configs/fontainebleau_config.yaml`. These external third-party ANU
+Fontainebleau volumes are not redistributed because the authors do not hold
+redistribution rights. Users
+must obtain them from the original data provider and standardize them to binary
+`uint8` volumes with `0 = solid`, `1 = pore`, and a common size of
+`480 x 480 x 480` voxels:
 
 ```bash
 python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
-Prepare each of the four volumes separately:
+Original file packaging and phase-label conventions may vary with the version
+supplied by the provider. Local paths are therefore declared in the
+configuration rather than prescribed in the public documentation. Train and
+generate through the official entry point shown above, or use the released
+checkpoints with `--mode final`.
+
+An equivalent generation-only command is:
 
 ```bash
-python scripts/prepare_fontainebleau_data.py \
-  --input /path/to/fontainebleau.raw \
-  --output_raw data/fontainebleau/phi0p2045.raw \
-  --raw_shape 480 480 480 \
-  --pore_value 1
-```
-
-Repeat for target porosities `0.1743`, `0.1263`, and `0.0853`, writing
-`phi0p1743.raw`, `phi0p1263.raw`, and `phi0p0853.raw`.
-
-Train and generate:
-
-```bash
-python scripts/train_fontainebleau.py --stage all \
-  --raw_path data/fontainebleau/phi0p2045.raw \
-  --raw_shape 480 480 480 \
-  --save_dir outputs/fontainebleau_phi0p2045 \
-  --poro_center 0.13 \
-  --target_porosity 0.2045 \
-  --device cuda
-
 python scripts/generate_batch.py \
   --ckpt_dir outputs/fontainebleau_phi0p2045 \
   --out_root data/generated_fontainebleau_sets \
@@ -253,9 +242,15 @@ After `git lfs pull`, use
 - Manuscript-scale permeability and pore-network results require `porespy`, `openpnm`, and substantial compute time.
 - Because training and sampling are stochastic, exact generated volumes and numerically identical outputs are not guaranteed.
 
-## Release GPU Smoke Test
+## Release GPU Smoke Test Status
 
-Run these commands in the original GPU environment before tagging the release:
+The released main-sandstone and Fontainebleau checkpoints were each loaded on
+GPU and used to generate one binary sample. Both outputs contained readable
+three-dimensional `seg` arrays with consistent porosity metadata. The
+main-sandstone sample also entered the post-processing smoke workflow
+successfully.
+
+The commands used for checkpoint generation and output validation were:
 
 ```bash
 python scripts/generate_batch.py \
