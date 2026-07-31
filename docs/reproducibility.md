@@ -132,8 +132,10 @@ all three directional permeabilities are finite and positive. The
 each sample.
 
 Evaluation commands are strict by default: every requested topology group must
-contain at least one successful sample, and topology and permeability success
-rates must be at least 90%. Each run writes an evaluation-quality summary.
+contain at least one successful sample, and topology, permeability, and PNM
+target success rates must be at least 90%. Each run writes an
+evaluation-quality summary. The PNM `all_targets_summary.json` contains both
+the per-target results and the quality-gate outcome.
 Use `--min-success-rate` to set a different declared threshold.
 `--allow-partial` is intended only for debugging: it converts a below-threshold
 rate to a warning, but a group with zero successful results still exits

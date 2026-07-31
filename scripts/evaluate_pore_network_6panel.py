@@ -22,6 +22,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.utils.naming import phi_tag
+from src.utils.quality_gate import quality_gate_message
 from src.utils.volume_io import load_npz_array
 
 
@@ -143,6 +144,12 @@ def parse_args():
         "--gen-npz-key",
         default="seg",
         help="Generated NPZ array to evaluate. Use seg for binarized pore masks.",
+    )
+    parser.add_argument("--min-success-rate", type=float, default=0.9)
+    parser.add_argument(
+        "--allow-partial",
+        action="store_true",
+        help="Warn instead of failing below --min-success-rate; zero successful targets still fail.",
     )
     return parser.parse_args()
 
@@ -824,8 +831,50 @@ def main():
             all_summaries.append(err)
             print(f"[ERROR] {folder_name}: {e}")
 
+    failures = [item for item in all_summaries if "error" in item]
+    successful = len(all_summaries) - len(failures)
+    quality = {
+        "total": len(all_summaries),
+        "successful": successful,
+        "partial": 0,
+        "failed": len(failures),
+        "success_rate": successful / len(all_summaries) if all_summaries else 0.0,
+        "min_success_rate": args.min_success_rate,
+        "allow_partial": args.allow_partial,
+        "failed_targets": [item["folder_name"] for item in failures],
+    }
+
+    gate_error = None
+    try:
+        warning = quality_gate_message(
+            "PNM target evaluation",
+            len(all_summaries),
+            successful,
+            args.min_success_rate,
+            args.allow_partial,
+        )
+        quality["gate_status"] = "warning" if warning else "passed"
+    except (RuntimeError, ValueError) as exc:
+        warning = None
+        gate_error = exc
+        quality["gate_status"] = "failed"
+        quality["gate_error"] = str(exc)
+
     with open(out_root / "all_targets_summary.json", "w", encoding="utf-8") as f:
-        json.dump(all_summaries, f, indent=2, ensure_ascii=False)
+        json.dump(
+            {"targets": all_summaries, "quality": quality},
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    if warning:
+        print(f"[WARN] {warning}")
+    if gate_error:
+        raise RuntimeError(
+            f"PNM evaluation failed for {len(failures)}/{len(all_summaries)} targets. "
+            f"{gate_error}"
+        ) from gate_error
 
     print("\n" + "=" * 84)
     print("All processing completed.")

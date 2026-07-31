@@ -82,6 +82,10 @@ def test_pnm_requires_generated_seg_key():
     assert 'GEN_NPZ_KEY = "seg"' in source
     assert '"--gen-npz-key"' in source
     assert 'validate_porosity=(npz_key == "seg")' in source
+    assert '"--min-success-rate"' in source
+    assert '"--allow-partial"' in source
+    assert 'quality_gate_message(' in source
+    assert '"gate_status"' in source
 
 
 def test_pnm_outputs_preserve_full_target_porosity(tmp_path):
