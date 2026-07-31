@@ -162,6 +162,37 @@ def test_code_availability_and_readme_match_release_policy():
     assert "Gaohui Ni, Yanyan Ma, Shaowei Ma, Yuxin Yang, Xuefeng Liu, and Hao Ni" in readme
 
 
+def test_manuscript_plot_style_is_shared_by_result_scripts():
+    style = (ROOT / "src" / "utils" / "plot_style.py").read_text(encoding="utf-8")
+    for expected in (
+        '"font.family": "Arial"',
+        '"font.size": 14',
+        '"axes.linewidth": 1.5',
+        '"xtick.direction": "in"',
+        'REAL_COLOR = "black"',
+        'GEN_COLOR = "red"',
+        "REAL_FILL_ALPHA = 0.45",
+        "GEN_FILL_ALPHA = 0.35",
+        "LINE_WIDTH = 2.0",
+        "SAVE_DPI = 300",
+        "SINGLE_FIGSIZE = (6.0, 4.5)",
+        'bbox_inches="tight"',
+    ):
+        assert expected in style
+
+    for relative in (
+        "scripts/evaluate_s2_lineal_edt.py",
+        "scripts/evaluate_pore_network_6panel.py",
+        "scripts/evaluate_coordination_euler.py",
+        "scripts/plot_slice_porosity.py",
+        "scripts/plot_all.py",
+        "scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py",
+        "src/sampling/sample.py",
+    ):
+        source = (ROOT / relative).read_text(encoding="utf-8")
+        assert "plot_style" in source
+
+
 def test_pnm_requires_generated_seg_key():
     source = (ROOT / "scripts" / "evaluate_pore_network_6panel.py").read_text(encoding="utf-8")
 

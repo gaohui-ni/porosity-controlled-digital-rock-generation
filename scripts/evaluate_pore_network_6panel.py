@@ -24,6 +24,19 @@ if str(ROOT) not in sys.path:
 from src.utils.naming import phi_tag
 from src.utils.quality_gate import quality_gate_message
 from src.utils.volume_io import load_npz_array
+from src.utils.plot_style import (
+    GEN_COLOR,
+    GEN_FILL_ALPHA,
+    LINE_WIDTH,
+    REAL_COLOR,
+    REAL_FILL_ALPHA,
+    REAL_FILL_COLOR,
+    apply_manuscript_style,
+    format_axis,
+    save_figure,
+)
+
+apply_manuscript_style(plt)
 
 
 # =========================================================
@@ -430,16 +443,17 @@ def plot_mean_std(ax, x, mean1, std1, mean2, std2,
     low2 = np.clip(mean2 - std2, 0, None)
     high2 = mean2 + std2
 
-    ax.plot(x, mean1, label=label1, linewidth=2)
-    ax.fill_between(x, low1, high1, alpha=0.2)
+    ax.fill_between(x, low1, high1, color=REAL_FILL_COLOR, alpha=REAL_FILL_ALPHA, edgecolor="none", zorder=1)
+    ax.plot(x, mean1, color=REAL_COLOR, label=label1, linewidth=LINE_WIDTH, zorder=2)
 
-    ax.plot(x, mean2, label=label2, linewidth=2)
-    ax.fill_between(x, low2, high2, alpha=0.2)
+    ax.fill_between(x, low2, high2, color=GEN_COLOR, alpha=GEN_FILL_ALPHA, edgecolor="none", zorder=3)
+    ax.plot(x, mean2, color=GEN_COLOR, label=label2, linewidth=LINE_WIDTH, zorder=4)
 
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_title(title)
-    ax.legend()
+    format_axis(ax)
+    ax.legend(loc="upper right", frameon=False, fontsize=12)
 
 
 def plot_tortuosity_panel(ax, real_tau_mean, real_tau_std, gen_tau_mean, gen_tau_std):
@@ -447,15 +461,16 @@ def plot_tortuosity_panel(ax, real_tau_mean, real_tau_std, gen_tau_mean, gen_tau
     x = np.arange(3)
     width = 0.36
 
-    ax.bar(x - width / 2, real_tau_mean, width, yerr=real_tau_std, capsize=4, label="real")
-    ax.bar(x + width / 2, gen_tau_mean, width, yerr=gen_tau_std, capsize=4, label="gen")
+    ax.bar(x - width / 2, real_tau_mean, width, yerr=real_tau_std, capsize=4, color=REAL_FILL_COLOR, edgecolor=REAL_COLOR, label="Real")
+    ax.bar(x + width / 2, gen_tau_mean, width, yerr=gen_tau_std, capsize=4, color="#ffaaaa", edgecolor=GEN_COLOR, label="Gen")
 
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.set_xlabel("direction")
     ax.set_ylabel("tortuosity")
     ax.set_title("Tortuosity (x/y/z)")
-    ax.legend()
+    format_axis(ax)
+    ax.legend(loc="upper right", frameon=False, fontsize=12)
 
 
 # =========================================================
@@ -712,7 +727,7 @@ def run_one_target(folder_name, target_value):
     if not (pnm_saved and tau_saved):
         raise RuntimeError(f"{folder_name}: results required by the six-panel plot are incomplete.")
 
-    fig, axes = plt.subplots(2, 3, figsize=(16, 9))
+    fig, axes = plt.subplots(2, 3, figsize=(18, 9))
 
     plot_mean_std(
         axes[0, 0],
@@ -771,8 +786,7 @@ def run_one_target(folder_name, target_value):
     )
 
     fig.suptitle(f"Six-panel comparison at target={target_label}", fontsize=14)
-    fig.tight_layout()
-    fig.savefig(out_dir / f"six_panel_phi{tag}.png", dpi=220)
+    save_figure(fig, out_dir / f"six_panel_phi{tag}.png")
     plt.close(fig)
 
     # ---------- Save data ----------

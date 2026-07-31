@@ -122,12 +122,13 @@ def sample_one(cfg: CFG, logger: logging.Logger):
     os.makedirs(vis_dir, exist_ok=True)
     mid = cfg.patch_size // 2
     import matplotlib.pyplot as plt
-    fig = plt.figure(figsize=(12,4))
+    from src.utils.plot_style import apply_manuscript_style, save_figure
+    apply_manuscript_style(plt)
+    fig = plt.figure(figsize=(18, 4.5))
     ax=plt.subplot(1,3,1); ax.set_title("prob (XY mid)"); ax.imshow(prob_np[:,:,mid], cmap="gray", vmin=0, vmax=1); ax.axis("off")
     ax=plt.subplot(1,3,2); ax.set_title("seg (XY mid)"); ax.imshow(seg[:,:,mid], cmap="gray", vmin=0, vmax=1); ax.axis("off")
     ax=plt.subplot(1,3,3); ax.set_title("seg (XZ mid)"); ax.imshow(seg[:,mid,:], cmap="gray", vmin=0, vmax=1); ax.axis("off")
-    fig.tight_layout()
-    fig.savefig(os.path.join(vis_dir, "slices.png"), dpi=150)
+    save_figure(fig, os.path.join(vis_dir, "slices.png"))
     plt.close(fig)
 
     logger.info(f"[VIS] saved slices to: {vis_dir}")

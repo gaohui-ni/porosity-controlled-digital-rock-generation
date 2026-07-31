@@ -14,6 +14,20 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.utils.naming import phi_tag
+from src.utils.plot_style import (
+    GEN_COLOR,
+    GEN_FILL_ALPHA,
+    LINE_WIDTH,
+    REAL_COLOR,
+    REAL_FILL_ALPHA,
+    REAL_FILL_COLOR,
+    SINGLE_FIGSIZE,
+    apply_manuscript_style,
+    format_axis,
+    save_figure,
+)
+
+apply_manuscript_style(plt)
 
 
 # =========================
@@ -304,22 +318,25 @@ def plot_mean_std_curve(
     real_label="Real",
     gen_label="Gen",
 ):
-    plt.figure(figsize=(6.5, 4.5))
-
-    plt.plot(x, y_real_mean, label=real_label)
-    plt.fill_between(x, y_real_mean - y_real_std, y_real_mean + y_real_std, alpha=0.25)
-
-    plt.plot(x, y_gen_mean, label=gen_label)
-    plt.fill_between(x, y_gen_mean - y_gen_std, y_gen_mean + y_gen_std, alpha=0.25)
-
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.grid(True, alpha=0.3)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=180)
-    plt.close()
+    fig, ax = plt.subplots(figsize=SINGLE_FIGSIZE)
+    ax.fill_between(
+        x, y_real_mean - y_real_std, y_real_mean + y_real_std,
+        color=REAL_FILL_COLOR, alpha=REAL_FILL_ALPHA, edgecolor="none", zorder=1,
+    )
+    ax.plot(x, y_real_mean, color=REAL_COLOR, linewidth=LINE_WIDTH, label=real_label, zorder=2)
+    ax.fill_between(
+        x, y_gen_mean - y_gen_std, y_gen_mean + y_gen_std,
+        color=GEN_COLOR, alpha=GEN_FILL_ALPHA, edgecolor="none", zorder=3,
+    )
+    ax.plot(x, y_gen_mean, color=GEN_COLOR, linewidth=LINE_WIDTH, label=gen_label, zorder=4)
+    ax.set_xlim(float(np.min(x)), float(np.max(x)))
+    ax.set_title(title)
+    ax.set_xlabel(xlabel, fontsize=14)
+    ax.set_ylabel(ylabel, fontsize=14)
+    format_axis(ax)
+    ax.legend(loc="upper right", frameon=False, fontsize=12)
+    save_figure(fig, out_path)
+    plt.close(fig)
 
 
 def save_curve_summary(out_path, payload):
@@ -444,7 +461,15 @@ def main():
             m_real, s_real = mean_std(s2_real[name])
             m_gen, s_gen = mean_std(s2_gen[name])
 
-            ylabel = "Normalized two-point correlation function S2(r)" if args.normalize_s2 else "Two-point correlation function S2(r)"
+            direction_labels = {
+                "X": r"$S_{2,x}(r)$",
+                "Y": r"$S_{2,y}(r)$",
+                "Z": r"$S_{2,z}(r)$",
+                "R": r"$\overline{S}_2(r)$",
+            }
+            ylabel = direction_labels[name]
+            if args.normalize_s2:
+                ylabel = "Normalized " + ylabel
             title_name = "R (mean of X,Y,Z)" if name == "R" else name
 
             plot_mean_std_curve(
@@ -454,7 +479,7 @@ def main():
                 y_gen_mean=m_gen,
                 y_gen_std=s_gen,
                 title=f"Two-point correlation function S2(r) - {title_name} - phi={target:.2f}",
-                xlabel="r (voxel)",
+                xlabel=r"$r$ (voxel)",
                 ylabel=ylabel,
                 out_path=target_out / f"s2_{name}_phi{tag}.png",
             )
@@ -474,7 +499,7 @@ def main():
                 y_gen_mean=m_gen,
                 y_gen_std=s_gen,
                 title=f"Lineal-path L(r) - {title_name} - phi={target:.2f}",
-                xlabel="r (voxel)",
+                xlabel=r"$r$ (voxel)",
                 ylabel=ylabel,
                 out_path=target_out / f"lineal_{name}_phi{tag}.png",
             )

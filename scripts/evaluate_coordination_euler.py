@@ -11,6 +11,19 @@ import porespy as ps
 
 from src.metrics.euler_characteristic import euler_characteristic_curve
 from src.utils.quality_gate import quality_gate_message
+from src.utils.plot_style import (
+    GEN_COLOR,
+    GEN_FILL_ALPHA,
+    LINE_WIDTH,
+    REAL_COLOR,
+    REAL_FILL_ALPHA,
+    REAL_FILL_COLOR,
+    apply_manuscript_style,
+    format_axis,
+    save_figure,
+)
+
+apply_manuscript_style(plt)
 
 
 # =========================================================
@@ -305,7 +318,7 @@ def aggregate_group(sample_results, radius_step_um=3.5, max_coord=8):
 # Plot
 # =========================================================
 def plot_phi_average_figure(phi_name, real_stats, gen_stats, save_path: Path):
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
     ax0, ax1 = axes
 
     # Left panel: mean coordination-number distribution.
@@ -318,6 +331,8 @@ def plot_phi_average_figure(phi_name, real_stats, gen_stats, save_path: Path):
         width=width,
         yerr=real_stats["coord_std"],
         capsize=3,
+        color=REAL_FILL_COLOR,
+        edgecolor=REAL_COLOR,
         label=f"Real (n={real_stats['n_samples']})",
     )
     ax0.bar(
@@ -326,6 +341,8 @@ def plot_phi_average_figure(phi_name, real_stats, gen_stats, save_path: Path):
         width=width,
         yerr=gen_stats["coord_std"],
         capsize=3,
+        color="#ffaaaa",
+        edgecolor=GEN_COLOR,
         label=f"Generated (n={gen_stats['n_samples']})",
     )
 
@@ -334,36 +351,34 @@ def plot_phi_average_figure(phi_name, real_stats, gen_stats, save_path: Path):
     ax0.set_xlabel("Coordination number")
     ax0.set_ylabel("Mean frequency / probability")
     ax0.set_title(f"{phi_name} - Mean coordination distribution")
-    ax0.legend(frameon=False, fontsize=9)
-    ax0.spines["top"].set_visible(False)
-    ax0.spines["right"].set_visible(False)
+    format_axis(ax0)
+    ax0.legend(loc="upper right", frameon=False, fontsize=12)
 
     # Right panel: mean Euler-characteristic curve.
     rr = real_stats["radii"]
     rg = gen_stats["radii"]
 
-    ax1.plot(rr, real_stats["euler_mean"], linewidth=2, label=f"Real (n={real_stats['n_samples']})")
+    ax1.plot(rr, real_stats["euler_mean"], color=REAL_COLOR, linewidth=LINE_WIDTH, label=f"Real (n={real_stats['n_samples']})")
     ax1.fill_between(
         rr,
         real_stats["euler_mean"] - real_stats["euler_std"],
         real_stats["euler_mean"] + real_stats["euler_std"],
-        alpha=0.2,
+        color=REAL_FILL_COLOR, alpha=REAL_FILL_ALPHA, edgecolor="none",
     )
 
-    ax1.plot(rg, gen_stats["euler_mean"], linewidth=2, label=f"Generated (n={gen_stats['n_samples']})")
+    ax1.plot(rg, gen_stats["euler_mean"], color=GEN_COLOR, linewidth=LINE_WIDTH, label=f"Gen (n={gen_stats['n_samples']})")
     ax1.fill_between(
         rg,
         gen_stats["euler_mean"] - gen_stats["euler_std"],
         gen_stats["euler_mean"] + gen_stats["euler_std"],
-        alpha=0.2,
+        color=GEN_COLOR, alpha=GEN_FILL_ALPHA, edgecolor="none",
     )
 
     ax1.set_xlabel("Pore radius (um)")
     ax1.set_ylabel("Euler characteristic")
     ax1.set_title(f"{phi_name} - Mean Euler characteristic")
-    ax1.legend(frameon=False, fontsize=9)
-    ax1.spines["top"].set_visible(False)
-    ax1.spines["right"].set_visible(False)
+    format_axis(ax1)
+    ax1.legend(loc="upper right", frameon=False, fontsize=12)
 
     poro_text = (
         f"Real porosity = {real_stats['porosity_mean']:.4f} +/- {real_stats['porosity_std']:.4f}\n"
@@ -372,8 +387,7 @@ def plot_phi_average_figure(phi_name, real_stats, gen_stats, save_path: Path):
     fig.suptitle(f"Topology average comparison for {phi_name}", fontsize=13, y=1.02)
     fig.text(0.5, -0.02, poro_text, ha="center", fontsize=10)
 
-    plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches="tight")
+    save_figure(fig, save_path)
     plt.close(fig)
 
 

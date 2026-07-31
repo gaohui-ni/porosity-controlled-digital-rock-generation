@@ -34,6 +34,18 @@ def main():
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    from src.utils.plot_style import (
+        GEN_COLOR,
+        LINE_WIDTH,
+        REAL_COLOR,
+        SINGLE_FIGSIZE,
+        TARGET_COLOR,
+        apply_manuscript_style,
+        format_axis,
+        save_figure,
+    )
+
+    apply_manuscript_style(plt)
 
     parser = argparse.ArgumentParser(description="Plot real/generated slice-wise porosity along z.")
     parser.add_argument("--real", required=True)
@@ -66,15 +78,16 @@ def main():
         }
     ).to_csv(csv_path, index=False)
 
-    fig, ax = plt.subplots(figsize=(7, 4))
-    ax.plot(z, real_curve, label="Real", linewidth=1.5)
-    ax.plot(z, generated_curve, label="Generated", linewidth=1.5)
-    ax.axhline(args.target, color="tab:blue", linestyle="--", label="Target")
-    ax.set_xlabel("Slice index along z")
-    ax.set_ylabel("Slice porosity")
-    ax.legend(frameon=False)
-    fig.tight_layout()
-    fig.savefig(output, dpi=300)
+    fig, ax = plt.subplots(figsize=SINGLE_FIGSIZE)
+    ax.plot(z, real_curve, color=REAL_COLOR, label="Real", linewidth=LINE_WIDTH)
+    ax.plot(z, generated_curve, color=GEN_COLOR, label="Gen", linewidth=LINE_WIDTH)
+    ax.axhline(args.target, color=TARGET_COLOR, linewidth=LINE_WIDTH, linestyle="--", label="Target")
+    ax.set_xlim(0, int(z.max()))
+    ax.set_xlabel("Slice index along z", fontsize=14)
+    ax.set_ylabel("Slice porosity", fontsize=14)
+    format_axis(ax)
+    ax.legend(loc="upper right", frameon=False, fontsize=12)
+    save_figure(fig, output)
     plt.close(fig)
     print(f"Wrote {output}")
     print(f"Wrote {csv_path}")

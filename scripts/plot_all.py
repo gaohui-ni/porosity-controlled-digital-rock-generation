@@ -10,6 +10,13 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.metrics.two_point_correlation import two_point_correlation_xyz
+from src.utils.plot_style import (
+    LINE_WIDTH,
+    REAL_COLOR,
+    apply_manuscript_style,
+    format_axis,
+    save_figure,
+)
 
 
 def load_demo_volume(path):
@@ -28,23 +35,24 @@ def write_placeholder_png(path):
     except ImportError:
         return False
 
+    apply_manuscript_style(plt)
+
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     volume = load_demo_volume("examples/demo_output/demo_seg.npy")
     mid = volume.shape[2] // 2
     curves = two_point_correlation_xyz(volume, max_lag=min(32, volume.shape[0] - 1))
 
-    fig, axes = plt.subplots(1, 2, figsize=(8, 3.5))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
     axes[0].imshow(volume[:, :, mid], cmap="gray", vmin=0, vmax=1)
     axes[0].set_title("Synthetic slice")
     axes[0].axis("off")
-    axes[1].plot(curves["R"])
+    axes[1].plot(curves["R"], color=REAL_COLOR, linewidth=LINE_WIDTH)
     axes[1].set_title("S2_R")
-    axes[1].set_xlabel("Lag r")
-    axes[1].set_ylabel("Two-point correlation function S2_R")
-    axes[1].grid(alpha=0.25)
-    fig.tight_layout()
-    fig.savefig(path, dpi=160)
+    axes[1].set_xlabel(r"$r$ (voxel)", fontsize=14)
+    axes[1].set_ylabel(r"$\overline{S}_2(r)$", fontsize=14)
+    format_axis(axes[1])
+    save_figure(fig, path)
     plt.close(fig)
     return True
 
