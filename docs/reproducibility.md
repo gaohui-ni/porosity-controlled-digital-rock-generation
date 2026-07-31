@@ -128,6 +128,14 @@ all three directional permeabilities are finite and positive. The
 `n_valid_directions` column records the number of successful directions for
 each sample.
 
+Evaluation commands are strict by default: every requested topology group must
+contain at least one successful sample, and topology and permeability success
+rates must be at least 90%. Each run writes an evaluation-quality summary.
+Use `--min-success-rate` to set a different declared threshold.
+`--allow-partial` is intended only for debugging: it converts a below-threshold
+rate to a warning, but a group with zero successful results still exits
+non-zero.
+
 Topology:
 
 ```bash

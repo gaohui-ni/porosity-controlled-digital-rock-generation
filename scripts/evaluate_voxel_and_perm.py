@@ -18,6 +18,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.utils.naming import phi_tag
+from src.utils.quality_gate import quality_gate_message
 
 
 DARCY_IN_M2 = 9.869233e-13
@@ -426,6 +427,12 @@ def main():
         help="File extensions to evaluate. Pass .raw for real sets or .npz for generated sets.",
     )
     ap.add_argument("--limit", type=int, default=None, help="Process only the first N files for debugging.")
+    ap.add_argument("--min-success-rate", type=float, default=0.9)
+    ap.add_argument(
+        "--allow-partial",
+        action="store_true",
+        help="Warn instead of failing below --min-success-rate; zero usable permeability samples still fail.",
+    )
     args = ap.parse_args()
 
     shape = tuple(args.shape)
@@ -549,9 +556,47 @@ def main():
 
     print(f"\nSaved: {args.output_csv}")
 
-    ok_count = sum(1 for r in rows if r["status"] == "ok")
-    err_count = len(rows) - ok_count
-    print(f"Done. ok={ok_count}, error={err_count}")
+    complete_count = sum(
+        1 for row in rows
+        if row["status"] == "ok" and row["n_valid_directions"] == 3
+    )
+    partial_count = sum(
+        1 for row in rows
+        if row["status"] == "ok" and 0 < row["n_valid_directions"] < 3
+    )
+    failed_count = len(rows) - complete_count - partial_count
+    usable_count = complete_count + partial_count
+    success_rate = usable_count / len(rows)
+    quality_summary = {
+        "group_name": args.group_name,
+        "total": len(rows),
+        "successful": complete_count,
+        "partial": partial_count,
+        "failed": failed_count,
+        "usable": usable_count,
+        "success_rate": success_rate,
+        "min_success_rate": args.min_success_rate,
+        "allow_partial": args.allow_partial,
+    }
+    summary_path = Path(args.output_csv).with_suffix(".summary.json")
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(summary_path, "w", encoding="utf-8") as stream:
+        json.dump(quality_summary, stream, indent=2)
+
+    print(
+        "Done. "
+        f"successful={complete_count}, partial={partial_count}, "
+        f"failed={failed_count}, usable_rate={success_rate:.1%}"
+    )
+    warning = quality_gate_message(
+        f"permeability {args.group_name}",
+        len(rows),
+        usable_count,
+        args.min_success_rate,
+        args.allow_partial,
+    )
+    if warning:
+        print(f"[WARN] {warning}")
 
 
 if __name__ == "__main__":

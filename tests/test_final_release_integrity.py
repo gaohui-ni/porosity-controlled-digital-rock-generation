@@ -6,6 +6,7 @@ import pandas as pd
 from src.utils.volume_io import load_npz_array
 from src.utils.naming import phi_tag
 from src.metrics.euler_characteristic import euler_characteristic_curve
+from src.utils.quality_gate import quality_gate_message
 from scripts.compare_metric_tables import aggregate
 from scripts.export_source_data import export_pnm
 from scripts.prepare_fontainebleau_real_sets import select_patches
@@ -41,6 +42,18 @@ def test_euler_curve_at_zero_uses_original_pore_space_without_normalization():
 
     assert radii[0] == 0.0
     assert curve[0] == 2.0
+
+
+def test_evaluation_quality_gate_is_strict_by_default():
+    with np.testing.assert_raises_regex(RuntimeError, "all 10 samples failed"):
+        quality_gate_message("topology phi0p11 real", 10, 0, 0.9, False)
+
+    with np.testing.assert_raises_regex(RuntimeError, "below the required"):
+        quality_gate_message("permeability real", 10, 8, 0.9, False)
+
+    warning = quality_gate_message("permeability debug", 10, 8, 0.9, True)
+    assert "80.0%" in warning
+    assert quality_gate_message("permeability real", 10, 9, 0.9, False) is None
 
 
 def test_generated_npz_reader_selects_seg_and_validates_porosity(tmp_path):

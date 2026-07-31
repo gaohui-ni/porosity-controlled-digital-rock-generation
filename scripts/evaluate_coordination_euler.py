@@ -10,6 +10,7 @@ import imageio.v2 as imageio
 import porespy as ps
 
 from src.metrics.euler_characteristic import euler_characteristic_curve
+from src.utils.quality_gate import quality_gate_message
 
 
 # =========================================================
@@ -390,6 +391,7 @@ def run_pipeline(args):
     safe_mkdir(out_root / "group_summary")
 
     summary_rows = []
+    quality_rows = []
 
     for phi in args.phis:
         print(f"\n========== Processing {phi} ==========")
@@ -402,9 +404,13 @@ def run_pipeline(args):
 
         if len(real_items) == 0:
             print(f"[WARN] {phi}  has no real samples: {real_phi_dir}")
+            quality_rows.append({"phi": phi, "group": "real", "total": 0, "successful": 0, "partial": 0, "failed": 0})
+            quality_rows.append({"phi": phi, "group": "generated", "total": len(gen_items), "successful": 0, "partial": 0, "failed": len(gen_items)})
             continue
         if len(gen_items) == 0:
             print(f"[WARN] {phi}  has no generated samples: {gen_phi_dir}")
+            quality_rows.append({"phi": phi, "group": "real", "total": len(real_items), "successful": 0, "partial": 0, "failed": len(real_items)})
+            quality_rows.append({"phi": phi, "group": "generated", "total": 0, "successful": 0, "partial": 0, "failed": 0})
             continue
 
         print(f"[INFO] {phi} real samples: {len(real_items)}")
@@ -481,6 +487,27 @@ def run_pipeline(args):
             except Exception as e:
                 print(f"[ERROR] gen sample failed: {sample_path}\n{e}")
 
+        quality_rows.extend(
+            [
+                {
+                    "phi": phi,
+                    "group": "real",
+                    "total": len(real_items),
+                    "successful": len(real_results),
+                    "partial": 0,
+                    "failed": len(real_items) - len(real_results),
+                },
+                {
+                    "phi": phi,
+                    "group": "generated",
+                    "total": len(gen_items),
+                    "successful": len(gen_results),
+                    "partial": 0,
+                    "failed": len(gen_items) - len(gen_results),
+                },
+            ]
+        )
+
         if len(real_results) == 0 or len(gen_results) == 0:
             print(f"[WARN] {phi}  has one group without successful results; skipping plot.")
             continue
@@ -534,6 +561,36 @@ def run_pipeline(args):
         })
 
     pd.DataFrame(summary_rows).to_csv(out_root / "summary_all_phi.csv", index=False)
+    quality_frame = pd.DataFrame(quality_rows)
+    quality_frame["success_rate"] = np.where(
+        quality_frame["total"] > 0,
+        quality_frame["successful"] / quality_frame["total"],
+        0.0,
+    )
+    quality_frame.to_csv(out_root / "evaluation_quality_summary.csv", index=False)
+
+    warnings = []
+    errors = []
+    for row in quality_rows:
+        label = f"topology {row['phi']} {row['group']}"
+        try:
+            warning = quality_gate_message(
+                label,
+                row["total"],
+                row["successful"],
+                args.min_success_rate,
+                args.allow_partial,
+            )
+            if warning:
+                warnings.append(warning)
+        except RuntimeError as exc:
+            errors.append(str(exc))
+
+    for warning in warnings:
+        print(f"[WARN] {warning}")
+    if errors:
+        raise RuntimeError("Topology evaluation quality gate failed:\n- " + "\n- ".join(errors))
+
     print(f"\nDone. Results saved to: {out_root}")
 
 
@@ -566,6 +623,12 @@ def parse_args():
 
     parser.add_argument("--npz-key", type=str, default="auto", help="NPZ key to use; default is auto. Use auto or seg for generated samples.")
     parser.add_argument("--verbose-npz", action="store_true", help="Print the selected npz key and metadata.")
+    parser.add_argument("--min-success-rate", type=float, default=0.9)
+    parser.add_argument(
+        "--allow-partial",
+        action="store_true",
+        help="Warn instead of failing below --min-success-rate; zero successful samples still fail.",
+    )
 
     return parser.parse_args()
 
