@@ -1,51 +1,39 @@
-# Code Availability
+# Computer Code Availability
 
-The code developed for this study is available at:
+**Name of code:** Porosity-Controlled 3D Digital Rock Generation.
 
-https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation
+**Developer and technical contact:** Gaohui Ni, College of Science, China
+University of Petroleum (East China), No. 66 West Changjiang Road, Huangdao
+District, Qingdao, Shandong 266580, China; telephone: +86-151-9298-7839;
+email: 1946978288@qq.com.
 
-The repository includes the 3D VQ-VAE, FiLM-conditioned latent DDPM, quantile-based porosity matching, configuration files, training scripts, batch generation scripts, evaluation scripts, and synthetic examples.
+**Year first available:** 2026.
 
-## Manuscript Code Availability Statement
+**Hardware requirements:** A standard CPU is sufficient for the lightweight
+demonstration and unit tests. A CUDA-capable NVIDIA GPU is recommended for
+model training and manuscript-scale generation. The experiments reported in
+this study were conducted using an NVIDIA A100 GPU with 40 GB memory.
 
-> The source code and pretrained model checkpoints used in this study are
-> publicly available in the GitHub repository *Porosity-Controlled 3D Digital
-> Rock Generation*. The final checkpoints are distributed through Git LFS,
-> with file sizes and SHA-256 checksums documented in the repository. The
-> repository also provides configuration files, synthetic examples,
-> documentation, and workflows for both checkpoint-based inference and
-> independent model retraining. The code is released under the MIT License.
+**Software requirements:** Python 3.10, PyTorch 2.5.1, NumPy 2.2.6, SciPy
+1.15.3, PoreSpy 3.0.2, OpenPNM 3.5.2, and the additional dependencies
+documented in the repository.
 
-## Repository Details
+**Programming language:** Python.
 
-Name of code/library: Porosity-Controlled 3D Digital Rock Generation
+**Program size:** Approximately 2.73 MB of uncompressed Git-tracked release
+content, excluding pretrained checkpoints, raw data, generated outputs, and
+Git metadata. This value was calculated from 125 tracked files after excluding
+`savedmodels/`, `data/`, `results/`, and `outputs/`.
 
-Contact: Hao Ni, nihao@upc.edu.cn
+**Source code availability:** The source code is publicly available in the
+GitHub repository *Porosity-Controlled 3D Digital Rock Generation* under the
+MIT License:
+https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation. The
+pretrained checkpoints are distributed through Git LFS, with file sizes and
+SHA-256 checksums documented in `docs/model_manifest.md`.
 
-Hardware requirements: A standard CPU is sufficient for the lightweight demonstration and unit tests. A CUDA-capable NVIDIA GPU is recommended for manuscript-scale model training and generation. The experiments reported in this study were conducted using an NVIDIA A100 40 GB GPU.
-
-Program language: Python 3.10.
-
-Software required: PyTorch, NumPy, SciPy, pandas, scikit-image, Matplotlib, PyYAML, PoreSpy, and OpenPNM.
-
-The source code, configuration files, synthetic examples, documentation, and reproduction instructions are publicly available at:
-
-https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation
-
-The final trained VQ-VAE and latent-DDPM checkpoints are distributed under
-`savedmodels/` through Git LFS. After cloning, users must run `git lfs pull`
-before checkpoint-based inference. The repository also provides the complete
-main-sandstone training workflow for independently retraining the models from
-the publicly available raw data. Complete Fontainebleau validation additionally
-requires the external ANU volumes, which are not redistributed.
-
-The released checkpoints enable reproduction of the reported model inference
-and analysis workflow. Due to stochastic sampling and hardware- or
-software-dependent numerical differences, generated volumes may not be bitwise
-identical across computational environments. Independently retrained models are
-expected to reproduce the reported methodological and statistical behavior
-rather than identical generated samples.
-
-## Notes for Review
-
-Large raw micro-CT volumes are not stored in the repository. Raw data availability is documented in `docs/data_availability.md`; final model file layout and checksums are documented in `docs/checkpoints.md` and `docs/model_manifest.md`.
+The released checkpoints support model inference and analysis. Complete
+Fontainebleau validation additionally requires access to the external ANU
+volumes, which are not redistributed in this repository. Due to stochastic
+sampling and hardware- or software-dependent numerical differences, generated
+volumes may not be bitwise identical across computational environments.

@@ -139,6 +139,27 @@ def test_documented_main_workflow_matches_canonical_configuration():
     assert "not redistributed" in reproducibility
 
 
+def test_code_availability_and_readme_match_release_policy():
+    statement = (ROOT / "docs" / "code_availability.md").read_text(encoding="utf-8")
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+    for expected in (
+        "# Computer Code Availability",
+        "Gaohui Ni",
+        "+86-151-9298-7839",
+        "1946978288@qq.com",
+        "Year first available:** 2026",
+        "Program size:** Approximately 2.73 MB",
+        "Git LFS",
+        "MIT License",
+    ):
+        assert expected in statement
+
+    assert "complete two-dataset workflow additionally requires" in readme
+    assert "external ANU Fontainebleau volumes" in readme
+    assert "A release archive may also be provided" not in readme
+
+
 def test_pnm_requires_generated_seg_key():
     source = (ROOT / "scripts" / "evaluate_pore_network_6panel.py").read_text(encoding="utf-8")
 

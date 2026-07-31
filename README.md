@@ -94,7 +94,12 @@ notebooks/tutorials/0003-fontainebleau-validation.ipynb
 `run_pipeline.py` is the ONLY official entry point for reproducing the manuscript workflow.
 `scripts/run_pipeline.py` is the internal modular implementation called by the top-level entry point and should not be used directly for reviewer reproduction.
 
-The complete manuscript workflow can be reproduced through model retraining using the released code, configurations, and public data:
+The main-sandstone workflow can be reproduced using the publicly released
+Mendeley Data volume. The complete two-dataset workflow additionally requires
+access to the external ANU Fontainebleau volumes, which are not redistributed
+in this repository.
+
+To run the complete workflow when both datasets are available:
 
 ```bash
 python run_pipeline.py --mode full --config configs/main.yaml
@@ -239,8 +244,7 @@ savedmodels/
 ```
 
 The two `unet_final.pth` files exceed the normal GitHub 100 MB single-file limit
-and therefore require Git LFS. A release archive may also be provided as a
-browser-download alternative. Checksums are provided in
+and therefore require Git LFS. Checksums are provided in
 [docs/model_manifest.md](docs/model_manifest.md).
 
 The complete VQ-VAE and latent-DDPM training workflow is also provided, so users can retrain the models using the publicly available raw data and `configs/main.yaml`.
