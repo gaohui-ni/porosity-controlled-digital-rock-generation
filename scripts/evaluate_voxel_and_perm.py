@@ -364,13 +364,19 @@ def main():
     ap.add_argument("--voxel_size", type=float, default=3.5e-6, help="Voxel size in meters.")
     ap.add_argument("--perm_accuracy", choices=["standard", "high"], default="standard")
     ap.add_argument("--recursive", action="store_true", help="Recursively search subdirectories.")
+    ap.add_argument(
+        "--extensions",
+        nargs="+",
+        default=[".raw", ".npz"],
+        help="File extensions to evaluate. Pass .raw for real sets or .npz for generated sets.",
+    )
     ap.add_argument("--limit", type=int, default=None, help="Process only the first N files for debugging.")
     args = ap.parse_args()
 
     shape = tuple(args.shape)
     files = find_input_files(
         root=args.input_root,
-        exts=(".raw", ".npz"),
+        exts=tuple(ext.lower() if ext.startswith(".") else f".{ext.lower()}" for ext in args.extensions),
         recursive=args.recursive,
     )
 

@@ -8,6 +8,7 @@ These files are the final checkpoints for the laboratory sandstone experiment.
 - Generated volume: `256 x 256 x 256` voxels
 - VQ-VAE training: 50 epochs
 - Latent DDPM training: 300 epochs
+- FiLM porosity normalization: `(phi - 0.13) / 0.02`
 - Training seed: 123
 - Default inference seed sequence: starts at 0
 

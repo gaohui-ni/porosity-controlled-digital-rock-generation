@@ -54,7 +54,7 @@ pip install -e .
 - Lightweight demo, notebooks, and unit tests: CPU only; no raw micro-CT data or trained checkpoint is required.
 - Manuscript-scale training and generation: CUDA-capable PyTorch installation recommended; default generated/comparison sample size is `256 x 256 x 256` voxels.
 - Pore-network and permeability workflows: install `requirements_optional.txt`; these steps can be memory- and time-intensive.
-- Raw data: the default full configuration expects `data/raw/S1.raw` with shape `800 x 800 x 800`, following the data convention in [docs/data_availability.md](docs/data_availability.md).
+- Raw data: the default full configuration expects the released Mendeley file at `data/raw/Bei_800x800x800.raw` with shape `800 x 800 x 800`, following [docs/data_availability.md](docs/data_availability.md).
 - Voxel size: the manuscript-scale laboratory sandstone data use `3.5e-6` m/voxel, configured as `data.voxel_size_m` in [configs/main.yaml](configs/main.yaml).
 
 ## Minimal Demo

@@ -73,18 +73,37 @@ Use this output for porosity, connected pore fraction, surface density, EDT summ
 
 ```bash
 python scripts/evaluate_voxel_and_perm.py \
+  --input_root data/real256_sets_from_S1_strict \
+  --output_csv results/tables/real_voxel_perm.csv \
+  --group_name real \
+  --shape 256 256 256 \
+  --voxel_size 3.5e-6 \
+  --recursive \
+  --extensions .raw
+
+python scripts/evaluate_voxel_and_perm.py \
   --input_root data/generated_phi_sets \
   --output_csv results/tables/generated_voxel_perm.csv \
   --group_name gen \
   --shape 256 256 256 \
   --voxel_size 3.5e-6 \
-  --recursive
+  --recursive \
+  --extensions .npz
+
+python scripts/compare_metric_tables.py \
+  --real-csv results/tables/real_voxel_perm.csv \
+  --gen-csv results/tables/generated_voxel_perm.csv \
+  --output-csv results/tables/permeability_comparison.csv \
+  --source-data-csv results/source_data/fig8_permeability.csv
 ```
 
 Output files:
 
 ```text
+results/tables/real_voxel_perm.csv
 results/tables/generated_voxel_perm.csv
+results/tables/permeability_comparison.csv
+results/source_data/fig8_permeability.csv
 results/fig_perm/
 ```
 
@@ -97,6 +116,13 @@ python scripts/evaluate_coordination_euler.py \
   --real-root data/real256_sets_from_S1_strict \
   --gen-root data/generated_phi_sets \
   --out-root results/fig_pnm
+```
+
+The complete Fontainebleau Real-Gen workflow, including all four real volumes,
+is reproduced with:
+
+```bash
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
 For the six-panel pore-network analysis:

@@ -58,12 +58,19 @@ Unless otherwise specified, binary volumes follow this convention:
 ```text
 data/
   raw/
-    S1.raw
+    Bei_800x800x800.raw
   fontainebleau/
-    fontainebleau_phi0p2045.raw
+    phi0p2045.raw
+    phi0p1743.raw
+    phi0p1263.raw
+    phi0p0853.raw
 ```
 
-The scripts accept alternative paths through command-line arguments.
+`Bei_800x800x800.raw` is the original filename in the released Mendeley
+dataset, so no renaming is required. The Fontainebleau files are not
+redistributed; the names above are the local paths expected by
+`configs/fontainebleau_config.yaml`. Alternative paths can be set in the
+configuration files.
 
 ## Manuscript Data Availability Statement
 

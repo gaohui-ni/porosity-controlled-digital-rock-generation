@@ -45,6 +45,7 @@ results/temp/
 results/*.json
 results/*.csv
 results/pipeline_*_manifest.json
+results/source_data/*.csv
 *.tmp
 
 # system
@@ -69,3 +70,6 @@ Thumbs.db
 !results/figures/README.md
 !results/tables/
 !results/tables/README.md
+!results/source_data/
+!results/source_data/README.md
+!results/source_data/.gitkeep

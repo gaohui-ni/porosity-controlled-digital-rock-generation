@@ -64,7 +64,7 @@ The equivalent step-by-step commands are:
 
 ```bash
 python scripts/build_real_phi_groups.py \
-  --raw_path data/raw/S1.raw \
+  --raw_path data/raw/Bei_800x800x800.raw \
   --raw_shape 800 800 800 \
   --patch 256 \
   --stride 32 \
@@ -76,7 +76,7 @@ python scripts/build_real_phi_groups.py \
 ```bash
 python scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py \
   --stage all \
-  --raw_path data/raw/S1.raw \
+  --raw_path data/raw/Bei_800x800x800.raw \
   --save_dir outputs/main_sandstone \
   --target_porosity 0.13 \
   --device cuda
@@ -156,7 +156,7 @@ Prepare the volume:
 ```bash
 python scripts/prepare_fontainebleau_data.py \
   --input /path/to/fontainebleau.raw \
-  --output_raw data/fontainebleau/fontainebleau_phi0p2045.raw \
+  --output_raw data/fontainebleau/phi0p2045.raw \
   --raw_shape 480 480 480 \
   --pore_value 1
 ```
@@ -165,10 +165,10 @@ Train and generate:
 
 ```bash
 python scripts/train_fontainebleau.py --stage all \
-  --raw_path data/fontainebleau/fontainebleau_phi0p2045.raw \
+  --raw_path data/fontainebleau/phi0p2045.raw \
   --raw_shape 480 480 480 \
   --save_dir outputs/fontainebleau_phi0p2045 \
-  --poro_center 0.2045 \
+  --poro_center 0.13 \
   --target_porosity 0.2045 \
   --device cuda
 
@@ -177,7 +177,7 @@ python scripts/generate_batch.py \
   --out_root data/generated_fontainebleau_sets \
   --targets 0.2045 0.1743 0.1263 0.0853 \
   --n_per_target 50 \
-  --poro_center 0.2045 \
+  --poro_center 0.13 \
   --device cuda
 ```
 
@@ -185,6 +185,8 @@ If the final Fontainebleau checkpoint package is available locally, use `--ckpt_
 
 ## Current Limitations
 
-- Trained checkpoints are not distributed with this release. The complete workflow can be reproduced through model retraining using the released code, configurations, and public raw data. See `docs/checkpoints.md`.
+- Final trained checkpoints are distributed under `savedmodels/` through Git
+  LFS and verified by `scripts/verify_final_models.py`. The complete workflow
+  can also be reproduced through model retraining. See `docs/checkpoints.md`.
 - Manuscript-scale permeability and pore-network results require `porespy`, `openpnm`, and substantial compute time.
 - Because training and sampling are stochastic, exact generated volumes and numerically identical outputs are not guaranteed.

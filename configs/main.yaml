@@ -1,5 +1,5 @@
 data:
-  raw_path: data/raw/S1.raw
+  raw_path: data/raw/Bei_800x800x800.raw
   raw_shape: [800, 800, 800]
   voxel_size_m: 3.5e-6
   patch_size: 256
@@ -39,6 +39,7 @@ paths:
   curve_results: results/fig_s2
   table_results: results/tables
   topology_results: results/fig_pnm
+  source_data_results: results/source_data
 
 demo:
   summary_root: examples

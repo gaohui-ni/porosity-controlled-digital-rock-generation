@@ -1,6 +1,10 @@
 # Reproducibility workflow for Computers & Geosciences
 
-This repository is organized for review and reproducibility. The raw micro-CT data and trained checkpoints are not included because of data restrictions and file size. The public repository provides model definitions, training scripts, sampling scripts, metric evaluation scripts, and a synthetic demo.
+This repository is organized for review and reproducibility. Raw micro-CT data
+are referenced through their public or external sources rather than duplicated
+in GitHub. Final trained checkpoints are distributed under `savedmodels/`
+through Git LFS. The repository provides model definitions, training and
+sampling scripts, metric evaluation scripts, and a synthetic demo.
 
 ## 1. Install
 
@@ -23,13 +27,13 @@ python scripts/demo_quantile_binarization.py
 ### Build real comparison groups
 
 ```bash
-python scripts/build_real_phi_groups.py   --raw_path data/raw/S1.raw   --raw_shape 800 800 800   --patch 256   --stride 32   --targets 0.11 0.12 0.13 0.14 0.15   --n_per_target 100   --out_root data/real256_sets_from_S1_strict
+python scripts/build_real_phi_groups.py   --raw_path data/raw/Bei_800x800x800.raw   --raw_shape 800 800 800   --patch 256   --stride 32   --targets 0.11 0.12 0.13 0.14 0.15   --n_per_target 100   --out_root data/real256_sets_from_S1_strict
 ```
 
 ### Train VQ-VAE and latent DDPM
 
 ```bash
-python scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py --stage all   --raw_path data/raw/S1.raw   --save_dir outputs/main_sandstone   --target_porosity 0.13   --device cuda
+python scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py --stage all   --raw_path data/raw/Bei_800x800x800.raw   --save_dir outputs/main_sandstone   --target_porosity 0.13   --device cuda
 ```
 
 ### Batch generate samples
@@ -55,13 +59,13 @@ python scripts/evaluate_coordination_euler.py   --real-root data/real256_sets_fr
 Prepare a 0/1 raw volume first:
 
 ```bash
-python scripts/prepare_fontainebleau_data.py   --input /path/to/fontainebleau.raw   --output_raw data/fontainebleau/fontainebleau_phi0p2045.raw   --raw_shape 480 480 480   --pore_value 1
+python scripts/prepare_fontainebleau_data.py   --input /path/to/fontainebleau.raw   --output_raw data/fontainebleau/phi0p2045.raw   --raw_shape 480 480 480   --pore_value 1
 ```
 
 Train and generate:
 
 ```bash
-python scripts/train_fontainebleau.py --stage all   --raw_path data/fontainebleau/fontainebleau_phi0p2045.raw   --raw_shape 480 480 480   --save_dir outputs/fontainebleau_phi0p2045   --poro_center 0.2045   --target_porosity 0.2045   --device cuda
+python scripts/train_fontainebleau.py --stage all   --raw_path data/fontainebleau/phi0p2045.raw   --raw_shape 480 480 480   --save_dir outputs/fontainebleau_phi0p2045   --epochs_vae 80   --epochs_ddpm 150   --poro_center 0.13   --target_porosity 0.2045   --device cuda
 
-python scripts/generate_batch.py   --ckpt_dir outputs/fontainebleau_phi0p2045   --out_root data/generated_fontainebleau_sets   --targets 0.2045 0.1743 0.1263 0.0853   --n_per_target 50   --poro_center 0.2045   --device cuda
+python scripts/generate_batch.py   --ckpt_dir outputs/fontainebleau_phi0p2045   --out_root data/generated_fontainebleau_sets   --targets 0.2045 0.1743 0.1263 0.0853   --n_per_target 50   --poro_center 0.13   --device cuda
 ```

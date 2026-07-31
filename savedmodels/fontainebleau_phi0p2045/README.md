@@ -9,6 +9,7 @@ validation experiment trained at porosity `0.2045`.
 - Generated volume: `256 x 256 x 256` voxels
 - VQ-VAE training: 80 epochs
 - Latent DDPM training: 150 epochs
+- FiLM porosity normalization: `(phi - 0.13) / 0.02`
 - Training seed: 123
 - Default inference seed sequence: starts at 0
 - Validation porosities: `0.2045`, `0.1743`, `0.1263`, and `0.0853`

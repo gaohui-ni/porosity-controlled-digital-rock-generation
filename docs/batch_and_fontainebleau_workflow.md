@@ -44,7 +44,7 @@ The input volume should be converted to uint8 raw format where `0=solid` and `1=
 ```bash
 python scripts/prepare_fontainebleau_data.py \
   --input /path/to/fontainebleau_volume.raw \
-  --output_raw data/fontainebleau/fontainebleau_phi0p2045.raw \
+  --output_raw data/fontainebleau/phi0p2045.raw \
   --raw_shape 480 480 480 \
   --pore_value 1
 ```
@@ -56,10 +56,12 @@ If the input semantics are reversed, add `--invert`. If the input is grayscale o
 ```bash
 python scripts/train_fontainebleau.py \
   --stage all \
-  --raw_path data/fontainebleau/fontainebleau_phi0p2045.raw \
+  --raw_path data/fontainebleau/phi0p2045.raw \
   --raw_shape 480 480 480 \
   --save_dir outputs/fontainebleau_phi0p2045 \
-  --poro_center 0.2045 \
+  --epochs_vae 80 \
+  --epochs_ddpm 150 \
+  --poro_center 0.13 \
   --target_porosity 0.2045 \
   --device cuda
 ```
@@ -69,13 +71,20 @@ python scripts/train_fontainebleau.py \
 ```bash
 python scripts/generate_batch.py \
   --ckpt_dir outputs/fontainebleau_phi0p2045 \
-  --out_root generated_fontainebleau_sets \
+  --out_root data/generated_fontainebleau_sets \
   --targets 0.2045 0.1743 0.1263 0.0853 \
   --n_per_target 50 \
-  --poro_center 0.2045 \
+  --poro_center 0.13 \
   --device cuda
 ```
 
 To generate from the final supplied Fontainebleau checkpoint package, use `--ckpt_dir savedmodels/fontainebleau_phi0p2045`.
 
-The generated samples can then be evaluated using the same directional two-point probability function `S2`, pore-network, and OpenPNM permeability scripts used for the main sandstone experiment.
+The four real validation volumes must be placed at the paths listed in
+`configs/fontainebleau_config.yaml`. The official pipeline extracts matched
+real patches and evaluates directional `S2`, lineal path, EDT, topology, PNM,
+and permeability for both real and generated groups:
+
+```bash
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
+```

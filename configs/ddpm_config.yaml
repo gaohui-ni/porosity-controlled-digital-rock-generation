@@ -1,4 +1,4 @@
-raw_path: "data/raw/S1.raw"
+raw_path: "data/raw/Bei_800x800x800.raw"
 raw_shape: [800, 800, 800]
 patch_size: 256
 n_samples: 1000

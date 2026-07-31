@@ -63,7 +63,7 @@ python run_pipeline.py --mode full --config configs/main.yaml
 
 ```bash
 python scripts/build_real_phi_groups.py \
-  --raw_path data/raw/S1.raw \
+  --raw_path data/raw/Bei_800x800x800.raw \
   --raw_shape 800 800 800 \
   --patch 256 \
   --stride 32 \
@@ -77,7 +77,7 @@ python scripts/build_real_phi_groups.py \
 ```bash
 python scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py \
   --stage all \
-  --raw_path data/raw/S1.raw \
+  --raw_path data/raw/Bei_800x800x800.raw \
   --save_dir outputs/main_sandstone \
   --target_porosity 0.13 \
   --device cuda

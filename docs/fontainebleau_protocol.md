@@ -1,65 +1,64 @@
 # Fontainebleau Validation Protocol
 
-This protocol documents how Fontainebleau sandstone samples are used for independent validation and porosity extrapolation.
+This protocol defines the independent Fontainebleau sandstone validation and
+porosity-extrapolation workflow.
 
 ## Dataset
 
-The validation data are four Fontainebleau sandstone digital rock samples from a previously reported Australian National University digital rock dataset. The samples are not redistributed in this repository.
+The validation data are four Fontainebleau sandstone digital rock samples from
+a previously reported Australian National University dataset. They are not
+redistributed in this repository.
 
-- Volume size: 480 x 480 x 480 voxels
-- Voxel resolution: 5.68 um/voxel
-- Porosities: 0.1743, 0.1263, 0.0853, and 0.2045
+- Volume size: `480 x 480 x 480` voxels
+- Voxel resolution: `5.68 um/voxel`
+- Porosities: `0.2045`, `0.1743`, `0.1263`, and `0.0853`
 
-## Training and Test Protocol
+Place the four binary `uint8` volumes at the paths declared under
+`real_volumes` in `configs/fontainebleau_config.yaml`:
 
-The standard validation setting trains the model on one Fontainebleau volume and evaluates generation at both the training porosity and unseen porosities.
-
-- Training porosity: 0.2045 by default
-- Test porosities: 0.2045, 0.1743, 0.1263, and 0.0853
-- Generated samples per target: 50 by default
-- Patch size: 256 x 256 x 256 voxels unless otherwise specified
-
-The lower-porosity targets test extrapolation because they are not included as direct training targets in the default setting.
-
-## Commands
-
-Prepare a raw validation volume:
-
-```bash
-python scripts/prepare_fontainebleau_data.py \
-  --input /path/to/fontainebleau.raw \
-  --output_raw data/fontainebleau/fontainebleau_phi0p2045.raw \
-  --raw_shape 480 480 480 \
-  --pore_value 1
+```text
+data/fontainebleau/
+|-- phi0p2045.raw
+|-- phi0p1743.raw
+|-- phi0p1263.raw
+`-- phi0p0853.raw
 ```
 
-Train and generate:
+## Training And Conditioning
+
+The model is trained on the `0.2045` volume and evaluated at the training
+porosity and three unseen porosities.
+
+- VQ-VAE training: 80 epochs
+- Latent DDPM training: 150 epochs
+- Training volume porosity: `0.2045`
+- FiLM normalization: `(phi - 0.13) / 0.02`
+- Generated samples per target: 50
+- Comparison patch size: `256 x 256 x 256` voxels
+
+The training porosity and FiLM normalization center are different quantities
+and must not be substituted for one another.
+
+## Official Commands
+
+Run the independent validation workflow:
 
 ```bash
-python scripts/train_fontainebleau.py --stage all \
-  --raw_path data/fontainebleau/fontainebleau_phi0p2045.raw \
-  --raw_shape 480 480 480 \
-  --save_dir outputs/fontainebleau_phi0p2045 \
-  --poro_center 0.2045 \
-  --target_porosity 0.2045 \
-  --device cuda
-
-python scripts/generate_batch.py \
-  --ckpt_dir outputs/fontainebleau_phi0p2045 \
-  --out_root data/generated_fontainebleau_sets \
-  --targets 0.2045 0.1743 0.1263 0.0853 \
-  --n_per_target 50 \
-  --poro_center 0.2045 \
-  --device cuda
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
-## Evaluation Metrics
+Use the released final checkpoints without retraining:
 
-Use the same metrics as the main sandstone experiment:
+```bash
+python run_pipeline.py --mode final --config configs/main.yaml
+```
 
-- Achieved porosity
-- Directional two-point probability function `S2`
-- Lineal-path statistics
-- Euclidean distance transform pore-size statistics
-- Connectivity and Euler characteristic
-- Pore-network descriptors and OpenPNM permeability when dependencies are available
+The workflow:
+
+1. extracts porosity-matched real 256-cubed patches from all four volumes;
+2. generates samples at all four target porosities;
+3. compares directional `S2`, lineal path, and EDT pore-size statistics;
+4. compares voxel connectivity and OpenPNM permeability;
+5. compares coordination, Euler, and PNM six-panel descriptors;
+6. writes Fontainebleau outputs under `results/fig_fontainebleau/` and
+   comparison tables under `results/tables/`.

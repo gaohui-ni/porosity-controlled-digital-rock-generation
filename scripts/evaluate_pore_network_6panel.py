@@ -4,6 +4,7 @@
 from pathlib import Path
 import argparse
 import json
+import sys
 import warnings
 
 import numpy as np
@@ -14,6 +15,13 @@ from scipy.ndimage import distance_transform_edt
 
 import porespy as ps
 import openpnm as op
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.utils.volume_io import load_npz_array
 
 
 # =========================================================
@@ -41,7 +49,7 @@ REAL_INVERT = False
 
 # -------- gen: npz --------
 GEN_FILE_EXT = ".npz"
-GEN_NPZ_KEY = None          # Keep None if the key is unknown; the first array is used by default.
+GEN_NPZ_KEY = "seg"
 GEN_PORE_VALUE = 1
 GEN_USE_THRESHOLD = False   # Set True if generated samples are probability fields.
 GEN_THRESHOLD = 0.5
@@ -125,11 +133,21 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Generate EDT/PNM/tortuosity six-panel comparisons.")
     parser.add_argument("--config", default="configs/main.yaml", help="YAML config with data.voxel_size_m.")
     parser.add_argument("--voxel_size", type=float, default=None, help="Override voxel size in meters.")
+    parser.add_argument("--real-root", default=None)
+    parser.add_argument("--gen-root", default=None)
+    parser.add_argument("--out-root", default=None)
+    parser.add_argument("--targets", type=float, nargs="+", default=None)
+    parser.add_argument("--raw-shape", type=int, nargs=3, default=None)
+    parser.add_argument(
+        "--gen-npz-key",
+        default="seg",
+        help="Generated NPZ array to evaluate. Use seg for binarized pore masks.",
+    )
     return parser.parse_args()
 
 
 def configure_from_args(args):
-    global VOXEL_SIZE
+    global VOXEL_SIZE, REAL_ROOT, GEN_ROOT, OUT_ROOT, TARGETS, RAW_SHAPE, GEN_NPZ_KEY
 
     if args.config:
         config_path = Path(args.config)
@@ -141,6 +159,17 @@ def configure_from_args(args):
 
     if args.voxel_size is not None:
         VOXEL_SIZE = float(args.voxel_size)
+    if args.real_root is not None:
+        REAL_ROOT = args.real_root
+    if args.gen_root is not None:
+        GEN_ROOT = args.gen_root
+    if args.out_root is not None:
+        OUT_ROOT = args.out_root
+    if args.targets is not None:
+        TARGETS = [(f"phi{value:.2f}".replace(".", "p"), float(value)) for value in args.targets]
+    if args.raw_shape is not None:
+        RAW_SHAPE = tuple(args.raw_shape)
+    GEN_NPZ_KEY = args.gen_npz_key
 
 # =========================================================
 # 2) Basic functions
@@ -165,17 +194,9 @@ def load_raw(path: Path):
 
 
 def load_npz(path: Path, npz_key=None):
-    data = np.load(path)
-    keys = list(data.keys())
-    if len(keys) == 0:
-        raise ValueError(f"{path} contains no arrays")
-    if npz_key is not None:
-        if npz_key not in data:
-            raise KeyError(f"{path} does not contain key={npz_key}, available keys={keys}")
-        arr = data[npz_key]
-    else:
-        arr = data[keys[0]]
-    return arr
+    if npz_key is None:
+        raise ValueError("Generated NPZ key must be explicit; use --gen-npz-key seg.")
+    return load_npz_array(path, key=npz_key, validate_porosity=(npz_key == "seg"))
 
 
 def to_pore_mask(arr, pore_value=1, invert=False, use_threshold=False, threshold=0.5):

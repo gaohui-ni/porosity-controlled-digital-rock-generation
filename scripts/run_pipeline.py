@@ -104,6 +104,9 @@ def main_pipeline(cfg, config_path="configs/main.yaml", checkpoint_dir=None, tra
     paths = cfg["paths"]
     model = cfg["model"]
     ckpt_dir = checkpoint_dir or paths["checkpoint_dir"]
+    real_perm_csv = str(Path(paths["table_results"]) / "real_voxel_perm.csv")
+    gen_perm_csv = str(Path(paths["table_results"]) / "generated_voxel_perm.csv")
+    comparison_csv = str(Path(paths["table_results"]) / "permeability_comparison.csv")
 
     common_train = [
         "--raw_path",
@@ -196,14 +199,34 @@ def main_pipeline(cfg, config_path="configs/main.yaml", checkpoint_dir=None, tra
             ],
         ),
         (
-            "Evaluate voxel metrics and permeability",
+            "Evaluate real-sample voxel metrics and permeability",
+            [
+                sys.executable,
+                "scripts/evaluate_voxel_and_perm.py",
+                "--input_root",
+                paths["real_root"],
+                "--output_csv",
+                real_perm_csv,
+                "--group_name",
+                "real",
+                "--shape",
+                *as_str_list([data["patch_size"]] * 3),
+                "--voxel_size",
+                str(data["voxel_size_m"]),
+                "--recursive",
+                "--extensions",
+                ".raw",
+            ],
+        ),
+        (
+            "Evaluate generated-sample voxel metrics and permeability",
             [
                 sys.executable,
                 "scripts/evaluate_voxel_and_perm.py",
                 "--input_root",
                 paths["generated_root"],
                 "--output_csv",
-                str(Path(paths["table_results"]) / "generated_voxel_perm.csv"),
+                gen_perm_csv,
                 "--group_name",
                 "gen",
                 "--shape",
@@ -211,6 +234,23 @@ def main_pipeline(cfg, config_path="configs/main.yaml", checkpoint_dir=None, tra
                 "--voxel_size",
                 str(data["voxel_size_m"]),
                 "--recursive",
+                "--extensions",
+                ".npz",
+            ],
+        ),
+        (
+            "Compare real and generated permeability metrics",
+            [
+                sys.executable,
+                "scripts/compare_metric_tables.py",
+                "--real-csv",
+                real_perm_csv,
+                "--gen-csv",
+                gen_perm_csv,
+                "--output-csv",
+                comparison_csv,
+                "--source-data-csv",
+                str(Path(paths["source_data_results"]) / "fig8_permeability.csv"),
             ],
         ),
         (
@@ -233,6 +273,33 @@ def main_pipeline(cfg, config_path="configs/main.yaml", checkpoint_dir=None, tra
                 "scripts/evaluate_pore_network_6panel.py",
                 "--config",
                 config_path,
+                "--real-root",
+                paths["real_root"],
+                "--gen-root",
+                paths["generated_root"],
+                "--out-root",
+                paths["topology_results"],
+                "--targets",
+                *as_str_list(gen["targets"]),
+                "--raw-shape",
+                *as_str_list([data["patch_size"]] * 3),
+                "--gen-npz-key",
+                "seg",
+            ],
+        ),
+        (
+            "Export manuscript S2 and PNM source data",
+            [
+                sys.executable,
+                "scripts/export_source_data.py",
+                "--s2-root",
+                paths["curve_results"],
+                "--pnm-root",
+                paths["topology_results"],
+                "--s2-output",
+                str(Path(paths["source_data_results"]) / "fig6_s2.csv"),
+                "--pnm-output",
+                str(Path(paths["source_data_results"]) / "fig7_pnm.csv"),
             ],
         ),
         (
@@ -275,10 +342,40 @@ def fontainebleau_pipeline(cfg, train_models=True):
     model = cfg["model"]
     paths = cfg["paths"]
 
-    out_root = "data/generated_fontainebleau_sets"
+    out_root = fb["generated_root"]
+    real_root = fb["real_root"]
+    result_root = fb["results_root"]
+    table_root = Path(paths["table_results"])
+    real_perm_csv = str(table_root / "fontainebleau_real_voxel_perm.csv")
+    gen_perm_csv = str(table_root / "fontainebleau_generated_voxel_perm.csv")
+    comparison_csv = str(table_root / "fontainebleau_permeability_comparison.csv")
+    target_folders = [f"phi{float(value):.2f}".replace(".", "p") for value in fb["validation_targets"]]
     save_dir = "outputs/fontainebleau_phi0p2045" if train_models else fb.get("final_checkpoint_dir", "savedmodels/fontainebleau_phi0p2045")
 
-    steps = []
+    volume_args = []
+    for porosity, path in fb["real_volumes"].items():
+        volume_args.extend(["--volume", f"{porosity}={path}"])
+
+    steps = [
+        (
+            "Prepare Fontainebleau real validation patches",
+            [
+                sys.executable,
+                "scripts/prepare_fontainebleau_real_sets.py",
+                *volume_args,
+                "--shape",
+                *as_str_list(fb["raw_shape"]),
+                "--patch",
+                str(fb["patch_size"]),
+                "--stride",
+                str(fb["stride"]),
+                "--n-per-target",
+                str(fb["real_samples_per_target"]),
+                "--out-root",
+                real_root,
+            ],
+        )
+    ]
     if train_models:
         steps.append(
             (
@@ -299,9 +396,9 @@ def fontainebleau_pipeline(cfg, train_models=True):
                 "--device",
                 train["device"],
                 "--epochs_vae",
-                str(train["epochs_vae"]),
+                str(fb["epochs_vae"]),
                 "--epochs_ddpm",
-                str(train["epochs_ddpm"]),
+                str(fb["epochs_ddpm"]),
                 "--batch_vae",
                 str(train["batch_vae"]),
                 "--batch_ddpm",
@@ -343,14 +440,51 @@ def fontainebleau_pipeline(cfg, train_models=True):
             ],
         ),
         (
-            "Evaluate Fontainebleau voxel metrics and permeability",
+            "Evaluate Fontainebleau S2, lineal path, and EDT",
+            [
+                sys.executable,
+                "scripts/evaluate_s2_lineal_edt.py",
+                "--real_root",
+                real_root,
+                "--gen_root",
+                out_root,
+                "--out_root",
+                str(Path(result_root) / "spatial_statistics"),
+                "--targets",
+                *as_str_list(fb["validation_targets"]),
+                "--r_max",
+                str(cfg["evaluation"]["r_max"]),
+            ],
+        ),
+        (
+            "Evaluate Fontainebleau real voxel metrics and permeability",
+            [
+                sys.executable,
+                "scripts/evaluate_voxel_and_perm.py",
+                "--input_root",
+                real_root,
+                "--output_csv",
+                real_perm_csv,
+                "--group_name",
+                "fontainebleau_real",
+                "--shape",
+                *as_str_list([fb["patch_size"]] * 3),
+                "--voxel_size",
+                str(float(fb["voxel_size_um"]) * 1.0e-6),
+                "--recursive",
+                "--extensions",
+                ".raw",
+            ],
+        ),
+        (
+            "Evaluate Fontainebleau generated voxel metrics and permeability",
             [
                 sys.executable,
                 "scripts/evaluate_voxel_and_perm.py",
                 "--input_root",
                 out_root,
                 "--output_csv",
-                str(Path(paths["table_results"]) / "fontainebleau_voxel_perm.csv"),
+                gen_perm_csv,
                 "--group_name",
                 "fontainebleau",
                 "--shape",
@@ -358,6 +492,67 @@ def fontainebleau_pipeline(cfg, train_models=True):
                 "--voxel_size",
                 str(float(fb["voxel_size_um"]) * 1.0e-6),
                 "--recursive",
+                "--extensions",
+                ".npz",
+            ],
+        ),
+        (
+            "Compare Fontainebleau real and generated permeability metrics",
+            [
+                sys.executable,
+                "scripts/compare_metric_tables.py",
+                "--real-csv",
+                real_perm_csv,
+                "--gen-csv",
+                gen_perm_csv,
+                "--output-csv",
+                comparison_csv,
+                "--source-data-csv",
+                str(Path(paths["source_data_results"]) / "fig9_fontainebleau.csv"),
+            ],
+        ),
+        (
+            "Evaluate Fontainebleau topology",
+            [
+                sys.executable,
+                "scripts/evaluate_coordination_euler.py",
+                "--real-root",
+                real_root,
+                "--gen-root",
+                out_root,
+                "--out-root",
+                str(Path(result_root) / "topology"),
+                "--phis",
+                *target_folders,
+                "--voxel-size-um",
+                str(fb["voxel_size_um"]),
+                "--radius-step-um",
+                str(fb["voxel_size_um"]),
+                "--npz-key",
+                "seg",
+            ],
+        ),
+        (
+            "Evaluate Fontainebleau PNM six-panel descriptors",
+            [
+                sys.executable,
+                "scripts/evaluate_pore_network_6panel.py",
+                "--config",
+                "configs/main.yaml",
+                "--real-root",
+                real_root,
+                "--gen-root",
+                out_root,
+                "--out-root",
+                str(Path(result_root) / "pnm"),
+                "--targets",
+                *as_str_list(fb["validation_targets"]),
+                "--raw-shape",
+                *as_str_list([fb["patch_size"]] * 3),
+                "--voxel_size",
+                str(float(fb["voxel_size_um"]) * 1.0e-6),
+                "--gen-npz-key",
+                "seg",
             ],
         ),
         (
@@ -375,7 +570,13 @@ def full_pipeline(cfg, config_path="configs/main.yaml"):
 def final_checkpoint_pipeline(cfg, config_path="configs/main.yaml"):
     paths = cfg["paths"]
     main_final_dir = paths.get("final_checkpoint_dir", "savedmodels/main_sandstone")
-    return main_pipeline(
+    verification = [
+        (
+            "Verify final checkpoint identity",
+            [sys.executable, "scripts/verify_final_models.py"],
+        )
+    ]
+    return verification + main_pipeline(
         cfg,
         config_path=config_path,
         checkpoint_dir=main_final_dir,
