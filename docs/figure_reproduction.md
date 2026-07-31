@@ -142,7 +142,11 @@ is reproduced with:
 python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
-For the six-panel pore-network analysis:
+For the extended six-panel pore-network diagnostic analysis:
+
+This extended diagnostic output is not identical to manuscript Fig. 7.
+Manuscript Fig. 7 combines pore radius, throat radius, throat shape factor,
+EDT radius, and coordination number from the corresponding evaluation outputs.
 
 ```bash
 python scripts/evaluate_pore_network_6panel.py --config configs/main.yaml

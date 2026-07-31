@@ -9,7 +9,7 @@ python run_pipeline.py --mode full --config configs/main.yaml
 
 | Figure | Result | Script or implementation | Required input | Local output |
 | --- | --- | --- | --- | --- |
-| Fig. 1 | 3D VQ-VAE architecture and reconstruction stage | `scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py --stage vae`; `src/models/vqvae3d.py` | Main sandstone raw volume and `configs/main.yaml` | `outputs/main_sandstone/vqvae_final.pth` and VQ-VAE training logs |
+| Fig. 1 | 3D VQ-VAE architecture and reconstruction stage | `scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py --stage vqvae`; `src/models/vqvae3d.py` | Main sandstone raw volume and `configs/main.yaml` | `outputs/main_sandstone/vqvae_final.pth` and VQ-VAE training logs |
 | Fig. 2 | Conditional latent-space DDPM architecture | `scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py --stage ddpm`; `src/models/unet3d_film.py` | Raw training volume and trained VQ-VAE | `outputs/main_sandstone/unet_final.pth`, `latent_stats.npz`, and DDPM logs |
 | Fig. 3 | Adaptive quantile binarization (AQB) | `scripts/demo_quantile_binarization.py`; `src/sampling/quantile_binarization.py` | Decoded probability volume and target porosity | Binary segmentation, threshold, and achieved-porosity report under `examples/` |
 | Fig. 4 | Representative generated volumes and slices at five porosities | `scripts/generate_batch.py` | Released checkpoints and targets 0.11–0.15 | `data/generated_phi_sets/phi*/gen256_*.npz` and `.raw`; manuscript rendering is assembled from these volumes |
