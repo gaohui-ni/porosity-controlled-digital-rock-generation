@@ -1,9 +1,6 @@
 import argparse
 from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -34,6 +31,10 @@ def slice_porosity_z(volume):
 
 
 def main():
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
     parser = argparse.ArgumentParser(description="Plot real/generated slice-wise porosity along z.")
     parser.add_argument("--real", required=True)
     parser.add_argument("--generated", required=True)
