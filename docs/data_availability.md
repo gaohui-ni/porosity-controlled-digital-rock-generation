@@ -31,7 +31,7 @@ locally.
 
 Typical derived outputs include:
 
-- `results/fig_s2/`: directional two-point probability function `S2`, lineal-path, and EDT curves;
+- `results/fig_s2/`: directional two-point correlation function `S2`, lineal-path, and EDT curves;
 - `results/tables/`: porosity, voxel, pore-network, and permeability tables;
 - `results/fig_pnm/`: topology and pore-network summaries;
 - `results/summary.json` and `results/results_summary.csv`: compact result manifests.

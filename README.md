@@ -12,7 +12,7 @@ The repository contains:
 - FiLM-conditioned latent DDPM for target-porosity controlled generation.
 - Quantile-based binarization for matching prescribed porosity.
 - Training, sampling, batch-generation, and Fontainebleau validation scripts.
-- Evaluation utilities for porosity, directional two-point probability function `S2`, pore-size statistics, topology, pore-network features, and OpenPNM permeability workflows.
+- Evaluation utilities for porosity, directional two-point correlation function `S2`, pore-size statistics, topology, pore-network features, and OpenPNM permeability workflows.
 - Synthetic examples that can be used without restricted raw micro-CT data.
 
 ## Repository Structure
@@ -139,13 +139,13 @@ pip install -r requirements_dev.txt
 pytest tests/
 ```
 
-The tests cover quantile-based porosity matching, porosity calculation, directional two-point probability-function output shapes, and pipeline dry-run behavior.
+The tests cover quantile-based porosity matching, porosity calculation, directional two-point correlation-function output shapes, and pipeline dry-run behavior.
 
 ## Reproduce Manuscript Outputs
 
 The official manuscript-scale experiment is configured in [configs/main.yaml](configs/main.yaml). [configs/experiment_main.yaml](configs/experiment_main.yaml) is retained as a backward-compatible copy/example. See [docs/figure_reproduction.md](docs/figure_reproduction.md) for a command-by-command figure reproduction map. The pipeline writes figure-oriented outputs under `results/`:
 
-- `results/fig_s2/`: directional two-point probability function `S2`, lineal-path, and EDT pore-size curves.
+- `results/fig_s2/`: directional two-point correlation function `S2`, lineal-path, and EDT pore-size curves.
 - `results/fig_perm/`: permeability-related tables and plots.
 - `results/fig_pnm/`: topology and pore-network descriptors.
 - `results/fig_fontainebleau/`: Fontainebleau validation outputs.

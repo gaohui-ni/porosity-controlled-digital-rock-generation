@@ -67,7 +67,7 @@ manuscript. The command writes both the PNG and an adjacent CSV locally.
 
 ## Spatial Statistics Figures
 
-Use these outputs for directional two-point probability function `S2`, lineal-path, and EDT pore-size figures.
+Use these outputs for directional two-point correlation function `S2`, lineal-path, and EDT pore-size figures.
 
 ```bash
 python scripts/evaluate_s2_lineal_edt.py \

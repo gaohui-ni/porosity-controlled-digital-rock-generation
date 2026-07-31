@@ -2,7 +2,7 @@
 
 The official pipelines write figure source-data tables here:
 
-- `fig6_s2.csv`: directional two-point probability curves
+- `fig6_s2.csv`: directional two-point correlation curves
 - `fig7_pnm.csv`: flattened pore-network descriptor curves
 - `fig8_permeability.csv`: main-sandstone Real-Gen permeability comparison
 - `fig9_fontainebleau.csv`: Fontainebleau Real-Gen comparison

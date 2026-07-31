@@ -41,7 +41,7 @@ def write_placeholder_png(path):
     axes[1].plot(curves["R"])
     axes[1].set_title("S2_R")
     axes[1].set_xlabel("Lag r")
-    axes[1].set_ylabel("Two-point probability function S2_R")
+    axes[1].set_ylabel("Two-point correlation function S2_R")
     axes[1].grid(alpha=0.25)
     fig.tight_layout()
     fig.savefig(path, dpi=160)

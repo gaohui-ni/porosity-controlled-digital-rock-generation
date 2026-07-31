@@ -444,7 +444,7 @@ def main():
             m_real, s_real = mean_std(s2_real[name])
             m_gen, s_gen = mean_std(s2_gen[name])
 
-            ylabel = "Normalized two-point probability function S2(r)" if args.normalize_s2 else "Two-point probability function S2(r)"
+            ylabel = "Normalized two-point correlation function S2(r)" if args.normalize_s2 else "Two-point correlation function S2(r)"
             title_name = "R (mean of X,Y,Z)" if name == "R" else name
 
             plot_mean_std_curve(
@@ -453,7 +453,7 @@ def main():
                 y_real_std=s_real,
                 y_gen_mean=m_gen,
                 y_gen_std=s_gen,
-                title=f"Two-point probability function S2(r) - {title_name} - phi={target:.2f}",
+                title=f"Two-point correlation function S2(r) - {title_name} - phi={target:.2f}",
                 xlabel="r (voxel)",
                 ylabel=ylabel,
                 out_path=target_out / f"s2_{name}_phi{tag}.png",
