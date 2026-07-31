@@ -21,6 +21,11 @@ savedmodels/
 The two `unet_final.pth` files are larger than 100 MB and are therefore stored
 as Git LFS objects rather than ordinary GitHub blobs.
 
+Git LFS under `savedmodels/` is the canonical checkpoint distribution route
+for this release. The same files are not duplicated as GitHub Release assets;
+users should run `git lfs pull` after cloning. Identity is verified against the
+sizes and SHA256 checksums in `docs/model_manifest.md`.
+
 The repository also provides the complete source code, configuration files, public raw-data reference, random-seed settings, and documentation required to retrain the 3D VQ-VAE and the FiLM-conditioned latent DDPM. New training runs write checkpoints under `outputs/` by default:
 
 - `outputs/main_sandstone/vqvae_final.pth`

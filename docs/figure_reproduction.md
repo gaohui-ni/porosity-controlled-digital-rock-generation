@@ -51,6 +51,20 @@ It does not start manuscript-scale training unless `--run-full-pipeline` is
 provided explicitly. Use `--skip-pipeline` to plot from existing outputs.
 Manuscript-scale figures require the full evaluation outputs listed below.
 
+## Fig. 5: Slice-Wise Porosity
+
+```bash
+python scripts/plot_slice_porosity.py \
+  --real data/real256_sets_from_S1_strict/phi0p15/REAL_SAMPLE.raw \
+  --generated data/generated_phi_sets/phi0p15/GENERATED_SAMPLE.npz \
+  --shape 256 256 256 \
+  --target 0.15 \
+  --output results/figures/fig5_slice_porosity.png
+```
+
+Replace the two sample placeholders with the representative files used in the
+manuscript. The command writes both the PNG and an adjacent CSV locally.
+
 ## Spatial Statistics Figures
 
 Use these outputs for directional two-point probability function `S2`, lineal-path, and EDT pore-size figures.

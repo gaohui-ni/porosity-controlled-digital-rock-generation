@@ -13,6 +13,7 @@ from scripts.compare_metric_tables import aggregate
 from scripts.export_source_data import export_pnm
 from scripts.prepare_fontainebleau_real_sets import select_patches
 from scripts.validate_smoke_outputs import validate_npz
+from scripts.plot_slice_porosity import slice_porosity_z
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -87,6 +88,24 @@ def test_release_smoke_output_validator(tmp_path):
 
     assert result["shape"] == [4, 4, 4]
     assert result["seg_porosity"] == 0.5
+
+
+def test_slice_porosity_profile_uses_z_axis():
+    volume = np.zeros((3, 4, 5), dtype=np.uint8)
+    volume[:, :, 2] = 1
+
+    profile = slice_porosity_z(volume)
+
+    assert profile.tolist() == [0.0, 0.0, 1.0, 0.0, 0.0]
+
+
+def test_figure_registry_maps_all_manuscript_figures():
+    registry = (ROOT / "docs" / "figure_mapping.md").read_text(encoding="utf-8")
+
+    for number in range(1, 10):
+        assert f"| Fig. {number} |" in registry
+    assert "| Figure | Result | Script or implementation | Required input | Local output |" in registry
+    assert "scripts/plot_slice_porosity.py" in registry
 
 
 def test_pnm_requires_generated_seg_key():
