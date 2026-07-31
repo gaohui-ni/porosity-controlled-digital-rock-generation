@@ -96,13 +96,14 @@ def demo_pipeline(cfg):
     ]
 
 
-def main_pipeline(cfg, config_path="configs/main.yaml"):
+def main_pipeline(cfg, config_path="configs/main.yaml", checkpoint_dir=None, train_models=True):
     data = cfg["data"]
     train = cfg["training"]
     gen = cfg["generation"]
     eval_cfg = cfg["evaluation"]
     paths = cfg["paths"]
     model = cfg["model"]
+    ckpt_dir = checkpoint_dir or paths["checkpoint_dir"]
 
     common_train = [
         "--raw_path",
@@ -135,7 +136,7 @@ def main_pipeline(cfg, config_path="configs/main.yaml"):
         sys.executable,
         "scripts/generate_batch.py",
         "--ckpt_dir",
-        paths["checkpoint_dir"],
+        ckpt_dir,
         "--out_root",
         paths["generated_root"],
         "--targets",
@@ -154,7 +155,7 @@ def main_pipeline(cfg, config_path="configs/main.yaml"):
         str(model["n_steps"]),
     ]
 
-    return [
+    steps = [
         (
             "Build real porosity groups",
             [
@@ -174,26 +175,6 @@ def main_pipeline(cfg, config_path="configs/main.yaml"):
                 str(data["real_samples_per_target"]),
                 "--out_root",
                 paths["real_root"],
-            ],
-        ),
-        (
-            "Train VQ-VAE",
-            [
-                sys.executable,
-                "scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py",
-                "--stage",
-                "vqvae",
-                *common_train,
-            ],
-        ),
-        (
-            "Train latent DDPM",
-            [
-                sys.executable,
-                "scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py",
-                "--stage",
-                "ddpm",
-                *common_train,
             ],
         ),
         ("Generate controlled samples", generate_cmd),
@@ -260,8 +241,34 @@ def main_pipeline(cfg, config_path="configs/main.yaml"):
         ),
     ]
 
+    if train_models:
+        steps[1:1] = [
+            (
+                "Train VQ-VAE",
+                [
+                    sys.executable,
+                    "scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py",
+                    "--stage",
+                    "vqvae",
+                    *common_train,
+                ],
+            ),
+            (
+                "Train latent DDPM",
+                [
+                    sys.executable,
+                    "scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py",
+                    "--stage",
+                    "ddpm",
+                    *common_train,
+                ],
+            ),
+        ]
 
-def fontainebleau_pipeline(cfg):
+    return steps
+
+
+def fontainebleau_pipeline(cfg, train_models=True):
     fb_cfg_path = ROOT / "configs" / "fontainebleau_config.yaml"
     fb = load_config(fb_cfg_path)
     train = cfg["training"]
@@ -269,10 +276,12 @@ def fontainebleau_pipeline(cfg):
     paths = cfg["paths"]
 
     out_root = "data/generated_fontainebleau_sets"
-    save_dir = "outputs/fontainebleau_phi0p2045"
+    save_dir = "outputs/fontainebleau_phi0p2045" if train_models else fb.get("final_checkpoint_dir", "savedmodels/fontainebleau_phi0p2045")
 
-    return [
-        (
+    steps = []
+    if train_models:
+        steps.append(
+            (
             "Train Fontainebleau VQ-VAE and latent DDPM",
             [
                 sys.executable,
@@ -304,7 +313,10 @@ def fontainebleau_pipeline(cfg):
                 "--poro_scale",
                 str(fb["poro_scale"]),
             ],
-        ),
+            )
+        )
+
+    steps.extend([
         (
             "Generate Fontainebleau validation samples",
             [
@@ -352,11 +364,23 @@ def fontainebleau_pipeline(cfg):
             "Summarize Fontainebleau result files",
             command_report(paths["results_root"]),
         ),
-    ]
+    ])
+    return steps
 
 
 def full_pipeline(cfg, config_path="configs/main.yaml"):
     return main_pipeline(cfg, config_path=config_path) + fontainebleau_pipeline(cfg)
+
+
+def final_checkpoint_pipeline(cfg, config_path="configs/main.yaml"):
+    paths = cfg["paths"]
+    main_final_dir = paths.get("final_checkpoint_dir", "savedmodels/main_sandstone")
+    return main_pipeline(
+        cfg,
+        config_path=config_path,
+        checkpoint_dir=main_final_dir,
+        train_models=False,
+    ) + fontainebleau_pipeline(cfg, train_models=False)
 
 
 def main():
@@ -367,7 +391,7 @@ def main():
         )
     )
     parser.add_argument("--config", default="configs/main.yaml")
-    parser.add_argument("--mode", choices=["demo", "main", "fontainebleau", "full"], default="demo")
+    parser.add_argument("--mode", choices=["demo", "main", "fontainebleau", "full", "final"], default="demo")
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -382,6 +406,8 @@ def main():
         steps = main_pipeline(cfg, config_path=args.config)
     elif args.mode == "fontainebleau":
         steps = fontainebleau_pipeline(cfg)
+    elif args.mode == "final":
+        steps = final_checkpoint_pipeline(cfg, config_path=args.config)
     else:
         steps = full_pipeline(cfg, config_path=args.config)
 

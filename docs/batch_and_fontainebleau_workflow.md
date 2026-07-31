@@ -12,6 +12,18 @@ python scripts/generate_batch.py \
   --device cuda
 ```
 
+To generate from the final supplied main-sandstone checkpoint package instead of a newly trained `outputs/` directory, use:
+
+```bash
+python scripts/generate_batch.py \
+  --ckpt_dir savedmodels/main_sandstone \
+  --out_root generated_phi_sets \
+  --targets 0.11 0.12 0.13 0.14 0.15 \
+  --n_per_target 100 \
+  --poro_center 0.13 \
+  --device cuda
+```
+
 The output folder is organized as:
 
 ```text
@@ -63,5 +75,7 @@ python scripts/generate_batch.py \
   --poro_center 0.2045 \
   --device cuda
 ```
+
+To generate from the final supplied Fontainebleau checkpoint package, use `--ckpt_dir savedmodels/fontainebleau_phi0p2045`.
 
 The generated samples can then be evaluated using the same directional two-point probability function `S2`, pore-network, and OpenPNM permeability scripts used for the main sandstone experiment.

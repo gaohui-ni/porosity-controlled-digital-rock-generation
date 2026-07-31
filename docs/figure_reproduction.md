@@ -28,6 +28,12 @@ For only the independent Fontainebleau validation figures, use:
 python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
+For generation and evaluation from final supplied checkpoints without retraining, use:
+
+```bash
+python run_pipeline.py --mode final --config configs/main.yaml
+```
+
 The full workflow can be inspected without running training:
 
 ```bash

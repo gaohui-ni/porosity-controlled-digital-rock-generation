@@ -32,6 +32,7 @@ evaluation:
 
 paths:
   checkpoint_dir: outputs/main_sandstone
+  final_checkpoint_dir: savedmodels/main_sandstone
   real_root: data/real256_sets_from_S1_strict
   generated_root: data/generated_phi_sets
   results_root: results

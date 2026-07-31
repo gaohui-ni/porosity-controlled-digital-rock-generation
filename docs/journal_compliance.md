@@ -24,7 +24,7 @@ The repository supports a manuscript at the interface of computing and geoscienc
 | Tutorials / how-to files | `notebooks/tutorials/`, `docs/user_guide.md`, `docs/reproducibility.md` |
 | User guide with inputs and outputs | `docs/user_guide.md` |
 | Data availability and redistribution limits | `docs/data_availability.md` |
-| Trained checkpoints | Not distributed; retraining workflow and limitation are documented in `docs/checkpoints.md` |
+| Trained checkpoints | Final model layout and checksums are documented in `docs/checkpoints.md` and `docs/model_manifest.md`; large files require Git LFS or release assets |
 | Figure/result reproduction map | `docs/figure_mapping.md`, `docs/figure_reproduction.md` |
 | Automated lightweight checks | `.github/workflows/tests.yml`, `tests/` |
 
@@ -50,7 +50,7 @@ python run_pipeline.py --mode full --config configs/main.yaml
 
 ## Data and Model Limitations
 
-Large raw micro-CT data are referenced through Mendeley Data rather than stored in GitHub. The repository supports complete workflow reproduction through retraining from public data. Final trained checkpoints are not distributed, and the limitation on exact sample-level reproduction is explicitly documented. The repository provides synthetic examples, configuration files, and full training/generation/evaluation scripts so that reviewers can inspect the workflow and rerun it when the released data and compute environment are available.
+Large raw micro-CT data are referenced through Mendeley Data rather than stored in GitHub. The repository supports complete workflow reproduction through retraining from public data and documents the final model layout and checksums for checkpoint-level reuse. Large checkpoint files require Git LFS or release assets. The repository provides synthetic examples, configuration files, and full training/generation/evaluation scripts so that reviewers can inspect the workflow and rerun it when the released data and compute environment are available.
 
 ## Computational Requirements
 
@@ -64,6 +64,6 @@ Large raw micro-CT data are referenced through Mendeley Data rather than stored 
 - Confirm the repository remains public during review.
 - Confirm `configs/main.yaml` matches the manuscript experiments.
 - Confirm final figure numbers in the manuscript match `docs/figure_mapping.md`.
-- Confirm the checkpoint non-distribution policy remains consistent across `README.md`, `docs/checkpoints.md`, and the manuscript.
+- Confirm the final checkpoint distribution route remains consistent across `README.md`, `docs/checkpoints.md`, `docs/model_manifest.md`, and the manuscript.
 - Confirm exact dependency versions from the final experiment environment are recorded before release.
 - Generate final `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv` only after the full run.

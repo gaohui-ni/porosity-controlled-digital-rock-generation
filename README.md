@@ -26,7 +26,7 @@ docs/         Installation, user guide, reproducibility, and data/code availabil
 data/         Placeholder folders for user-provided raw data.
 outputs/      Placeholder folder for generated checkpoints and outputs.
 results/      Placeholder folder for generated figures, curves, and tables.
-savedmodels/  Placeholder folder for trained model checkpoints.
+savedmodels/  Final trained model checkpoint layout and optional Git LFS checkpoint files.
 ```
 
 ## Installation
@@ -98,7 +98,8 @@ Available modes:
 - `demo`: lightweight synthetic porosity-control check;
 - `main`: main laboratory sandstone workflow, including training, generation, spatial statistics, permeability, topology, and PNM six-panel descriptors;
 - `fontainebleau`: independent Fontainebleau validation workflow;
-- `full`: `main` followed by `fontainebleau`.
+- `full`: `main` followed by `fontainebleau`;
+- `final`: generate and evaluate using final checkpoint files under `savedmodels/`, without retraining.
 
 For a lightweight reviewer sanity check:
 
@@ -149,6 +150,7 @@ Typical commands:
 python run_pipeline.py --mode full --config configs/main.yaml
 python run_pipeline.py --mode main --config configs/main.yaml
 python run_pipeline.py --mode fontainebleau --config configs/main.yaml
+python run_pipeline.py --mode final --config configs/main.yaml
 python src/metrics/summarize_all.py --root results
 python scripts/plot_all.py
 ```
@@ -188,11 +190,25 @@ The repository also includes synthetic examples and scripts that allow reviewers
 
 See [docs/data_availability.md](docs/data_availability.md).
 
-## Checkpoints
+## Final Models and Checkpoints
 
-Trained model checkpoints are not distributed with this repository.
+The final trained model layout is:
 
-The complete VQ-VAE and latent-DDPM training workflow is provided, and users can retrain the models using the publicly available raw data and `configs/main.yaml`.
+```text
+savedmodels/
+|-- main_sandstone/
+|   |-- vqvae_final.pth
+|   |-- unet_final.pth
+|   `-- latent_stats.npz
+`-- fontainebleau_phi0p2045/
+    |-- vqvae_final.pth
+    |-- unet_final.pth
+    `-- latent_stats.npz
+```
+
+The two `unet_final.pth` files exceed the normal GitHub 100 MB single-file limit. When publishing these final models through GitHub, use Git LFS or release assets. Checksums are provided in [docs/model_manifest.md](docs/model_manifest.md).
+
+The complete VQ-VAE and latent-DDPM training workflow is also provided, so users can retrain the models using the publicly available raw data and `configs/main.yaml`.
 
 A completed training run produces:
 
@@ -200,7 +216,7 @@ A completed training run produces:
 - `unet_final.pth`
 - `latent_stats.npz`
 
-Because model training and diffusion sampling are stochastic, retrained models should reproduce the reported workflow and statistical behavior, but the exact generated samples and numerical values may differ from those reported in the manuscript.
+Because model training and diffusion sampling are stochastic, retrained models should reproduce the reported workflow and statistical behavior, but exact generated samples and numerical values may differ unless the same final checkpoint files are used.
 
 See [docs/checkpoints.md](docs/checkpoints.md) for details.
 

@@ -37,7 +37,7 @@ Derived statistical results supporting the findings of the study are available f
 
 ## Trained Checkpoints
 
-The trained VQ-VAE and latent-DDPM checkpoints used for the manuscript are not distributed. The repository provides the complete training workflow for independently retraining the models from the released data.
+The final trained VQ-VAE and latent-DDPM checkpoints are arranged under `savedmodels/` when the checkpoint package is included locally or published through Git LFS / release assets. File sizes and SHA256 checksums are listed in `docs/model_manifest.md`. The repository also provides the complete training workflow for independently retraining the models from the released data.
 
 ## Lightweight Synthetic Examples
 
@@ -69,4 +69,4 @@ The scripts accept alternative paths through command-line arguments.
 
 Suggested wording for the manuscript:
 
-> The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data at https://doi.org/10.17632/vp2yw9c7jj.1. The trained VQ-VAE and latent-DDPM checkpoints used for the manuscript are not distributed. The repository provides the complete training workflow for independently retraining the models from the released data. The Fontainebleau sandstone digital rock samples used for validation were obtained from a previously reported Australian National University (ANU) digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not redistributed by the authors. Derived statistical results and analysis data supporting the findings of this study are available from the corresponding author upon reasonable request.
+> The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data at https://doi.org/10.17632/vp2yw9c7jj.1. The final trained VQ-VAE and latent-DDPM checkpoint layout and SHA256 checksums are documented in the public repository. The repository also provides the complete training workflow for independently retraining the models from the released data. The Fontainebleau sandstone digital rock samples used for validation were obtained from a previously reported Australian National University (ANU) digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not redistributed by the authors. Derived statistical results and analysis data supporting the findings of this study are available from the corresponding author upon reasonable request.

@@ -10,3 +10,4 @@ validation_targets: [0.2045, 0.1743, 0.1263, 0.0853]
 n_per_target: 50
 poro_center: 0.2045
 poro_scale: 0.02
+final_checkpoint_dir: "savedmodels/fontainebleau_phi0p2045"

@@ -8,6 +8,7 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 - [x] `run_pipeline.py` is the only reviewer-facing reproduction entry point.
 - [x] `scripts/run_pipeline.py` is documented as an internal modular implementation.
 - [x] `--dry-run` is documented as a pipeline logic check, not a substitute for full training.
+- [x] Final-checkpoint workflow is available through `python run_pipeline.py --mode final --config configs/main.yaml`.
 
 ## Lightweight Verification
 
@@ -23,7 +24,7 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 - [x] Synthetic/demo data are distinguished from manuscript-scale raw data.
 - [x] Fontainebleau validation data are identified as external data and are not redistributed.
 - [x] Data availability details are documented in `docs/data_availability.md`.
-- [x] Checkpoint non-distribution policy is documented.
+- [x] Final model layout and checksum policy are documented.
 - [x] The limitation on exact sample-level reproduction is stated clearly.
 - [x] Complete training commands and configurations are provided.
 - [x] Public raw-data access is documented.
@@ -43,6 +44,8 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 - [ ] Confirm final manuscript figure numbers match `docs/figure_mapping.md`.
 - [ ] Confirm Mendeley Data version and DOI are final in README, manuscript, and `docs/data_availability.md`.
 - [ ] Confirm that all reported parameters match the manuscript.
+- [ ] Confirm final model files are published through Git LFS, GitHub Release, Zenodo, or Mendeley as stated in the manuscript.
+- [ ] Verify final model SHA256 values against `docs/model_manifest.md`.
 - [ ] Export and record exact dependency versions from the final experiment environment.
 - [ ] Confirm `torch`, `porespy`, `openpnm`, `numpy`, and `scipy` versions match the manuscript-scale run.
 - [ ] Tag a release after final manuscript/code synchronization.

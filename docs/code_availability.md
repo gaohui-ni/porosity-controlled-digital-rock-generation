@@ -26,8 +26,8 @@ The source code, configuration files, synthetic examples, documentation, and rep
 
 https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation
 
-The trained VQ-VAE and latent-DDPM checkpoints used to produce the manuscript results are not distributed. The repository provides the complete training workflow for independently retraining the models from the publicly available raw data. Because model training and diffusion sampling are stochastic, independently reproduced results may differ in exact generated structures and numerical values while retaining the reported methodological and statistical behavior.
+The final trained VQ-VAE and latent-DDPM checkpoint layout is provided under `savedmodels/` when the checkpoint package is included locally or published through Git LFS / release assets. The repository also provides the complete training workflow for independently retraining the models from the publicly available raw data. Because model training and diffusion sampling are stochastic, independently reproduced results may differ in exact generated structures and numerical values while retaining the reported methodological and statistical behavior.
 
 ## Notes for Review
 
-Large raw micro-CT volumes and trained checkpoints are not stored in the repository. Raw data availability is documented in `docs/data_availability.md`; the checkpoint non-distribution policy is documented in `docs/checkpoints.md`.
+Large raw micro-CT volumes are not stored in the repository. Raw data availability is documented in `docs/data_availability.md`; final model file layout and checksums are documented in `docs/checkpoints.md` and `docs/model_manifest.md`.

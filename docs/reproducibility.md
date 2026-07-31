@@ -37,7 +37,8 @@ Available pipeline modes are:
 - `demo`: lightweight synthetic porosity-control check;
 - `main`: main laboratory sandstone workflow, including PNM six-panel descriptors;
 - `fontainebleau`: independent Fontainebleau validation workflow;
-- `full`: `main` followed by `fontainebleau`.
+- `full`: `main` followed by `fontainebleau`;
+- `final`: generate and evaluate using final checkpoint files under `savedmodels/`, without retraining.
 
 ## Main Workflow
 
@@ -51,6 +52,12 @@ To reproduce only the main laboratory sandstone results:
 
 ```bash
 python run_pipeline.py --mode main --config configs/main.yaml
+```
+
+To use the final supplied checkpoints without retraining:
+
+```bash
+python run_pipeline.py --mode final --config configs/main.yaml
 ```
 
 The equivalent step-by-step commands are:
@@ -84,6 +91,8 @@ python scripts/generate_batch.py \
   --poro_center 0.13 \
   --device cuda
 ```
+
+If the final checkpoint package is available locally, use `--ckpt_dir savedmodels/main_sandstone` for main-sandstone generation.
 
 ## Evaluation Workflow
 
@@ -171,6 +180,8 @@ python scripts/generate_batch.py \
   --poro_center 0.2045 \
   --device cuda
 ```
+
+If the final Fontainebleau checkpoint package is available locally, use `--ckpt_dir savedmodels/fontainebleau_phi0p2045`.
 
 ## Current Limitations
 

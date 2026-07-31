@@ -1,0 +1,2 @@
+savedmodels/**/*.pth filter=lfs diff=lfs merge=lfs -text
+savedmodels/**/*.npz filter=lfs diff=lfs merge=lfs -text

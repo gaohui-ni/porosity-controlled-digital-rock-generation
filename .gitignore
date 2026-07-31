@@ -33,6 +33,12 @@ ckpt*/
 checkpoints/
 savedmodels/*.pth
 savedmodels/*.pt
+!savedmodels/main_sandstone/
+!savedmodels/main_sandstone/*.pth
+!savedmodels/main_sandstone/*.npz
+!savedmodels/fontainebleau_phi0p2045/
+!savedmodels/fontainebleau_phi0p2045/*.pth
+!savedmodels/fontainebleau_phi0p2045/*.npz
 
 # temporary analysis outputs
 results/temp/

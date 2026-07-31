@@ -22,6 +22,7 @@ python scripts/reproduce_figures.py --config configs/main.yaml
 | Topology and pore-network metrics | `python scripts/evaluate_coordination_euler.py ...` | `results/fig_pnm/` |
 | Fontainebleau validation | `docs/fontainebleau_protocol.md` | `results/fig_fontainebleau/` |
 | Full command list | `python run_pipeline.py --mode full --config configs/main.yaml --dry-run` | `results/pipeline_full_manifest.json` |
+| Final-checkpoint workflow | `python run_pipeline.py --mode final --config configs/main.yaml` | `results/pipeline_final_manifest.json` |
 | Lightweight figure-output helper | `python scripts/reproduce_figures.py --config configs/main.yaml` | `results/figures/` |
 
 For detailed commands, see `docs/figure_reproduction.md`.
