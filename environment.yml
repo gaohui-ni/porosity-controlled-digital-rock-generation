@@ -12,9 +12,7 @@ dependencies:
   - scikit-image
   - pyyaml
   - tqdm
-  - h5py
   - pytorch
-  - torchvision
   - tifffile
   - imageio
   - pip

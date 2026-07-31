@@ -156,6 +156,24 @@ def test_figure_helper_defaults_to_demo_and_requires_full_opt_in():
     assert "run_pipeline.py --mode full" not in result.stdout
 
 
+def test_manuscript_environment_is_version_locked():
+    requirements = (ROOT / "environment" / "requirements-lock.txt").read_text(encoding="utf-8")
+    conda = (ROOT / "environment" / "environment-lock.yml").read_text(encoding="utf-8")
+
+    for requirement in (
+        "torch==2.5.1",
+        "numpy==2.2.6",
+        "scipy==1.15.3",
+        "porespy==3.0.2",
+        "openpnm==3.5.2",
+    ):
+        assert requirement in requirements
+    assert "python=3.10.12" in conda
+    assert "pytorch=2.5.1" in conda
+    assert "pytorch-cuda=12.1" in conda
+    assert "cudnn=9.1" in conda
+
+
 def test_metric_comparison_aggregates_by_target(tmp_path):
     path = tmp_path / "metrics.csv"
     pd.DataFrame(

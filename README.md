@@ -27,6 +27,7 @@ data/         Placeholder folders for user-provided raw data.
 outputs/      Placeholder folder for generated checkpoints and outputs.
 results/      Placeholder folder for generated figures, curves, and tables.
 savedmodels/  Final trained model checkpoints distributed through Git LFS.
+environment/  Exact package versions used for the manuscript-scale workflow.
 ```
 
 ## Installation
@@ -34,8 +35,8 @@ savedmodels/  Final trained model checkpoints distributed through Git LFS.
 Conda is recommended:
 
 ```bash
-conda env create -f environment.yml
-conda activate digitalrock
+conda env create -f environment/environment-lock.yml
+conda activate vq256_cuda
 pip install -e .
 ```
 
@@ -47,7 +48,11 @@ pip install -r requirements_optional.txt
 pip install -e .
 ```
 
-`porespy` and `openpnm` are optional but required for pore-network and permeability workflows. GPU training requires a CUDA-compatible PyTorch installation. Exact dependency versions for the final manuscript-scale run should be exported from the experiment environment and recorded following [docs/dependency_versions.md](docs/dependency_versions.md) before final release.
+`porespy` and `openpnm` are optional for the lightweight demo but required for
+pore-network and permeability workflows. The manuscript environment is locked
+in `environment/environment-lock.yml` and
+`environment/requirements-lock.txt`; see
+[docs/dependency_versions.md](docs/dependency_versions.md).
 
 ## Computational Requirements
 

@@ -52,8 +52,8 @@ This checklist is intended for the final Computers & Geosciences / Energy & Fuel
 - [ ] Confirm that all reported parameters match the manuscript.
 - [x] Confirm final model files are published through Git LFS, GitHub Release, Zenodo, or Mendeley as stated in the manuscript.
 - [x] Verify final model SHA256 values against `docs/model_manifest.md`.
-- [ ] Export and record exact dependency versions from the final experiment environment.
-- [ ] Confirm `torch`, `porespy`, `openpnm`, `numpy`, and `scipy` versions match the manuscript-scale run.
+- [x] Export and record exact dependency versions from the final experiment environment.
+- [x] Confirm `torch`, `porespy`, `openpnm`, `numpy`, and `scipy` versions match the manuscript-scale run.
 - [ ] Tag a release after final manuscript/code synchronization.
 
 Note: Precomputed summary files are intentionally not bundled before the final full run. They should be generated from the released data and configuration.

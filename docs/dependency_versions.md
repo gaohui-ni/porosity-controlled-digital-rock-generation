@@ -1,32 +1,44 @@
 # Dependency Versions
 
-This repository documents the package set in `requirements.txt`, `requirements_optional.txt`, and `environment.yml`.
+The exact core package versions reported by the manuscript-scale experiment
+environment are recorded in:
 
-For the final manuscript release, exact versions should be exported from the experiment environment used for the full GPU workflow. They are not filled in here without the actual environment to avoid reporting fabricated versions.
+- `environment/environment-lock.yml`
+- `environment/requirements-lock.txt`
 
-## Minimum Versions to Record
+## Runtime
 
-Record the final values for:
+| Component | Version |
+| --- | --- |
+| Python | 3.10.12 |
+| PyTorch | 2.5.1 |
+| PyTorch CUDA runtime (`torch.version.cuda`) | 12.1 |
+| cuDNN | 9.1 |
+| NumPy | 2.2.6 |
+| SciPy | 1.15.3 |
+| pandas | 2.3.3 |
+| matplotlib | 3.10.8 |
+| scikit-image | 0.25.2 |
+| PoreSpy | 3.0.2 |
+| OpenPNM | 3.5.2 |
 
-- Python: `3.10`
-- PyTorch: TBD from final experiment environment
-- NumPy: TBD from final experiment environment
-- SciPy: TBD from final experiment environment
-- scikit-image: TBD from final experiment environment
-- porespy: TBD from final experiment environment
-- openpnm: TBD from final experiment environment
-- CUDA toolkit / driver used for training: TBD from final experiment environment
+The CUDA version in this table is the runtime used by PyTorch. The host driver
+reported CUDA compatibility 13.2 and the server `nvcc` compiler reported 12.6;
+these are not substituted for `torch.version.cuda` in the reproducibility
+claim.
 
-## Suggested Export Commands
+`h5py` and `torchvision` are not included because the released workflow does
+not import them and `torchvision` was not installed in the reported experiment
+environment.
 
-From the final experiment environment:
+## Installation
 
 ```bash
-python -V
-python -c "import torch, numpy, scipy, skimage; print('torch', torch.__version__); print('numpy', numpy.__version__); print('scipy', scipy.__version__); print('skimage', skimage.__version__)"
-python -c "import porespy, openpnm; print('porespy', porespy.__version__); print('openpnm', openpnm.__version__)"
-pip freeze > requirements.lock.txt
-conda env export --from-history > environment.lock.yml
+conda env create -f environment/environment-lock.yml
+conda activate vq256_cuda
+pip install -e .
 ```
 
-Commit the resulting lock files, or paste the exact versions into this document, after the final full run has been completed.
+The shorter `requirements.txt`, `requirements_optional.txt`, and
+`environment.yml` remain convenient, unpinned setup files. Use the files under
+`environment/` for manuscript reproduction.
