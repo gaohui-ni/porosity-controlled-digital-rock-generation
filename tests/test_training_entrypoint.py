@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 
@@ -30,6 +31,6 @@ def test_full_pipeline_calls_training_stages():
     source = PIPELINE_SCRIPT.read_text(encoding="utf-8")
 
     assert "scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py" in source
-    assert '"--stage",\n                "vqvae"' in source
-    assert '"--stage",\n                "ddpm"' in source
+    assert re.search(r'"--stage"\s*,\s*"vqvae"', source)
+    assert re.search(r'"--stage"\s*,\s*"ddpm"', source)
     assert '"--raw_shape"' in source
