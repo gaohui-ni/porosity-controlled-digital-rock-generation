@@ -6,6 +6,7 @@ import pandas as pd
 from src.utils.volume_io import load_npz_array
 from src.utils.naming import phi_tag
 from scripts.compare_metric_tables import aggregate
+from scripts.export_source_data import export_pnm
 from scripts.prepare_fontainebleau_real_sets import select_patches
 
 
@@ -49,6 +50,29 @@ def test_pnm_requires_generated_seg_key():
     assert 'GEN_NPZ_KEY = "seg"' in source
     assert '"--gen-npz-key"' in source
     assert 'validate_porosity=(npz_key == "seg")' in source
+
+
+def test_pnm_outputs_preserve_full_target_porosity(tmp_path):
+    root = tmp_path / "pnm"
+    root.mkdir()
+    np.savez(
+        root / "curves_phi0p2045.npz",
+        target_porosity=np.float64(0.2045),
+        edt_centers=np.array([1.0, 2.0]),
+    )
+    output = tmp_path / "fig7_pnm.csv"
+
+    export_pnm(root, output)
+    exported = pd.read_csv(output)
+
+    assert exported["target_phi"].tolist() == [0.2045, 0.2045]
+    assert exported["metric"].tolist() == ["edt_centers", "edt_centers"]
+
+    source = (ROOT / "scripts" / "evaluate_pore_network_6panel.py").read_text(encoding="utf-8")
+    assert "tag = phi_tag(target_value)" in source
+    assert 'f"six_panel_phi{tag}.png"' in source
+    assert 'f"curves_phi{tag}.npz"' in source
+    assert '"target_porosity": np.float64(target_value)' in source
 
 
 def test_final_model_configuration_and_pipeline_are_separate():

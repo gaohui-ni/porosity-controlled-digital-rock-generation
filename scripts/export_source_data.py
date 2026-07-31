@@ -33,8 +33,15 @@ def export_pnm(root, output):
     rows = []
     for path in sorted(Path(root).rglob("curves_phi*.npz")):
         with np.load(path) as data:
-            target = path.stem.removeprefix("curves_phi")
+            if "target_porosity" in data.files:
+                target = float(np.asarray(data["target_porosity"]).reshape(()))
+            else:
+                target = float(
+                    path.stem.removeprefix("curves_phi").replace("p", ".")
+                )
             for key in data.files:
+                if key == "target_porosity":
+                    continue
                 array = np.asarray(data[key])
                 if array.ndim == 0:
                     rows.append({"target_phi": target, "metric": key, "index": 0, "value": array.item()})

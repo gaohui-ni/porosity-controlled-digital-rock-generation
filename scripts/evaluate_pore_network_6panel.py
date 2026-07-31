@@ -571,9 +571,11 @@ def run_one_target(folder_name, target_value):
     gen_dir = Path(GEN_ROOT) / folder_name
     out_dir = Path(OUT_ROOT) / folder_name
     out_dir.mkdir(parents=True, exist_ok=True)
+    tag = phi_tag(target_value)
+    target_label = tag.replace("p", ".")
 
     print("\n" + "=" * 84)
-    print(f"Processing {folder_name}  (target={target_value:.2f})")
+    print(f"Processing {folder_name}  (target={target_label})")
     print("=" * 84)
 
     real_files = collect_files(real_dir, REAL_FILE_EXT, MAX_REAL_FILES)
@@ -702,13 +704,14 @@ def run_one_target(folder_name, target_value):
         title="EDT pore-radius distribution",
     )
 
-    fig.suptitle(f"Six-panel comparison at target={target_value:.2f}", fontsize=14)
+    fig.suptitle(f"Six-panel comparison at target={target_label}", fontsize=14)
     fig.tight_layout()
-    fig.savefig(out_dir / f"six_panel_phi{target_value:.2f}.png", dpi=220)
+    fig.savefig(out_dir / f"six_panel_phi{tag}.png", dpi=220)
     plt.close(fig)
 
     # ---------- Save data ----------
     save_dict = {
+        "target_porosity": np.float64(target_value),
         "edt_centers": edt_centers,
         "real_edt_mean": real_edt_mean,
         "real_edt_std": real_edt_std,
@@ -748,7 +751,7 @@ def run_one_target(folder_name, target_value):
         "gen_tau_all_xyz": gen_tau_arr,
     }
 
-    np.savez(out_dir / f"curves_phi{target_value:.2f}.npz", **save_dict)
+    np.savez(out_dir / f"curves_phi{tag}.npz", **save_dict)
 
     # ---------- summary ----------
     summary = {
@@ -775,10 +778,10 @@ def run_one_target(folder_name, target_value):
         "figure_saved": True,
     }
 
-    with open(out_dir / f"summary_phi{target_value:.2f}.json", "w", encoding="utf-8") as f:
+    with open(out_dir / f"summary_phi{tag}.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
-    print(f"Finished {folder_name} | figure saved: {out_dir / f'six_panel_phi{target_value:.2f}.png'}")
+    print(f"Finished {folder_name} | figure saved: {out_dir / f'six_panel_phi{tag}.png'}")
     return summary
 
 
