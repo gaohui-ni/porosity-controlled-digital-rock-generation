@@ -145,6 +145,34 @@ def test_metric_comparison_aggregates_by_target(tmp_path):
     assert result.loc[0, "real_perm_x_m2_count"] == 2
 
 
+def test_metric_comparison_retains_partial_permeability_rows(tmp_path):
+    path = tmp_path / "partial_metrics.csv"
+    pd.DataFrame(
+        {
+            "target_tag": ["0p11"],
+            "target_phi": [0.11],
+            "porosity": [0.109],
+            "Kx_m2": [1.0e-12],
+            "Ky_m2": [np.nan],
+            "Kz_m2": [2.0e-12],
+            "Kgeom_m2": [np.nan],
+            "perm_status_x": ["ok"],
+            "perm_status_y": ["not_percolating"],
+            "perm_status_z": ["ok"],
+            "n_valid_directions": [2],
+            "status": ["ok"],
+        }
+    ).to_csv(path, index=False)
+
+    result = aggregate(path, "real")
+
+    assert result.loc[0, "real_porosity_count"] == 1
+    assert result.loc[0, "real_Kx_m2_count"] == 1
+    assert result.loc[0, "real_Ky_m2_count"] == 0
+    assert result.loc[0, "real_Kz_m2_count"] == 1
+    assert result.loc[0, "real_Kgeom_m2_count"] == 0
+
+
 def test_fontainebleau_patch_selection_returns_closest_patches():
     volume = np.zeros((8, 8, 8), dtype=np.uint8)
     volume[::2] = 1

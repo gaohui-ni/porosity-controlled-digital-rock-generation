@@ -119,6 +119,15 @@ python scripts/evaluate_voxel_and_perm.py \
   --recursive
 ```
 
+Permeability is solved independently along the three Cartesian directions.
+Basic voxel metrics are retained even when one or more directional OpenPNM
+solves fail. A non-percolating or failed direction is recorded as `NaN`, with
+the reason in `perm_status_x`, `perm_status_y`, or `perm_status_z`, and is
+excluded only from that directional aggregate. `Kgeom` is reported only when
+all three directional permeabilities are finite and positive. The
+`n_valid_directions` column records the number of successful directions for
+each sample.
+
 Topology:
 
 ```bash

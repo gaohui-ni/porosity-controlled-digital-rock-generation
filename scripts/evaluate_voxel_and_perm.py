@@ -241,21 +241,62 @@ def directional_perm(vol01, voxel_size, axis, viscosity=1.0, accuracy="standard"
     return K
 
 
-def compute_perm_all(vol01, voxel_size, viscosity=1.0, accuracy="standard"):
-    Kx = directional_perm(vol01, voxel_size, "x", viscosity, accuracy)
-    Ky = directional_perm(vol01, voxel_size, "y", viscosity, accuracy)
-    Kz = directional_perm(vol01, voxel_size, "z", viscosity, accuracy)
-    Kgeom = float(np.exp(np.mean(np.log([Kx, Ky, Kz]))))
+def compute_perm_all(
+    vol01,
+    voxel_size,
+    viscosity=1.0,
+    accuracy="standard",
+    percolates=None,
+):
+    """Compute each direction independently and retain partial results."""
+    percolates = percolates or {"x": True, "y": True, "z": True}
+    values = {}
+    statuses = {}
+
+    for axis in ("x", "y", "z"):
+        if not percolates[axis]:
+            values[axis] = np.nan
+            statuses[axis] = "not_percolating"
+            continue
+
+        try:
+            value = float(
+                directional_perm(
+                    vol01,
+                    voxel_size,
+                    axis,
+                    viscosity,
+                    accuracy,
+                )
+            )
+            if not np.isfinite(value) or value <= 0:
+                raise ValueError(f"invalid permeability value: {value}")
+            values[axis] = value
+            statuses[axis] = "ok"
+        except Exception as exc:
+            values[axis] = np.nan
+            statuses[axis] = f"error: {type(exc).__name__}: {exc}"
+
+    valid = [values[axis] for axis in ("x", "y", "z") if np.isfinite(values[axis])]
+    kgeom = (
+        float(np.exp(np.mean(np.log(valid))))
+        if len(valid) == 3 and all(value > 0 for value in valid)
+        else np.nan
+    )
 
     return {
-        "Kx_m2": Kx,
-        "Ky_m2": Ky,
-        "Kz_m2": Kz,
-        "Kgeom_m2": Kgeom,
-        "Kx_D": Kx / DARCY_IN_M2,
-        "Ky_D": Ky / DARCY_IN_M2,
-        "Kz_D": Kz / DARCY_IN_M2,
-        "Kgeom_D": Kgeom / DARCY_IN_M2,
+        "Kx_m2": values["x"],
+        "Ky_m2": values["y"],
+        "Kz_m2": values["z"],
+        "Kgeom_m2": kgeom,
+        "Kx_D": values["x"] / DARCY_IN_M2,
+        "Ky_D": values["y"] / DARCY_IN_M2,
+        "Kz_D": values["z"] / DARCY_IN_M2,
+        "Kgeom_D": kgeom / DARCY_IN_M2,
+        "perm_status_x": statuses["x"],
+        "perm_status_y": statuses["y"],
+        "perm_status_z": statuses["z"],
+        "n_valid_directions": len(valid),
     }
 
 
@@ -328,7 +369,13 @@ def process_one_file(
 
     sv = surface_area_per_volume(vol01)
     edt = edt_stats(vol01)
-    perm = compute_perm_all(vol01, voxel_size=voxel_size, viscosity=1.0, accuracy=perm_accuracy)
+    perm = compute_perm_all(
+        vol01,
+        voxel_size=voxel_size,
+        viscosity=1.0,
+        accuracy=perm_accuracy,
+        percolates={"x": px_is, "y": py_is, "z": pz_is},
+    )
 
     target_phi, target_tag = infer_target_info(str(path))
 
@@ -424,6 +471,10 @@ def main():
         "Ky_D",
         "Kz_D",
         "Kgeom_D",
+        "perm_status_x",
+        "perm_status_y",
+        "perm_status_z",
+        "n_valid_directions",
         "status",
         "error",
     ]
@@ -479,6 +530,10 @@ def main():
                 "Ky_D": "",
                 "Kz_D": "",
                 "Kgeom_D": "",
+                "perm_status_x": "not_computed",
+                "perm_status_y": "not_computed",
+                "perm_status_z": "not_computed",
+                "n_valid_directions": 0,
                 "status": "error",
                 "error": str(e),
             }
