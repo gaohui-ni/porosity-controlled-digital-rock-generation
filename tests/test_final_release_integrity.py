@@ -158,6 +158,8 @@ def test_code_availability_and_readme_match_release_policy():
     assert "complete two-dataset workflow additionally requires" in readme
     assert "external ANU Fontainebleau volumes" in readme
     assert "A release archive may also be provided" not in readme
+    assert "## Authors" in readme
+    assert "Gaohui Ni, Yanyan Ma, Shaowei Ma, Yuxin Yang, Xuefeng Liu, and Hao Ni" in readme
 
 
 def test_pnm_requires_generated_seg_key():

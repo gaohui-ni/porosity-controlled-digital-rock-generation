@@ -2,6 +2,10 @@
 
 Core implementation for the manuscript **A Porosity-Controllable Generative Framework for Three-Dimensional Porous Media Based on Discrete Latent-Space Diffusion**.
 
+## Authors
+
+Gaohui Ni, Yanyan Ma, Shaowei Ma, Yuxin Yang, Xuefeng Liu, and Hao Ni
+
 This repository provides a reproducible code base for 3D digital rock generation with a lightweight 3D VQ-VAE, a FiLM-conditioned latent DDPM, and quantile-based adaptive binarization for explicit porosity control.
 
 ## Scope
