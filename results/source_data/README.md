@@ -7,6 +7,6 @@ The official pipelines write figure source-data tables here:
 - `fig8_permeability.csv`: main-sandstone Real-Gen permeability comparison
 - `fig9_fontainebleau.csv`: Fontainebleau Real-Gen comparison
 
-These generated CSV files are intentionally not prepopulated before the final
-evaluation run. Their figure-number mapping must be checked against the final
-accepted manuscript layout.
+The evaluation pipelines generate these figure source-data tables locally.
+These derived CSV files are not distributed in the public repository. They are
+available from the corresponding author upon reasonable request.
