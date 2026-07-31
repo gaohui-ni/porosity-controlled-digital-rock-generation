@@ -14,6 +14,10 @@ For a lightweight figure-output sanity check after configuring the data paths, u
 python scripts/reproduce_figures.py --config configs/main.yaml
 ```
 
+This command runs the synthetic demo only. Add `--run-full-pipeline` only when
+the manuscript-scale training, generation, and evaluation workflow is intended,
+or use `--skip-pipeline` to plot from existing outputs.
+
 | Manuscript result group | Code entry point | Output folder |
 | --- | --- | --- |
 | Porosity-controlled generation demo | `python run_demo.py` | `examples/` |

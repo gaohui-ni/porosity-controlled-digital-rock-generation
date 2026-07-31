@@ -10,7 +10,10 @@ This repository supports the following levels of reproducibility:
 2. **Full workflow reproduction through retraining**: use the public raw data, supplied configuration files, and training scripts to retrain the VQ-VAE and latent DDPM, generate porosity-controlled samples, and rerun the evaluation workflow.
 3. **Statistical manuscript-result reproduction**: independently retrained models are expected to reproduce the reported porosity-control accuracy, structural statistics, pore-network characteristics, and permeability trends within normal stochastic variation.
 
-The final trained checkpoints used to produce the manuscript figures are not distributed. Therefore, exact sample-level, bitwise, or numerically identical reproduction of the published generated volumes is not supported.
+The final trained checkpoints are distributed under `savedmodels/` through Git
+LFS and support reproduction of the inference and analysis workflow. Because
+diffusion sampling and numerical results can depend on random seeds, hardware,
+and software versions, bitwise-identical generated volumes are not guaranteed.
 
 ## Lightweight Functional Test
 

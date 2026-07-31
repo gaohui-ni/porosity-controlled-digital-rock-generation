@@ -24,7 +24,10 @@ See `docs/fontainebleau_protocol.md` for the validation protocol.
 
 ## Derived Results
 
-Derived statistical results, figure source tables, and analysis data can be regenerated with the scripts in this repository after the raw data are available locally and the models have been retrained.
+Derived statistical results, figure source tables, and analysis data can be
+regenerated using the released checkpoints, or by independently retraining the
+models from the provided workflows, after the required raw data are available
+locally.
 
 Typical derived outputs include:
 

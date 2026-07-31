@@ -36,6 +36,13 @@ porosity and three unseen porosities.
 - Generated samples per target: 50
 - Comparison patch size: `256 x 256 x 256` voxels
 
+For each `480 x 480 x 480` parent volume, the workflow extracts 50 overlapping
+`256 x 256 x 256` subvolumes using a 32-voxel stride and a 32-voxel minimum
+origin separation. These are overlapping subvolumes from one parent rock
+volume, not 50 independent rock specimens. Shaded bands therefore describe
+dispersion among overlapping subvolumes and must not be interpreted as
+statistical uncertainty estimated from 50 independent specimens.
+
 The training porosity and FiLM normalization center are different quantities
 and must not be substituted for one another.
 

@@ -1,4 +1,6 @@
 from pathlib import Path
+import subprocess
+import sys
 
 import numpy as np
 import pandas as pd
@@ -138,6 +140,20 @@ def test_pipeline_contains_real_generated_comparisons():
     assert "Evaluate Fontainebleau S2, lineal path, and EDT" in source
     assert "Evaluate Fontainebleau topology" in source
     assert "Evaluate Fontainebleau PNM six-panel descriptors" in source
+
+
+def test_figure_helper_defaults_to_demo_and_requires_full_opt_in():
+    command = [
+        sys.executable,
+        str(ROOT / "scripts" / "reproduce_figures.py"),
+        "--config",
+        "configs/main.yaml",
+        "--dry-run",
+    ]
+    result = subprocess.run(command, cwd=ROOT, check=True, capture_output=True, text=True)
+
+    assert "run_pipeline.py --mode demo" in result.stdout
+    assert "run_pipeline.py --mode full" not in result.stdout
 
 
 def test_metric_comparison_aggregates_by_target(tmp_path):

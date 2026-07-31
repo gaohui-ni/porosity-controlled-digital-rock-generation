@@ -34,6 +34,11 @@ def parse_args():
         help="Use existing outputs and only run plotting/summary steps.",
     )
     parser.add_argument(
+        "--run-full-pipeline",
+        action="store_true",
+        help="Explicitly run the manuscript-scale full workflow before plotting.",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Print the figure reproduction commands without executing them.",
@@ -45,13 +50,28 @@ def main():
     args = parse_args()
     results_root = Path(args.results_root)
 
-    if not args.skip_pipeline:
+    if args.skip_pipeline and args.run_full_pipeline:
+        raise ValueError("--skip-pipeline and --run-full-pipeline cannot be used together.")
+
+    if args.run_full_pipeline:
         run(
             [
                 sys.executable,
                 "run_pipeline.py",
                 "--mode",
                 "full",
+                "--config",
+                args.config,
+            ],
+            dry_run=args.dry_run,
+        )
+    elif not args.skip_pipeline:
+        run(
+            [
+                sys.executable,
+                "run_pipeline.py",
+                "--mode",
+                "demo",
                 "--config",
                 args.config,
             ],

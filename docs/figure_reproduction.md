@@ -46,7 +46,10 @@ For a lightweight figure-output sanity check:
 python scripts/reproduce_figures.py --config configs/main.yaml
 ```
 
-This helper validates the output path and can generate a synthetic demo slice/two-point-probability figure. Manuscript-scale figures require the full evaluation outputs listed below.
+This helper runs the synthetic demo by default and validates the output path.
+It does not start manuscript-scale training unless `--run-full-pipeline` is
+provided explicitly. Use `--skip-pipeline` to plot from existing outputs.
+Manuscript-scale figures require the full evaluation outputs listed below.
 
 ## Spatial Statistics Figures
 

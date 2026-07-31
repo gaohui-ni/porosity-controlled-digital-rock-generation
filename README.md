@@ -26,7 +26,7 @@ docs/         Installation, user guide, reproducibility, and data/code availabil
 data/         Placeholder folders for user-provided raw data.
 outputs/      Placeholder folder for generated checkpoints and outputs.
 results/      Placeholder folder for generated figures, curves, and tables.
-savedmodels/  Final trained model checkpoint layout and optional Git LFS checkpoint files.
+savedmodels/  Final trained model checkpoints distributed through Git LFS.
 ```
 
 ## Installation
@@ -163,7 +163,12 @@ For a lightweight figure-output sanity check and figure-path helper:
 python scripts/reproduce_figures.py --config configs/main.yaml
 ```
 
-The helper validates the figure-output path and can generate a synthetic demo slice/S2 figure after running `python run_demo.py`. Manuscript-scale figures are generated from the full evaluation outputs listed in [docs/figure_reproduction.md](docs/figure_reproduction.md).
+By default, this helper runs only the synthetic demo and validates the
+figure-output path. It never starts manuscript-scale training unless
+`--run-full-pipeline` is supplied explicitly. To plot from existing outputs
+without running even the demo, use `--skip-pipeline`. Manuscript-scale figures
+are generated from the full evaluation outputs listed in
+[docs/figure_reproduction.md](docs/figure_reproduction.md).
 
 Before submission, use [docs/submission_checklist.md](docs/submission_checklist.md) and [docs/journal_compliance.md](docs/journal_compliance.md) for the final repository audit. Precomputed summary files are intentionally not bundled before the final full run.
 
