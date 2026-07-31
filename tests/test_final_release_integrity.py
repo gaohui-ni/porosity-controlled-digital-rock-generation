@@ -106,6 +106,11 @@ def test_figure_registry_maps_all_manuscript_figures():
         assert f"| Fig. {number} |" in registry
     assert "| Figure | Result | Script or implementation | Required input | Local output |" in registry
     assert "scripts/plot_slice_porosity.py" in registry
+    assert "Four main-text panels" in registry
+    assert "(a-c)" in registry
+    assert "(d) S/V comparison" in registry
+    assert "used in the Supplementary Material" in registry
+    assert "not a panel of main-text Fig. 6" in registry
 
 
 def test_pnm_requires_generated_seg_key():

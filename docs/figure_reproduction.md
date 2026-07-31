@@ -65,9 +65,14 @@ python scripts/plot_slice_porosity.py \
 Replace the two sample placeholders with the representative files used in the
 manuscript. The command writes both the PNG and an adjacent CSV locally.
 
-## Spatial Statistics Figures
+## Fig. 6 and Supplementary Spatial Statistics
 
-Use these outputs for directional two-point correlation function `S2`, lineal-path, and EDT pore-size figures.
+Main-text Fig. 6 contains four panels: the `X`, `Y`, and `Z` directional
+two-point correlation functions `S2(r)` as panels (a-c), followed by the `S/V`
+comparison as panel (d). The direction-averaged `R = mean(X, Y, Z)` curve is
+retained for the Supplementary Material and is not part of main-text Fig. 6.
+
+Use these outputs for directional `S2`, lineal-path, and EDT pore-size figures:
 
 ```bash
 python scripts/evaluate_s2_lineal_edt.py \
@@ -83,6 +88,10 @@ Output folder:
 ```text
 results/fig_s2/
 ```
+
+Within each porosity folder, `s2_X_*`, `s2_Y_*`, and `s2_Z_*` provide the
+main-text directional curves. `s2_R_*` is the supplementary direction-averaged
+curve.
 
 ## Permeability and Voxel-Metric Figures
 
