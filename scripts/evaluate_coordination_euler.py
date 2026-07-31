@@ -7,10 +7,9 @@ import matplotlib.pyplot as plt
 import tifffile
 import imageio.v2 as imageio
 
-from scipy import ndimage as ndi
-from skimage import measure
-
 import porespy as ps
+
+from src.metrics.euler_characteristic import euler_characteristic_curve
 
 
 # =========================================================
@@ -213,46 +212,6 @@ def coordination_distribution(volume_bool, max_coord=8):
     return np.arange(max_coord + 1), prob
 
 
-def specific_euler_curve(
-    volume_bool,
-    voxel_size_um=3.5,
-    radius_step_um=3.5,
-    radius_max_um=None,
-    normalize_by="total_voxels",
-):
-    """
-    Compute the specific Euler characteristic versus pore-radius curve.
-    Radius is reported in micrometers.
-    """
-    edt = ndi.distance_transform_edt(volume_bool) * voxel_size_um
-    pore_vals = edt[edt > 0]
-
-    if pore_vals.size == 0:
-        raise ValueError("The sample has no pore voxels, so the Euler curve cannot be computed.")
-
-    if radius_max_um is None:
-        radius_max_um = float(np.percentile(pore_vals, 99))
-
-    radii = np.arange(0, radius_max_um + 1e-9, radius_step_um)
-
-    if normalize_by == "total_voxels":
-        denom = volume_bool.size
-    elif normalize_by == "pore_voxels":
-        denom = int(volume_bool.sum())
-    else:
-        raise ValueError("normalize_by must be either total_voxels or pore_voxels.")
-
-    denom = max(denom, 1)
-
-    curve = []
-    for r in radii:
-        mask = edt >= r
-        chi = measure.euler_number(mask.astype(np.uint8), connectivity=3)
-        curve.append(chi / denom * 1e3)
-
-    return radii, np.asarray(curve, dtype=float)
-
-
 def process_one_sample(
     sample_path,
     invert=False,
@@ -263,7 +222,6 @@ def process_one_sample(
     radius_step_um=3.5,
     radius_max_um=None,
     max_coord=8,
-    normalize_by="total_voxels",
     npz_key="auto",
     verbose=False,
 ):
@@ -278,12 +236,11 @@ def process_one_sample(
 
     coord_x, coord_y = coordination_distribution(bw, max_coord=max_coord)
 
-    radii, euler_curve = specific_euler_curve(
+    radii, euler_curve = euler_characteristic_curve(
         bw,
         voxel_size_um=voxel_size_um,
         radius_step_um=radius_step_um,
         radius_max_um=radius_max_um,
-        normalize_by=normalize_by,
     )
 
     result = {
@@ -401,8 +358,8 @@ def plot_phi_average_figure(phi_name, real_stats, gen_stats, save_path: Path):
     )
 
     ax1.set_xlabel("Pore radius (um)")
-    ax1.set_ylabel("Specific Euler characteristic (x1e-3)")
-    ax1.set_title(f"{phi_name} - Mean specific Euler characteristic")
+    ax1.set_ylabel("Euler characteristic")
+    ax1.set_title(f"{phi_name} - Mean Euler characteristic")
     ax1.legend(frameon=False, fontsize=9)
     ax1.spines["top"].set_visible(False)
     ax1.spines["right"].set_visible(False)
@@ -470,7 +427,6 @@ def run_pipeline(args):
                     radius_step_um=args.radius_step_um,
                     radius_max_um=args.radius_max_um,
                     max_coord=args.max_coord,
-                    normalize_by=args.normalize_by,
                     npz_key=args.npz_key,
                     verbose=args.verbose_npz,
                 )
@@ -485,7 +441,7 @@ def run_pipeline(args):
 
                 pd.DataFrame({
                     "radius_um": res["radii"],
-                    "specific_euler_x1e3": res["euler"],
+                    "euler_characteristic": res["euler"],
                 }).to_csv(out_root / "per_sample_curves" / f"{phi}_real_{idx}_euler.csv", index=False)
 
             except Exception as e:
@@ -505,7 +461,6 @@ def run_pipeline(args):
                     radius_step_um=args.radius_step_um,
                     radius_max_um=args.radius_max_um,
                     max_coord=args.max_coord,
-                    normalize_by=args.normalize_by,
                     npz_key=args.npz_key,
                     verbose=args.verbose_npz,
                 )
@@ -520,7 +475,7 @@ def run_pipeline(args):
 
                 pd.DataFrame({
                     "radius_um": res["radii"],
-                    "specific_euler_x1e3": res["euler"],
+                    "euler_characteristic": res["euler"],
                 }).to_csv(out_root / "per_sample_curves" / f"{phi}_gen_{idx}_euler.csv", index=False)
 
             except Exception as e:
@@ -603,8 +558,6 @@ def parse_args():
     parser.add_argument("--radius-step-um", type=float, default=3.5, help="Radius step for the right panel; default is 3.5 um.")
     parser.add_argument("--radius-max-um", type=float, default=None, help="Maximum radius for the right panel; automatic by default.")
     parser.add_argument("--max-coord", type=int, default=8)
-    parser.add_argument("--normalize-by", type=str, default="total_voxels", choices=["total_voxels", "pore_voxels"])
-
     parser.add_argument("--invert", action="store_true", help="Use only if the pore/solid semantics are inverted.")
     parser.add_argument("--threshold", type=float, default=None)
 

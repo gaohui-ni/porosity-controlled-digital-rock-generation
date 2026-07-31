@@ -5,6 +5,7 @@ import pandas as pd
 
 from src.utils.volume_io import load_npz_array
 from src.utils.naming import phi_tag
+from src.metrics.euler_characteristic import euler_characteristic_curve
 from scripts.compare_metric_tables import aggregate
 from scripts.export_source_data import export_pnm
 from scripts.prepare_fontainebleau_real_sets import select_patches
@@ -24,6 +25,22 @@ def test_phi_tag_preserves_significant_porosity_digits():
     }
 
     assert {value: phi_tag(value) for value in expected} == expected
+
+
+def test_euler_curve_at_zero_uses_original_pore_space_without_normalization():
+    volume = np.zeros((7, 7, 7), dtype=bool)
+    volume[1, 1, 1] = True
+    volume[5, 5, 5] = True
+
+    radii, curve = euler_characteristic_curve(
+        volume,
+        voxel_size_um=1.0,
+        radius_step_um=1.0,
+        radius_max_um=1.0,
+    )
+
+    assert radii[0] == 0.0
+    assert curve[0] == 2.0
 
 
 def test_generated_npz_reader_selects_seg_and_validates_porosity(tmp_path):
