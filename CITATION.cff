@@ -14,8 +14,8 @@ authors:
     given-names: Xuefeng
   - family-names: Ni
     given-names: Hao
-version: 0.1.0
-date-released: 2026-07-31
+version: 0.1.1
+date-released: 2026-08-01
 license: MIT
 repository-code: "https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation"
 preferred-citation:

@@ -2,7 +2,7 @@
 
 setup(
     name="porosity-controlled-digital-rock-generation",
-    version="0.1.0",
+    version="0.1.1",
     packages=find_packages(),
     description="Porosity-controlled 3D digital rock generation using 3D VQ-VAE and latent DDPM.",
     author="Gaohui Ni",
