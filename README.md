@@ -10,16 +10,33 @@ This repository provides a reproducible code base for 3D digital rock generation
 
 ## Methodological Contributions
 
-The contribution is not the isolated use of VQ-VAE, FiLM, diffusion, or
-quantile thresholding. It is their integration into a three-dimensional
-discrete latent-space workflow that combines learned continuous porosity
-conditioning with an explicit output-space porosity constraint and evaluates
-the resulting rocks from voxel morphology through pore-network structure and
-permeability.
+This study introduces a unified discrete latent-space conditional diffusion
+framework designed around three persistent challenges in three-dimensional
+digital-rock generation: the computational cost of voxel-space modeling,
+representation learning from limited physical samples, and explicit control
+of a prescribed structural property.
 
-The scope of these contributions, their implementation locations, their
-relationship to manuscript Figs. 1-3 and 6-9, and the limits of the claims are
-documented in
+The principal methodological contribution is a dual-level porosity-control
+strategy built on a compact vector-quantized latent representation. A
+lightweight 3D VQ-VAE compresses `256^3`-voxel micro-CT volumes into a `64^3`
+discrete latent spatial domain. Continuous target porosity modulates the latent
+denoising features at the 3D U-Net bottleneck through FiLM, while adaptive
+quantile-threshold binarization imposes an explicit output-space pore-count
+constraint during decoding.
+
+The novelty therefore lies in the unified control pathway rather than in any
+isolated component: discrete latent-space compression makes three-dimensional
+diffusion computationally feasible for the reported volume size, learned
+conditioning governs porosity-dependent generation, and seeded deterministic
+output projection enforces the requested global porosity up to finite-grid
+integer discretization. The resulting volumes are evaluated beyond visual
+similarity and porosity agreement through spatial statistics, pore-network
+geometry, topology, and permeability. A separately trained Fontainebleau
+experiment further examines extrapolation to porosity conditions not
+represented during its training.
+
+Implementation locations, manuscript mappings, validation evidence, and the
+scope of these framework-level claims are documented in
 [docs/methodological_novelty.md](docs/methodological_novelty.md).
 
 ## Scope

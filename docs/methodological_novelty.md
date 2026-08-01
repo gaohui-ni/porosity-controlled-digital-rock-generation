@@ -1,12 +1,14 @@
 # Methodological Contributions
 
 This document maps the methodological claims in the manuscript to the released
-implementation and evaluation workflow. The contribution is a system design
-for porosity-controllable three-dimensional digital-rock generation. It does
-not claim that VQ-VAE, FiLM, DDPM, or quantile thresholding is independently a
-new algorithm.
+implementation and evaluation workflow. The principal novelty lies in a
+dual-control discrete latent-space framework that couples learned
+porosity-dependent structural generation with explicit output-space porosity
+enforcement for physically evaluated `256^3` digital-rock generation under
+limited-sample conditions. It does not claim that VQ-VAE, FiLM, DDPM, or
+quantile thresholding is independently a new algorithm.
 
-## 1. Problem Addressed
+## 1. Computational Problem
 
 Generating a `256 x 256 x 256` binary digital rock is demanding because the
 model must represent three-dimensional pore geometry, generate stochastic
@@ -15,6 +17,13 @@ produce a binary volume suitable for morphological and transport analysis.
 Matching only the mean pore fraction is insufficient: connectivity,
 two-point correlation, pore and throat geometry, coordination, and
 permeability must also remain geologically meaningful.
+
+In the reported setting, high-resolution physical volumes are limited and
+direct diffusion over `256^3` voxels would carry substantial memory and
+computational cost. Learned conditioning alone also does not mathematically
+guarantee that a binarized output will attain a prescribed global pore
+fraction. The framework therefore combines spatial compression, learned
+continuous conditioning, and explicit output projection in one control path.
 
 The framework addresses these requirements with three coupled stages:
 
@@ -26,32 +35,33 @@ The framework addresses these requirements with three coupled stages:
 
 These stages correspond to manuscript Figs. 1, 2, and 3, respectively.
 
-## 2. Distinction From Direct VAE, GAN, and Voxel-Space DDPM Workflows
+## 2. Discrete Latent-Space Diffusion Under Limited Data
 
-The methodological distinction lies in the complete control pathway rather
-than in any component considered alone.
+A lightweight 3D VQ-VAE maps each `256 x 256 x 256` binary micro-CT
+subvolume to a `32 x 64 x 64 x 64` vector-quantized latent tensor. Diffusion
+therefore operates in a `64^3` latent spatial domain rather than directly in
+the original `256^3` voxel domain. The finite 1024-entry codebook constrains
+the representation to a learned set of reusable embeddings.
 
-- Compared with direct 3D VAE generation, the released workflow performs
-  stochastic denoising in a vector-quantized latent representation and then
-  decodes the generated latent field to the voxel domain.
-- Compared with GAN-based generation, it uses a diffusion denoising objective
-  and does not rely on adversarial training.
-- Compared with a voxel-space 3D DDPM, diffusion operates on a
-  `32 x 64 x 64 x 64` quantized latent tensor instead of directly on the
-  `1 x 256 x 256 x 256` binary volume. This reduces the spatial diffusion
-  domain while retaining a three-dimensional representation.
-- Compared with unconditional or discrete class-conditional generation, the
-  target porosity is represented as a continuous scalar and is used during
-  both DDPM training and sampling.
-- Unlike a purely learned conditioning pathway, the final binary output is
-  also subjected to an explicit deterministic pore-count constraint.
+In this application, the design reduces the spatial cost of three-dimensional
+diffusion and provides a discrete representational constraint for learning
+from subvolumes of a parent sandstone sample. These are architectural roles,
+not claims that a separate ablation has proved the codebook alone to be the
+cause of improved stability.
 
-The VQ-VAE architecture, 1024-entry codebook, and `256^3` to `64^3` latent
-mapping are implemented in `src/models/vqvae3d.py`. Latent statistics,
-training, and sampling are implemented in
+The VQ-VAE architecture and quantizer are implemented in
+`src/models/vqvae3d.py`. Latent-statistics estimation and the full training
+path are implemented in
 `scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py`.
 
-## 3. Role of Continuous Porosity Conditioning and FiLM
+## 3. Dual Porosity-Control Mechanism
+
+The framework separates learned porosity-dependent generation from exact
+global pore-count enforcement. The first level conditions latent denoising;
+the second level projects the decoded probability field to the requested
+porosity.
+
+### 3.1 Learned Porosity-Dependent Structural Control
 
 For each training patch, porosity is measured from its binary voxel field. The
 condition supplied to the denoiser is normalized consistently during training
@@ -84,7 +94,7 @@ output-space porosity constraint. In the absence of a dedicated conditioning
 ablation, the repository does not claim that FiLM is universally superior to
 all alternative conditioning mechanisms.
 
-## 4. Role of Quantile-Based Porosity Projection
+### 3.2 Exact Output-Space Porosity Constraint
 
 Quantile binarization is accurately described as an inference-time output
 projection, not as a replacement for the generative model. Given a decoded
@@ -109,6 +119,27 @@ properties are evaluated separately. The implementation is in
 porosity behavior is covered by `tests/test_quantile_binarization.py` and
 `tests/test_porosity.py`.
 
+## 4. Distinction From Existing 3D Generative Workflows
+
+The methodological advance lies in the complete control architecture:
+
+- compared with direct 3D VAE sampling, stochastic generation is performed
+  through diffusion in a vector-quantized latent representation;
+- compared with GAN-based generation, the model uses a denoising objective
+  without adversarial optimization;
+- compared with voxel-space 3D DDPMs, diffusion operates in a spatially
+  compressed `64^3` latent domain rather than the `256^3` binary domain;
+- compared with unconditional or discrete class-conditional generation,
+  porosity is a continuous physical condition during training and sampling;
+- compared with purely learned conditioning, output-space projection enforces
+  the prescribed global pore count; and
+- compared with fixed-threshold decoding, the threshold adapts to the requested
+  porosity and the decoded probability ranking.
+
+The framework should therefore be understood as a unified physical-control
+architecture, not as a claim that its established components were individually
+invented in this study.
+
 ## 5. Geoscientific Evidence Chain
 
 The validation strategy asks whether porosity control is accompanied by
@@ -127,7 +158,7 @@ as follows:
 The complete mapping from figures to commands, inputs, and outputs is provided
 in `docs/figure_mapping.md` and `docs/figure_reproduction.md`.
 
-## 6. Transferability and Geoscientific Interpretation
+## 6. Out-of-Range Conditional Generation
 
 The experiments investigate whether local structural variation extracted from
 a parent sandstone volume can support generation across prescribed porosity
@@ -136,12 +167,15 @@ Fontainebleau experiment using one training volume and three independently
 obtained volumes at unseen porosity conditions, with evaluation extending from
 voxel morphology to pore-network descriptors and permeability.
 
+The purpose is to test whether the learned conditional relationship among
+porosity, pore structure, and transport response can be extrapolated beyond
+the training porosity within the examined Fontainebleau sandstone domain.
 This evidence supports porosity extrapolation within the separately trained
-Fontainebleau experiment and the tested porosity range. It is not a zero-shot
-transfer of the main-sandstone model and does not establish universal
-generalization across lithologies. Agreement in porosity is interpreted
-together with spatial, topological, and transport metrics, not as a standalone
-guarantee of physical fidelity.
+experiment and tested porosity interval. It is not a zero-shot transfer of the
+main-sandstone model and does not establish universal generalization across
+lithologies. Agreement in porosity is interpreted together with spatial,
+topological, and transport metrics, not as a standalone guarantee of physical
+fidelity.
 
 ## 7. Scope and Limitations
 
