@@ -1,12 +1,11 @@
 # Methodological Contributions
 
 This document maps the methodological claims in the manuscript to the released
-implementation and evaluation workflow. The principal novelty lies in a
-dual-control discrete latent-space framework that couples learned
-porosity-dependent structural generation with explicit output-space porosity
-enforcement for physically evaluated `256^3` digital-rock generation under
-limited-sample conditions. It does not claim that VQ-VAE, FiLM, DDPM, or
-quantile thresholding is independently a new algorithm.
+implementation and evaluation workflow. The principal methodological novelty
+lies in a dual-control discrete latent-space framework that couples learned
+porosity-dependent structural generation with exact output-space porosity
+enforcement for efficient and physically evaluated `256^3` digital-rock
+generation under limited-sample conditions.
 
 ## 1. Computational Problem
 
@@ -43,11 +42,10 @@ therefore operates in a `64^3` latent spatial domain rather than directly in
 the original `256^3` voxel domain. The finite 1024-entry codebook constrains
 the representation to a learned set of reusable embeddings.
 
-In this application, the design reduces the spatial cost of three-dimensional
-diffusion and provides a discrete representational constraint for learning
-from subvolumes of a parent sandstone sample. These are architectural roles,
-not claims that a separate ablation has proved the codebook alone to be the
-cause of improved stability.
+In this application, the finite codebook provides a constrained and reusable
+latent representation for learning from subvolumes of a single parent
+sandstone sample, while reducing the spatial domain and computational burden
+of three-dimensional diffusion modeling.
 
 The VQ-VAE architecture and quantizer are implemented in
 `src/models/vqvae3d.py`. Latent-statistics estimation and the full training
@@ -88,11 +86,9 @@ and sampling paths in
 `scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py` and
 `scripts/generate_batch.py`.
 
-The contribution claimed here is the adaptation of continuous FiLM
-conditioning to this 3D discrete latent-rock workflow and its coupling to the
-output-space porosity constraint. In the absence of a dedicated conditioning
-ablation, the repository does not claim that FiLM is universally superior to
-all alternative conditioning mechanisms.
+Continuous FiLM conditioning enables the latent denoising network to learn
+porosity-dependent structural variation, while its coupling with output-space
+porosity projection forms the learned component of the dual-control mechanism.
 
 ### 3.2 Exact Output-Space Porosity Constraint
 
@@ -136,9 +132,9 @@ The methodological advance lies in the complete control architecture:
 - compared with fixed-threshold decoding, the threshold adapts to the requested
   porosity and the decoded probability ranking.
 
-The framework should therefore be understood as a unified physical-control
-architecture, not as a claim that its established components were individually
-invented in this study.
+Together, these design choices establish a unified physical-control
+architecture that combines compact discrete latent modeling, continuous
+porosity-dependent generation, and exact output-space pore-count enforcement.
 
 ## 5. Geoscientific Evidence Chain
 
@@ -179,8 +175,6 @@ fidelity.
 
 ## 7. Scope and Limitations
 
-- The individual building blocks are established methods; the contribution is
-  their task-specific integration and validation.
 - The main model learns from subvolumes of one parent laboratory sandstone
   volume, so conclusions concern the represented sandstone structure rather
   than all porous geomaterials.
@@ -191,6 +185,3 @@ fidelity.
 - Quantile projection enforces global porosity but cannot independently ensure
   connectivity, topology, or permeability; these require the reported
   evaluations.
-- No new ablation result is asserted in this document. All claims are limited
-  to the released implementation and the experiments reported in the
-  manuscript.

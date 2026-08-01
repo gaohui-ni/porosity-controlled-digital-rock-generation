@@ -16,19 +16,21 @@ digital-rock generation: the computational cost of voxel-space modeling,
 representation learning from limited physical samples, and explicit control
 of a prescribed structural property.
 
-The principal methodological contribution is a dual-level porosity-control
-strategy built on a compact vector-quantized latent representation. A
-lightweight 3D VQ-VAE compresses `256^3`-voxel micro-CT volumes into a `64^3`
-discrete latent spatial domain. Continuous target porosity modulates the latent
-denoising features at the 3D U-Net bottleneck through FiLM, while adaptive
-quantile-threshold binarization imposes an explicit output-space pore-count
-constraint during decoding.
+The principal methodological novelty lies in a dual-control discrete
+latent-space framework that couples learned porosity-dependent structural
+generation with exact output-space porosity enforcement for efficient and
+physically evaluated `256^3` digital-rock generation under limited-sample
+conditions.
 
-The novelty therefore lies in the unified control pathway rather than in any
-isolated component: discrete latent-space compression makes three-dimensional
-diffusion computationally feasible for the reported volume size, learned
-conditioning governs porosity-dependent generation, and seeded deterministic
-output projection enforces the requested global porosity up to finite-grid
+A lightweight 3D VQ-VAE compresses `256^3`-voxel micro-CT volumes into a
+`64^3` discrete latent spatial domain. Continuous target porosity modulates the
+latent denoising features at the 3D U-Net bottleneck through FiLM, while
+adaptive quantile-threshold binarization imposes an explicit output-space
+pore-count constraint during decoding.
+
+This unified control pathway combines discrete latent-space compression,
+learned porosity-dependent generation, and seeded deterministic output
+projection that enforces the requested global porosity up to finite-grid
 integer discretization. The resulting volumes are evaluated beyond visual
 similarity and porosity agreement through spatial statistics, pore-network
 geometry, topology, and permeability. A separately trained Fontainebleau
