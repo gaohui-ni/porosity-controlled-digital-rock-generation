@@ -23,10 +23,10 @@ physically evaluated `256^3` digital-rock generation under limited-sample
 conditions.
 
 A lightweight 3D VQ-VAE compresses `256^3`-voxel micro-CT volumes into a
-`64^3` discrete latent spatial domain. Continuous target porosity modulates the
-latent denoising features at the 3D U-Net bottleneck through FiLM, while
-adaptive quantile-threshold binarization imposes an explicit output-space
-pore-count constraint during decoding.
+`64^3` discrete latent spatial domain. Continuous target porosity modulates
+latent denoising features through FiLM, while adaptive quantile-threshold
+binarization imposes an explicit output-space pore-count constraint during
+decoding.
 
 This unified control pathway combines discrete latent-space compression,
 learned porosity-dependent generation, and seeded deterministic output

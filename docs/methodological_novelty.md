@@ -72,15 +72,9 @@ phi_scaled = (phi_target - poro_center) / poro_scale
 The manuscript configuration uses `poro_center = 0.13` and
 `poro_scale = 0.02`, as recorded in `configs/main.yaml`. The normalized scalar
 is concatenated with the sinusoidal diffusion-time embedding. An MLP maps this
-joint condition to channel-wise `gamma` and `beta` parameters. The modulation
-is applied at the latent 3D U-Net bottleneck immediately before self-attention:
-
-```text
-mid = attention(x3 * (1 + gamma) + beta)
-```
-
-Thus, porosity is not appended as another voxel channel. It modulates latent
-denoising features jointly with diffusion time. The implementation is in
+joint condition to channel-wise `gamma` and `beta` parameters that modulate
+latent denoising features jointly with diffusion time. Thus, porosity is not
+appended as another voxel channel. The implementation is in
 `src/models/unet3d_film.py`, and the same normalization is used by the training
 and sampling paths in
 `scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py` and
