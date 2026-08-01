@@ -8,6 +8,20 @@ Gaohui Ni, Yanyan Ma, Shaowei Ma, Yuxin Yang, Xuefeng Liu, and Hao Ni
 
 This repository provides a reproducible code base for 3D digital rock generation with a lightweight 3D VQ-VAE, a FiLM-conditioned latent DDPM, and quantile-based adaptive binarization for explicit porosity control.
 
+## Methodological Contributions
+
+The contribution is not the isolated use of VQ-VAE, FiLM, diffusion, or
+quantile thresholding. It is their integration into a three-dimensional
+discrete latent-space workflow that combines learned continuous porosity
+conditioning with an explicit output-space porosity constraint and evaluates
+the resulting rocks from voxel morphology through pore-network structure and
+permeability.
+
+The scope of these contributions, their implementation locations, their
+relationship to manuscript Figs. 1-3 and 6-9, and the limits of the claims are
+documented in
+[docs/methodological_novelty.md](docs/methodological_novelty.md).
+
 ## Scope
 
 The repository contains:
