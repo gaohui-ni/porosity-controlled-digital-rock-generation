@@ -122,7 +122,7 @@ as follows:
 | Directional two-point correlation function `S2` | Direction-dependent spatial organization | `scripts/evaluate_s2_lineal_edt.py` | Fig. 6 |
 | Pore, throat, EDT, shape-factor, and coordination distributions | Pore-scale geometry and topology | `scripts/evaluate_pore_network_6panel.py`, `scripts/evaluate_coordination_euler.py` | Fig. 7 |
 | Directional and geometric-mean permeability | Transport response and anisotropy | `scripts/evaluate_voxel_and_perm.py`, `scripts/compare_metric_tables.py` | Fig. 8 |
-| External Fontainebleau validation | Transfer to independently obtained sandstone volumes and unseen porosity conditions | `python run_pipeline.py --mode fontainebleau --config configs/main.yaml` | Fig. 9 |
+| Independent Fontainebleau validation | A separately trained Fontainebleau experiment evaluating porosity extrapolation from the `0.2045` training volume to three unseen porosity conditions | `python run_pipeline.py --mode fontainebleau --config configs/main.yaml` | Fig. 9 |
 
 The complete mapping from figures to commands, inputs, and outputs is provided
 in `docs/figure_mapping.md` and `docs/figure_reproduction.md`.
@@ -131,15 +131,17 @@ in `docs/figure_mapping.md` and `docs/figure_reproduction.md`.
 
 The experiments investigate whether local structural variation extracted from
 a parent sandstone volume can support generation across prescribed porosity
-conditions. Transferability is examined using unseen target porosities and
-third-party Fontainebleau sandstone volumes, with evaluation extending from
+conditions. Porosity extrapolation is examined in a separately trained
+Fontainebleau experiment using one training volume and three independently
+obtained volumes at unseen porosity conditions, with evaluation extending from
 voxel morphology to pore-network descriptors and permeability.
 
-This evidence supports transfer within the tested sandstone datasets and
-porosity ranges. It does not establish universal generalization across all
-lithologies. Agreement in porosity is interpreted together with spatial,
-topological, and transport metrics, not as a standalone guarantee of physical
-fidelity.
+This evidence supports porosity extrapolation within the separately trained
+Fontainebleau experiment and the tested porosity range. It is not a zero-shot
+transfer of the main-sandstone model and does not establish universal
+generalization across lithologies. Agreement in porosity is interpreted
+together with spatial, topological, and transport metrics, not as a standalone
+guarantee of physical fidelity.
 
 ## 7. Scope and Limitations
 
