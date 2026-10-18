@@ -1,7 +1,8 @@
 # Fontainebleau Checkpoints
 
-These files are the final checkpoints for the Fontainebleau sandstone
-validation experiment trained at porosity `0.2045`.
+These files are compatibility checkpoints for the earlier Fontainebleau
+workflow. The second-version manuscript uses three conditions and reports the
+corresponding measured whole-volume porosities separately.
 
 - Input data: binary Fontainebleau sandstone micro-CT volume
 - Raw volume: `480 x 480 x 480` voxels
@@ -12,7 +13,8 @@ validation experiment trained at porosity `0.2045`.
 - FiLM porosity normalization: `(phi - 0.13) / 0.02`
 - Training seed: 123
 - Default inference seed sequence: starts at 0
-- Validation porosities: `0.2045`, `0.1743`, `0.1263`, and `0.0853`
+- Repository labels: `0.2045`, `0.1743`, and `0.1263`
+- Manuscript measured whole-volume porosities: `0.2041`, `0.1766`, and `0.1289`
 
 Files:
 

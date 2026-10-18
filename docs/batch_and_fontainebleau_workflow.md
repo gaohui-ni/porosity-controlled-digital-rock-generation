@@ -1,6 +1,18 @@
 # Batch generation and Fontainebleau validation workflow
 
-## 1. Batch generation for the main sandstone experiment
+## 1. Second-version main sandstone generation
+
+Use the spatial workflow for the manuscript results:
+
+```bash
+python run_pipeline.py --mode spatial --config configs/main.yaml
+```
+
+It generates calibrated probability volumes and applies TP-AQB for target
+groups 0.11–0.14. The frozen 95-crop test manifest and second-version spatial
+checkpoints are not bundled in the current repository.
+
+The direct command below belongs to the earlier compatibility path:
 
 ```bash
 python scripts/generate_batch.py \
@@ -12,7 +24,7 @@ python scripts/generate_batch.py \
   --device cuda
 ```
 
-To generate from the final supplied main-sandstone checkpoint package instead of a newly trained `outputs/` directory, use:
+To generate through the supplied compatibility checkpoint package instead of a newly trained `outputs/` directory, use:
 
 ```bash
 python scripts/generate_batch.py \
@@ -44,7 +56,7 @@ because the authors do not hold redistribution rights. Users must obtain them
 from the original provider. Before analysis, standardize the locally obtained
 volumes to binary `uint8` format with `0 = solid`, `1 = pore`, and a common
 size of `480 x 480 x 480` voxels. Original file packaging and phase-label
-conventions may vary by provider version. Declare the four standardized local
+conventions may vary by provider version. Declare the three standardized local
 paths in `configs/fontainebleau_config.yaml`.
 
 ## 3. Train on Fontainebleau
@@ -59,15 +71,16 @@ python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 python scripts/generate_batch.py \
   --ckpt_dir outputs/fontainebleau_phi0p2045 \
   --out_root data/generated_fontainebleau_sets \
-  --targets 0.2045 0.1743 0.1263 0.0853 \
-  --n_per_target 50 \
+  --targets 0.2045 0.1743 0.1263 \
+  --n_per_target 20 \
   --poro_center 0.13 \
   --device cuda
 ```
 
-To generate from the final supplied Fontainebleau checkpoint package, use `--ckpt_dir savedmodels/fontainebleau_phi0p2045`.
+To generate through the earlier compatibility checkpoint package, use
+`--ckpt_dir savedmodels/fontainebleau_phi0p2045`.
 
-The four real validation volumes must be placed at the paths listed in
+The three real validation volumes must be placed at the paths listed in
 `configs/fontainebleau_config.yaml`. The official pipeline extracts matched
 real patches and evaluates directional `S2`, lineal path, EDT, topology, PNM,
 and permeability for both real and generated groups:

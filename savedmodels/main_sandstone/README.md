@@ -1,6 +1,8 @@
 # Main Sandstone Checkpoints
 
-These files are the final checkpoints for the laboratory sandstone experiment.
+These files are compatibility checkpoints for the earlier laboratory-sandstone
+workflow. They are not the `ae_best.pth` and `unet_best_noise.pth` files used
+by the second-version spatial workflow.
 
 - Input data: binary laboratory sandstone micro-CT volume
 - Raw volume: `800 x 800 x 800` voxels

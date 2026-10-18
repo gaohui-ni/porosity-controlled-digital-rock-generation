@@ -1,181 +1,120 @@
 # Methodological Contributions
 
-This document maps the methodological claims in the manuscript to the released
-implementation and evaluation workflow. The principal methodological novelty
-lies in a dual-control discrete latent-space framework that couples learned
-porosity-dependent structural generation with exact output-space porosity
-enforcement for efficient and physically evaluated `256^3` digital-rock
-generation under limited-sample conditions.
+This document maps the second-version manuscript claims to the released
+implementation. The method combines discrete latent-space diffusion with two
+levels of porosity control: FiLM provides a learned response to target
+porosity, and TP-AQB enforces the final pore count while limiting changes to
+important pore connections.
 
-## 1. Computational Problem
+## Discrete latent-space generation
 
-Generating a `256 x 256 x 256` binary digital rock is demanding because the
-model must represent three-dimensional pore geometry, generate stochastic
-structural variation, respond continuously to a prescribed porosity, and
-produce a binary volume suitable for morphological and transport analysis.
-Matching only the mean pore fraction is insufficient: connectivity,
-two-point correlation, pore and throat geometry, coordination, and
-permeability must also remain geologically meaningful.
+The 3D VQ-VAE maps each `256 x 256 x 256` binary micro-CT subvolume to a
+`32 x 64 x 64 x 64` quantized latent tensor with a 1024-entry codebook. The
+DDPM therefore denoises a `64^3` spatial representation instead of the
+original `256^3` voxel field. The second-version implementation is in
+`scripts/train_256_vqvae_ddpm_spatial_vqaware_v3_film.py`.
 
-In the reported setting, high-resolution physical volumes are limited and
-direct diffusion over `256^3` voxels would carry substantial memory and
-computational cost. Learned conditioning alone also does not mathematically
-guarantee that a binarized output will attain a prescribed global pore
-fraction. The framework therefore combines spatial compression, learned
-continuous conditioning, and explicit output projection in one control path.
+The laboratory sandstone volume is partitioned before crops are drawn:
 
-The framework addresses these requirements with three coupled stages:
+| split | x range | y range | z range | use |
+| --- | --- | --- | --- | --- |
+| training | `[0,512)` | `[0,800)` | `[0,512)` | model fitting and latent statistics |
+| validation | `[0,512)` | `[0,800)` | `[544,800)` | checkpoint selection and calibration |
+| testing | `[544,800)` | `[0,800)` | `[0,800)` | final structural and physical evaluation |
 
-1. a 3D VQ-VAE learns a compact discrete latent representation;
-2. a latent DDPM generates normalized quantized embeddings under a continuous
-   target-porosity condition;
-3. a deterministic quantile-based projection converts the decoded probability
-   field into a binary volume with the requested global pore count.
+The 32-voxel gap prevents overlap between the training and validation regions.
+The testing region is excluded from training, model selection, and calibration.
 
-These stages correspond to manuscript Figs. 1, 2, and 3, respectively.
+## Learned porosity response through FiLM
 
-## 2. Discrete Latent-Space Diffusion Under Limited Data
-
-A lightweight 3D VQ-VAE maps each `256 x 256 x 256` binary micro-CT
-subvolume to a `32 x 64 x 64 x 64` vector-quantized latent tensor. Diffusion
-therefore operates in a `64^3` latent spatial domain rather than directly in
-the original `256^3` voxel domain. The finite 1024-entry codebook constrains
-the representation to a learned set of reusable embeddings.
-
-In this application, the finite codebook provides a constrained and reusable
-latent representation for learning from subvolumes of a single parent
-sandstone sample, while reducing the spatial domain and computational burden
-of three-dimensional diffusion modeling.
-
-The VQ-VAE architecture and quantizer are implemented in
-`src/models/vqvae3d.py`. Latent-statistics estimation and the full training
-path are implemented in
-`scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py`.
-
-## 3. Dual Porosity-Control Mechanism
-
-The framework separates learned porosity-dependent generation from exact
-global pore-count enforcement. The first level conditions latent denoising;
-the second level projects the decoded probability field to the requested
-porosity.
-
-### 3.1 Learned Porosity-Dependent Structural Control
-
-For each training patch, porosity is measured from its binary voxel field. The
-condition supplied to the denoiser is normalized consistently during training
-and inference:
+The target porosity is normalized and concatenated with the sinusoidal
+diffusion-time embedding. A small MLP produces channel-wise affine parameters
+for the latent U-Net bottleneck:
 
 ```text
-phi_scaled = (phi_target - poro_center) / poro_scale
+u_phi = clip((phi_target - poro_center) / poro_scale)
+F_mod = F * (1 + gamma(t, u_phi)) + beta(t, u_phi)
 ```
 
-The manuscript configuration uses `poro_center = 0.13` and
-`poro_scale = 0.02`, as recorded in `configs/main.yaml`. The normalized scalar
-is concatenated with the sinusoidal diffusion-time embedding. An MLP maps this
-joint condition to channel-wise `gamma` and `beta` parameters that modulate
-latent denoising features jointly with diffusion time. Thus, porosity is not
-appended as another voxel channel. The implementation is in
-`src/models/unet3d_film.py`, and the same normalization is used by the training
-and sampling paths in
-`scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py` and
-`scripts/generate_batch.py`.
+The FiLM ablation keeps the network and sampling procedure fixed while setting
+the porosity input to zero. Under fixed-threshold binarization, the manuscript
+reports a response slope close to zero without the condition and a monotonic
+response with a slope of `1.009` and MAE of `0.00482` with the calibrated FiLM
+condition. This establishes that the target signal reaches the sampler. It does
+not by itself establish exact output porosity.
 
-Continuous FiLM conditioning enables the latent denoising network to learn
-porosity-dependent structural variation, while its coupling with output-space
-porosity projection forms the learned component of the dual-control mechanism.
+## Precise porosity matching through TP-AQB
 
-### 3.2 Exact Output-Space Porosity Constraint
+`src/sampling/tp_aqb.py` implements topology-preserving adaptive quantile
+binarization. The fixed-threshold volume `P >= 0.5` supplies the generated
+structure and specific-surface reference. TP-AQB then adds or removes voxels
+until `round(phi_target * N)` pore voxels are present while:
 
-Quantile binarization is accurately described as an inference-time output
-projection, not as a replacement for the generative model. Given a decoded
-pore-probability volume `P` with `N` voxels and target porosity `phi_target`, it
-computes
+- using 26-connectivity for pore space and 6-connectivity for solid space;
+- allowing deletion only at simple points;
+- protecting skeleton and narrow-throat neighborhoods;
+- preventing interacting deletions within one wave;
+- verifying global topology after each wave; and
+- using equal-count local pore-solid swaps to reduce specific-surface drift.
 
-```text
-N_target = round(phi_target * N)
-```
+This differs from the conventional top-N quantile helper retained in
+`src/sampling/quantile_binarization.py`. The helper is useful for demonstrations
+and compatibility workflows, but TP-AQB is the method described in the
+second-version manuscript.
 
-and uses a partition-based quantile threshold to select the highest-probability
-voxels as pore space. Voxels tied at the threshold are selected with a seeded
-tie-breaking step so that the final pore count matches `N_target` up to the
-integer discretization implied by the finite volume.
+## Main sandstone evidence
 
-This operation imposes the global pore fraction without retraining while
-preserving the rank ordering of the decoded probability field. It does not, by
-itself, prove that pore geometry or transport behavior is correct. Those
-properties are evaluated separately. The implementation is in
-`src/sampling/quantile_binarization.py`; the lightweight executable example is
-`scripts/demo_quantile_binarization.py`; and the target-versus-achieved
-porosity behavior is covered by `tests/test_quantile_binarization.py` and
-`tests/test_porosity.py`.
+The final main-sandstone comparison contains 95 real samples from the held-out
+testing region and 95 generated samples conditioned on the corresponding real
+porosities. The nominal porosity groups are:
 
-## 4. Distinction From Existing 3D Generative Workflows
+| target porosity | paired samples |
+| ---: | ---: |
+| 0.11 | 8 |
+| 0.12 | 29 |
+| 0.13 | 39 |
+| 0.14 | 19 |
 
-The methodological advance lies in the complete control architecture:
+The reported evaluation covers directional two-point correlation functions,
+specific surface area, pore and throat size, throat shape factor, tortuosity,
+throat length, coordination number, directional permeability, and geometric
+mean permeability. The claims concern ensemble agreement and porosity trends,
+not voxel-wise reconstruction of a particular real crop.
 
-- compared with direct 3D VAE sampling, stochastic generation is performed
-  through diffusion in a vector-quantized latent representation;
-- compared with GAN-based generation, the model uses a denoising objective
-  without adversarial optimization;
-- compared with voxel-space 3D DDPMs, diffusion operates in a spatially
-  compressed `64^3` latent domain rather than the `256^3` binary domain;
-- compared with unconditional or discrete class-conditional generation,
-  porosity is a continuous physical condition during training and sampling;
-- compared with purely learned conditioning, output-space projection enforces
-  the prescribed global pore count; and
-- compared with fixed-threshold decoding, the threshold adapts to the requested
-  porosity and the decoded probability ranking.
+## Fontainebleau extrapolation evidence
 
-Together, these design choices establish a unified physical-control
-architecture that combines compact discrete latent modeling, continuous
-porosity-dependent generation, and exact output-space pore-count enforcement.
+The Fontainebleau experiment is trained separately from the laboratory
+sandstone model. It uses one `480^3` sandstone volume for training and two
+lower-porosity volumes of the same lithology for validation. The reported
+whole-volume porosities are `0.2041`, `0.1766`, and `0.1289`; the repository's
+legacy filename and target labels are `0.2045`, `0.1743`, and `0.1263`.
 
-## 5. Geoscientific Evidence Chain
+Twenty generated and twenty real `256^3` subvolumes are compared at each
+condition. The two validation rocks lie below the training-patch porosity range
+of `0.1926` to `0.2215`. This supports cross-sample porosity extrapolation
+within Fontainebleau sandstone. It is not zero-shot transfer from the main
+laboratory sandstone and does not establish universal cross-lithology
+generalization.
 
-The validation strategy asks whether porosity control is accompanied by
-reasonable structural and transport behavior rather than treating porosity
-agreement as sufficient evidence. The repository maps the manuscript evidence
-as follows:
+## Manuscript figure evidence
 
-| Evidence | Scientific role | Implementation | Manuscript mapping |
-| --- | --- | --- | --- |
-| Generated volumes and slices | Qualitative 3D and sectional morphology | `scripts/generate_batch.py`, `scripts/plot_slice_porosity.py` | Figs. 4-5 |
-| Directional two-point correlation function `S2` | Direction-dependent spatial organization | `scripts/evaluate_s2_lineal_edt.py` | Fig. 6 |
-| Pore, throat, EDT, shape-factor, and coordination distributions | Pore-scale geometry and topology | `scripts/evaluate_pore_network_6panel.py`, `scripts/evaluate_coordination_euler.py` | Fig. 7 |
-| Directional and geometric-mean permeability | Transport response and anisotropy | `scripts/evaluate_voxel_and_perm.py`, `scripts/compare_metric_tables.py` | Fig. 8 |
-| Independent Fontainebleau validation | A separately trained Fontainebleau experiment evaluating porosity extrapolation from the `0.2045` training volume to three unseen porosity conditions | `python run_pipeline.py --mode fontainebleau --config configs/main.yaml` | Fig. 9 |
+| Evidence | Manuscript figure |
+| --- | --- |
+| VQ-VAE, conditional DDPM, and TP-AQB schematics | Figs. 1-3 |
+| Generated morphology, FiLM ablation, porosity matching, and slice variation | Figs. 4-7 |
+| Main-sandstone spatial statistics, pore-network descriptors, and permeability | Figs. 8-10 |
+| Fontainebleau porosity ranges, spatial statistics, pore-network descriptors, and permeability | Figs. 11-14 |
 
-The complete mapping from figures to commands, inputs, and outputs is provided
-in `docs/figure_mapping.md` and `docs/figure_reproduction.md`.
+See `docs/figure_mapping.md` for the corresponding scripts and inputs.
 
-## 6. Out-of-Range Conditional Generation
-
-The experiments investigate whether local structural variation extracted from
-a parent sandstone volume can support generation across prescribed porosity
-conditions. Porosity extrapolation is examined in a separately trained
-Fontainebleau experiment using one training volume and three independently
-obtained volumes at unseen porosity conditions, with evaluation extending from
-voxel morphology to pore-network descriptors and permeability.
-
-The purpose is to test whether the learned conditional relationship among
-porosity, pore structure, and transport response can be extrapolated beyond
-the training porosity within the examined Fontainebleau sandstone domain.
-This evidence supports porosity extrapolation within the separately trained
-experiment and tested porosity interval. It is not a zero-shot transfer of the
-main-sandstone model and does not establish universal generalization across
-lithologies. Agreement in porosity is interpreted together with spatial,
-topological, and transport metrics, not as a standalone guarantee of physical
-fidelity.
-
-## 7. Scope and Limitations
+## Scope and current release status
 
 - The main model learns from subvolumes of one parent laboratory sandstone
-  volume, so conclusions concern the represented sandstone structure rather
-  than all porous geomaterials.
-- Fontainebleau comparison subvolumes overlap within each parent volume and are
-  not independent rock specimens.
-- The external validation covers four Fontainebleau volumes and does not imply
-  universal cross-lithology generalization.
-- Quantile projection enforces global porosity but cannot independently ensure
-  connectivity, topology, or permeability; these require the reported
-  evaluations.
+  volume.
+- Fontainebleau comparison patches come from three parent volumes and are not
+  independent rock specimens.
+- TP-AQB enforces pore count and preserves the generated reference topology; it
+  does not directly impose real-rock pore-network or permeability targets.
+- The current Git LFS checkpoints belong to the earlier compatibility
+  workflow. Second-version spatial checkpoints and the frozen 95-crop cohort
+  manifest are not included in this revision.

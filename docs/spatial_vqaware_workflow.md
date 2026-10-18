@@ -2,17 +2,17 @@
 
 ## Status and compatibility
 
-This workflow integrates the post-v0.1.1 experimental code while preserving
-the repository's released structure. The top-level `run_pipeline.py` remains
-the public entry point. Existing `main`, `fontainebleau`, `full`, and `final`
-modes are unchanged; the newer workflow is selected explicitly with:
+This is the primary laboratory-sandstone implementation for the second-version
+manuscript. It was added without removing the repository's earlier checkpoint
+workflow. The top-level `run_pipeline.py` remains the public entry point, and
+the current workflow is selected explicitly with:
 
 ```bash
 python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
-The released v0.1.1 checkpoints retain their original architecture and file
-names. Spatial-workflow checkpoints are written separately under
+The released compatibility checkpoints retain their original architecture and
+file names. Spatial-workflow checkpoints are written separately under
 `outputs/spatial_vqaware/` and are not interchangeable with those files.
 
 ## Data isolation
@@ -114,3 +114,16 @@ data/generated_phi_sets_spatial/
 No new trained checkpoint is bundled by this code update. Reproducing the
 spatial workflow therefore requires running its VAE, latent-statistics, and
 DDPM stages before sampling.
+
+## Manuscript evaluation cohort
+
+The manuscript's final main-sandstone evaluation uses 95 real crops from the
+held-out testing region and 95 generated samples conditioned on the real
+porosity of each crop. The nominal group sizes are `8`, `29`, `39`, and `19`
+for target porosities `0.11`, `0.12`, `0.13`, and `0.14`, respectively.
+
+The frozen 95-crop coordinate manifest and its second-version trained
+checkpoints are not bundled in this revision. The implemented `spatial` mode
+therefore reproduces the model-training, calibrated condition-sweep, and
+TP-AQB stages, but exact regeneration of the reported 95-pair cohort requires
+those frozen artifacts.

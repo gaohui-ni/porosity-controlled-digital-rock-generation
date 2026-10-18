@@ -1,7 +1,8 @@
 # savedmodels
 
-This directory contains the final trained model files publicly distributed
-through Git LFS.
+This directory contains earlier-workflow compatibility model files publicly
+distributed through Git LFS. The second-version spatial checkpoints are not
+bundled here.
 
 Expected layout:
 
@@ -17,4 +18,5 @@ savedmodels/
     `-- latent_stats.npz
 ```
 
-`outputs/` remains the default location for newly trained model outputs. `savedmodels/` is reserved for final released or locally supplied checkpoints.
+`outputs/` remains the default location for newly trained model outputs.
+`savedmodels/` contains released or locally supplied compatibility checkpoints.

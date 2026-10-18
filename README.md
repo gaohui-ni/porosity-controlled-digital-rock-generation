@@ -6,15 +6,16 @@ Core implementation for the manuscript **A Porosity-Controllable Generative Fram
 
 Gaohui Ni, Yanyan Ma, Shaowei Ma, Yuxin Yang, Xuefeng Liu, and Hao Ni
 
-This repository provides a reproducible code base for 3D digital rock generation with a lightweight 3D VQ-VAE, a FiLM-conditioned latent DDPM, and quantile-based adaptive binarization for explicit porosity control.
+This repository implements the second-version manuscript workflow for
+porosity-controllable 3D digital rock generation: a spatially separated 3D
+VQ-VAE, a FiLM-conditioned latent DDPM, and topology-preserving adaptive
+quantile binarization (TP-AQB) for precise output porosity matching.
 
 ## Methodological Contributions
 
-This study introduces a unified discrete latent-space conditional diffusion
-framework designed around three persistent challenges in three-dimensional
-digital-rock generation: the computational cost of voxel-space modeling,
-representation learning from limited physical samples, and explicit control
-of a prescribed structural property.
+The method addresses three practical problems in 3D digital-rock generation:
+the cost of voxel-space diffusion, learning from limited physical samples,
+and controlling porosity without discarding important pore connections.
 
 The principal methodological novelty lies in a dual-control discrete
 latent-space framework that couples learned porosity-dependent structural
@@ -23,19 +24,24 @@ physically evaluated `256^3` digital-rock generation under limited-sample
 conditions.
 
 A lightweight 3D VQ-VAE compresses `256^3`-voxel micro-CT volumes into a
-`64^3` discrete latent spatial domain. Continuous target porosity modulates
-latent denoising features through FiLM, while adaptive quantile-threshold
-binarization imposes an explicit output-space pore-count constraint during
-decoding.
+`32 x 64 x 64 x 64` discrete latent tensor. Continuous target porosity
+modulates latent denoising features through FiLM. TP-AQB starts from the
+model's fixed-threshold structure, adjusts the pore count under skeleton,
+throat-neighborhood, and topology constraints, and uses equal-count local
+swaps to reduce specific-surface drift.
 
-This unified control pathway combines discrete latent-space compression,
-learned porosity-dependent generation, and seeded deterministic output
-projection that enforces the requested global porosity up to finite-grid
-integer discretization. The resulting volumes are evaluated beyond visual
-similarity and porosity agreement through spatial statistics, pore-network
-geometry, topology, and permeability. A separately trained Fontainebleau
-experiment further examines extrapolation to porosity conditions not
-represented during its training.
+The main sandstone evaluation uses 95 real samples from the spatially held-out
+test region and 95 generated samples conditioned on their corresponding real
+porosities. The four nominal groups contain 8, 29, 39, and 19 pairs at target
+porosities `0.11`, `0.12`, `0.13`, and `0.14`. Evaluation covers directional
+two-point correlation, specific surface area, pore-network geometry and local
+topology, and directional and geometric-mean permeability.
+
+A separately trained Fontainebleau experiment evaluates cross-sample
+porosity extrapolation within the same lithology. One `480^3` rock is used for
+training and two lower-porosity rocks are used for validation. This is not a
+zero-shot transfer of the laboratory-sandstone model and is not presented as
+cross-lithology generalization.
 
 Implementation locations, manuscript mappings, validation evidence, and the
 scope of these framework-level claims are documented in
@@ -47,8 +53,10 @@ The repository contains:
 
 - 3D VQ-VAE and vector-quantized latent representation learning.
 - FiLM-conditioned latent DDPM for target-porosity controlled generation.
-- Quantile-based binarization for matching prescribed porosity, plus an
-  optional topology- and throat-preserving TP-AQB v2 postprocessor.
+- TP-AQB v2 for exact pore-count matching with topology, skeleton,
+  throat-neighborhood, and specific-surface safeguards.
+- A lightweight top-N quantile implementation retained for demonstrations and
+  legacy checkpoint compatibility.
 - A spatially disjoint train/validation/test workflow with EMA vector
   quantization, validation-based checkpoint selection, FiLM ablation, and
   calibrated conditional sampling.
@@ -67,7 +75,7 @@ docs/         Installation, user guide, reproducibility, and data/code availabil
 data/         Placeholder folders for user-provided raw data.
 outputs/      Placeholder folder for generated checkpoints and outputs.
 results/      Placeholder folder for generated figures, curves, and tables.
-savedmodels/  Final trained model checkpoints distributed through Git LFS.
+savedmodels/  Earlier-workflow compatibility checkpoints distributed through Git LFS.
 environment/  Exact package versions used for the manuscript-scale workflow.
 ```
 
@@ -131,36 +139,44 @@ notebooks/tutorials/0003-fontainebleau-validation.ipynb
 
 ## Official Reproduction Entry Point
 
-`run_pipeline.py` is the ONLY official entry point for reproducing the manuscript workflow.
+`run_pipeline.py` is the official top-level entry point for the repository workflows.
 `scripts/run_pipeline.py` is the internal modular implementation called by the top-level entry point and should not be used directly for reviewer reproduction.
 
-The main-sandstone workflow can be reproduced using the publicly released
-Mendeley Data volume. The complete two-dataset workflow additionally requires
-access to the external ANU Fontainebleau volumes, which are not redistributed
-in this repository.
-
-To run the complete workflow when both datasets are available:
+The second-version main-sandstone implementation uses the publicly released
+Mendeley Data volume:
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml
+python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
+
+Run `--mode fontainebleau` separately when the three external ANU volumes are
+available. They are not redistributed in this repository. The `full` command
+is retained for the earlier compatibility workflow and should not be confused
+with the second-version `spatial` path.
 
 Available modes:
 
 - `demo`: lightweight synthetic porosity-control check;
-- `main`: main laboratory sandstone workflow, including training, generation, spatial statistics, permeability, topology, and PNM six-panel descriptors;
-- `fontainebleau`: independent Fontainebleau validation workflow;
-- `full`: `main` followed by `fontainebleau`;
-- `final`: generate and evaluate using final checkpoint files under `savedmodels/`, without retraining;
-- `spatial`: run the newer spatial-split EMA-VQ/DDPM workflow and apply
-  TP-AQB v2. This mode is additive and does not change the released
-  `main/full/final` checkpoint contract.
+- `spatial`: second-version manuscript implementation for spatially separated
+  EMA-VQ/DDPM training, calibrated FiLM sampling, and TP-AQB v2;
+- `fontainebleau`: separately trained Fontainebleau validation and
+  porosity-extrapolation workflow;
+- `main`: compatibility workflow for the earlier main-sandstone checkpoint;
+- `full`: compatibility `main` workflow followed by `fontainebleau`;
+- `final`: inference and evaluation with the compatibility checkpoints under
+  `savedmodels/`, without retraining.
 
-The spatial workflow uses the same released `800^3` parent sandstone volume,
-but reserves disjoint regions for training, validation, and final testing. Its
-configuration is under `spatial_vqaware` in `configs/main.yaml`; implementation
-and provenance are documented in
+The `spatial` workflow is the primary implementation corresponding to the
+second-version manuscript. It uses the released `800^3` parent sandstone
+volume and reserves disjoint regions for training, validation, and final
+testing. Its configuration is under `spatial_vqaware` in `configs/main.yaml`;
+implementation and provenance are documented in
 [docs/spatial_vqaware_workflow.md](docs/spatial_vqaware_workflow.md).
+
+The current `savedmodels/` files belong to the earlier compatibility workflow.
+The second-version spatial checkpoint set and the frozen 95-crop test-cohort
+manifest are not bundled in this revision; the `spatial` workflow must
+therefore be retrained before calibrated sampling.
 
 For a lightweight reviewer sanity check:
 
@@ -168,18 +184,22 @@ For a lightweight reviewer sanity check:
 python run_demo.py
 ```
 
-To validate the full pipeline logic without launching training, generation, or evaluation:
+To inspect the second-version main-sandstone command sequence without
+launching training or generation:
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml --dry-run
+python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 ```
 
 `--dry-run` is a pipeline logic test. It builds the same ordered command sequence as the selected reproduction run and writes `results/pipeline_<mode>_manifest.json`, but it does not train models, generate samples, or evaluate outputs.
 
-The full run writes a standardized execution trace and result structure:
+Compatibility `full` runs and current `spatial` runs write separate command
+manifests and output roots. In particular:
 
-- command manifest: `results/pipeline_full_manifest.json`;
-- checkpoint and model outputs: `outputs/main_sandstone/`;
+- current command manifest: `results/pipeline_spatial_manifest.json`;
+- current checkpoint and model outputs: `outputs/spatial_vqaware/`;
+- TP-AQB volumes: `data/generated_phi_sets_spatial/`;
+- compatibility command manifest: `results/pipeline_full_manifest.json`;
 - figure-oriented outputs: `results/fig_s2/`, `results/fig_perm/`, `results/fig_pnm/`, and `results/fig_fontainebleau/`;
 - manuscript tables: `results/tables/`;
 - summary files: `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`.
@@ -193,11 +213,13 @@ pip install -r requirements_dev.txt
 pytest tests/
 ```
 
-The tests cover quantile-based porosity matching, porosity calculation, directional two-point correlation-function output shapes, and pipeline dry-run behavior.
+The tests cover conventional quantile matching, TP-AQB exact pore counts and
+topology preservation, porosity calculation, directional two-point
+correlation-function output shapes, and pipeline dry-run behavior.
 
 ## Reproduce Manuscript Outputs
 
-The official manuscript-scale experiment is configured in [configs/main.yaml](configs/main.yaml). [configs/experiment_main.yaml](configs/experiment_main.yaml) is retained as a backward-compatible copy/example. See [docs/figure_reproduction.md](docs/figure_reproduction.md) for a command-by-command figure reproduction map. The pipeline writes figure-oriented outputs under `results/`:
+The second-version manuscript-scale experiment is configured in [configs/main.yaml](configs/main.yaml). [configs/experiment_main.yaml](configs/experiment_main.yaml) is retained as a backward-compatible copy/example. See [docs/figure_reproduction.md](docs/figure_reproduction.md) for a command-by-command figure reproduction map. The pipeline writes figure-oriented outputs under `results/`:
 
 - `results/fig_s2/`: directional two-point correlation function `S2`, lineal-path, and EDT pore-size curves.
 - `results/fig_perm/`: permeability-related tables and plots.
@@ -205,17 +227,17 @@ The official manuscript-scale experiment is configured in [configs/main.yaml](co
 - `results/fig_fontainebleau/`: Fontainebleau validation outputs.
 - `results/tables/`: CSV tables used for manuscript plots.
 
-Typical commands:
+Current manuscript commands:
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml
-python run_pipeline.py --mode main --config configs/main.yaml
-python run_pipeline.py --mode fontainebleau --config configs/main.yaml
-python run_pipeline.py --mode final --config configs/main.yaml
 python run_pipeline.py --mode spatial --config configs/main.yaml
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 python src/metrics/summarize_all.py --root results
 python scripts/plot_all.py
 ```
+
+The `main`, `full`, and `final` modes remain available for compatibility with
+the earlier checkpoint layout.
 
 The summary command writes `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`. A short manuscript-to-code map is provided in [docs/figure_mapping.md](docs/figure_mapping.md).
 
@@ -243,12 +265,15 @@ See [docs/reproducibility.md](docs/reproducibility.md) and [docs/user_guide.md](
 
 At a high level:
 
-1. Place a binary raw digital rock volume under `data/raw/`.
-2. Build porosity-matched real comparison groups with `scripts/build_real_phi_groups.py`.
-3. Train the 3D VQ-VAE and latent DDPM.
-4. Generate batches at target porosity values.
-5. Evaluate spatial statistics, topology, pore-network metrics, and permeability.
-6. Repeat the validation workflow for Fontainebleau sandstone data when available.
+1. Place the binary `800^3` laboratory sandstone volume under `data/raw/`.
+2. Run the spatially separated 3D VQ-VAE and FiLM latent-DDPM workflow.
+3. Generate calibrated probability volumes and apply TP-AQB v2.
+4. Compare the 95 held-out real samples and 95 matched-condition generated
+   samples across the four nominal porosity groups.
+5. Evaluate spatial statistics, specific surface area, pore-network geometry,
+   local topology, and permeability.
+6. Run the separately trained three-volume Fontainebleau experiment when the
+   third-party data are available.
 
 ## Data Availability
 
@@ -260,13 +285,15 @@ The repository also includes synthetic examples and scripts that allow reviewers
 
 See [docs/data_availability.md](docs/data_availability.md).
 
-## Final Models and Checkpoints
+## Released Compatibility Models and Checkpoints
 
 ### Download pretrained checkpoints
 
-The final checkpoints are tracked under `savedmodels/` with Git LFS. Clone the
-repository and retrieve the model files before running checkpoint-based
-inference:
+The checkpoints currently tracked under `savedmodels/` with Git LFS reproduce
+the earlier compatibility workflow. They do not replace the `ae_best.pth`,
+`unet_best_noise.pth`, and calibrated sampling configuration used by the
+second-version spatial workflow. Clone the repository and retrieve these files
+before running compatibility checkpoint inference:
 
 ```bash
 git lfs install
@@ -282,7 +309,7 @@ Verify the downloaded files against the SHA256 values in
 python run_pipeline.py --mode final --config configs/main.yaml
 ```
 
-The final trained model layout is:
+The compatibility model layout is:
 
 ```text
 savedmodels/
@@ -300,7 +327,9 @@ The two `unet_final.pth` files exceed the normal GitHub 100 MB single-file limit
 and therefore require Git LFS. Checksums are provided in
 [docs/model_manifest.md](docs/model_manifest.md).
 
-The complete VQ-VAE and latent-DDPM training workflow is also provided, so users can retrain the models using the publicly available raw data and `configs/main.yaml`.
+The VQ-VAE, FiLM-conditioned latent-DDPM, calibrated sampling, and TP-AQB
+workflow is provided so users can retrain using the publicly available raw
+data and `configs/main.yaml`.
 
 A completed training run produces:
 
@@ -308,8 +337,10 @@ A completed training run produces:
 - `unet_final.pth`
 - `latent_stats.npz`
 
-The released checkpoints enable reproduction of the reported model inference
-and analysis workflow. Because diffusion sampling is stochastic and numerical
+The released checkpoints enable reuse of the earlier compatibility inference
+and analysis workflow. Exact reproduction of the second-version 95-pair cohort
+additionally requires its spatial checkpoints and frozen crop manifest.
+Because diffusion sampling is stochastic and numerical
 results can depend on hardware and software versions, generated volumes may not
 be bitwise identical across computational environments. Independently retrained
 models are expected to reproduce the workflow and statistical behavior rather

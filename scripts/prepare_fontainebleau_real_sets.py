@@ -1,4 +1,4 @@
-"""Build porosity-matched 256-cubed validation patches from four real volumes."""
+"""Build porosity-matched 256-cubed patches from configured real volumes."""
 
 import argparse
 import csv

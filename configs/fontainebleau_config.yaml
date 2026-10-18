@@ -5,11 +5,13 @@ raw_shape: [480, 480, 480]
 voxel_size_um: 5.68
 patch_size: 256
 stride: 32
-real_samples_per_target: 50
+# Repository target labels follow the local filenames. The corresponding
+# whole-volume measured porosities reported in the manuscript are listed below.
+real_samples_per_target: 20
 training_porosity: 0.2045
-unseen_targets: [0.1743, 0.1263, 0.0853]
-validation_targets: [0.2045, 0.1743, 0.1263, 0.0853]
-n_per_target: 50
+unseen_targets: [0.1743, 0.1263]
+validation_targets: [0.2045, 0.1743, 0.1263]
+n_per_target: 20
 epochs_vae: 80
 epochs_ddpm: 150
 poro_center: 0.13
@@ -22,4 +24,7 @@ real_volumes:
   "0.2045": "data/fontainebleau/phi0p2045.raw"
   "0.1743": "data/fontainebleau/phi0p1743.raw"
   "0.1263": "data/fontainebleau/phi0p1263.raw"
-  "0.0853": "data/fontainebleau/phi0p0853.raw"
+measured_volume_porosity:
+  "0.2045": 0.2041
+  "0.1743": 0.1766
+  "0.1263": 0.1289

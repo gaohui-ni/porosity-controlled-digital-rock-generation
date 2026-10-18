@@ -102,19 +102,17 @@ def test_slice_porosity_profile_uses_z_axis():
 def test_figure_registry_maps_all_manuscript_figures():
     registry = (ROOT / "docs" / "figure_mapping.md").read_text(encoding="utf-8")
 
-    for number in range(1, 10):
+    for number in range(1, 15):
         assert f"| Fig. {number} |" in registry
     assert "| Figure | Result | Script or implementation | Required input | Local output |" in registry
     assert "scripts/plot_slice_porosity.py" in registry
-    assert "Four main-text panels" in registry
-    assert "(a-c)" in registry
-    assert "(d) S/V comparison" in registry
-    assert "used in the Supplementary Material" in registry
-    assert "not a panel of main-text Fig. 6" in registry
-    assert "At phi=0.15" in registry
-    assert "manuscript panels exclude throat length, tortuosity, and Euler-characteristic" in registry
-    assert "(a) Kx, Ky, Kz, and Kgeom at phi=0.15" in registry
-    assert "Fontainebleau Kx, Ky, Kz, and Kgeom at phi=0.2045" in registry
+    assert "Gen1 (fixed threshold)" in registry
+    assert "Gen2 (TP-AQB)" in registry
+    assert "across 95 paired samples" in registry
+    assert "throat length, and coordination number at target 0.11" in registry
+    assert "fig10_permeability.csv" in registry
+    assert "measured porosity 0.1766" in registry
+    assert "fig14_fontainebleau.csv" in registry
 
 
 def test_documented_main_workflow_matches_canonical_configuration():
@@ -135,7 +133,7 @@ def test_documented_main_workflow_matches_canonical_configuration():
     for stale in ("results/curves", "results/topology"):
         assert stale not in combined
 
-    assert "external ANU Fontainebleau volumes" in reproducibility
+    assert "external third-party ANU" in reproducibility
     assert "not redistributed" in reproducibility
 
 
@@ -149,14 +147,14 @@ def test_code_availability_and_readme_match_release_policy():
         "+86-151-9298-7839",
         "1946978288@qq.com",
         "Year first available:** 2026",
-        "Program size:** Approximately 2.73 MB",
+        "Program size:** Approximately 2.77 MiB",
         "Git LFS",
         "MIT License",
     ):
         assert expected in statement
 
-    assert "complete two-dataset workflow additionally requires" in readme
-    assert "external ANU Fontainebleau volumes" in readme
+    assert "python run_pipeline.py --mode spatial" in readme
+    assert "three external ANU volumes" in readme
     assert "A release archive may also be provided" not in readme
     assert "## Authors" in readme
     assert "Gaohui Ni, Yanyan Ma, Shaowei Ma, Yuxin Yang, Xuefeng Liu, and Hao Ni" in readme
@@ -219,7 +217,7 @@ def test_pnm_outputs_preserve_full_target_porosity(tmp_path):
         target_porosity=np.float64(0.2045),
         edt_centers=np.array([1.0, 2.0]),
     )
-    output = tmp_path / "fig7_pnm.csv"
+    output = tmp_path / "fig9_pnm.csv"
 
     export_pnm(root, output)
     exported = pd.read_csv(output)
@@ -245,6 +243,10 @@ def test_final_model_configuration_and_pipeline_are_separate():
     assert "epochs_vae: 80" in fontainebleau
     assert "epochs_ddpm: 150" in fontainebleau
     assert "poro_center: 0.13" in fontainebleau
+    assert "real_samples_per_target: 20" in fontainebleau
+    assert "unseen_targets: [0.1743, 0.1263]" in fontainebleau
+    assert "validation_targets: [0.2045, 0.1743, 0.1263]" in fontainebleau
+    assert '"0.0853"' not in fontainebleau
     assert 'str(fb["epochs_vae"])' in pipeline
     assert 'str(fb["epochs_ddpm"])' in pipeline
     assert 'target_folders = [f"phi{phi_tag(value)}"' in pipeline

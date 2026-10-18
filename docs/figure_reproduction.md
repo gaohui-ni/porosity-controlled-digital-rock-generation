@@ -1,220 +1,120 @@
 # Figure Reproduction Map
 
-This document follows the current submitted-manuscript numbering for Figures 1–9.
+## Workflow selection
 
-## Overview
-
-The main configuration file is:
+The second-version main-sandstone workflow is:
 
 ```bash
-configs/main.yaml
+python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
-The complete two-dataset workflow is run through the official top-level entry
-point. It requires the public main-sandstone volume and access to the external
-ANU Fontainebleau volumes:
+Inspect its ordered commands without launching computation:
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml
+python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 ```
 
-For only the main laboratory sandstone figures, use:
-
-```bash
-python run_pipeline.py --mode main --config configs/main.yaml
-```
-
-For only the independent Fontainebleau validation figures, use:
+The independently trained Fontainebleau experiment is:
 
 ```bash
 python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
-For generation and evaluation from final supplied checkpoints without retraining, use:
+The `main`, `full`, and `final` modes remain available only for compatibility
+with the earlier checkpoint layout. The second-version spatial checkpoints and
+frozen 95-crop coordinate manifest are not currently bundled, so exact
+recreation of the reported paired cohort requires those artifacts.
 
-```bash
-python run_pipeline.py --mode final --config configs/main.yaml
-```
+## Figures 1–3: method schematics
 
-The full workflow can be inspected without running training:
+- Fig. 1 is based on the 3D VQ-VAE implementation in
+  `src/models/vqvae3d.py` and the spatial training script.
+- Fig. 2 is based on FiLM-conditioned latent diffusion in
+  `src/models/unet3d_film.py` and the same spatial training script.
+- Fig. 3 represents TP-AQB in `src/sampling/tp_aqb.py` and
+  `scripts/apply_tp_aqb.py`. The lightweight top-N quantile demo is not the
+  manuscript TP-AQB algorithm.
 
-```bash
-python run_pipeline.py --mode full --config configs/main.yaml --dry-run
-```
+## Figures 4–7: morphology and porosity control
 
-For a lightweight figure-output sanity check:
+- Fig. 4 uses representative TP-AQB outputs at targets 0.11–0.14.
+- Fig. 5 compares conditional and no-condition sampling at a fixed threshold
+  of 0.5; adaptive binarization is intentionally excluded from this ablation.
+- Fig. 6 compares 95 paired samples: Real, Gen1 (FiLM plus fixed threshold),
+  and Gen2 (FiLM plus TP-AQB). Group sizes are 8, 29, 39, and 19 at targets
+  0.11, 0.12, 0.13, and 0.14.
+- Fig. 7 uses `scripts/plot_slice_porosity.py` for a representative pair at
+  target 0.13.
 
-```bash
-python scripts/reproduce_figures.py --config configs/main.yaml
-```
+## Figure 8: spatial statistics and specific surface
 
-This helper runs the synthetic demo by default and validates the output path.
-It does not start manuscript-scale training unless `--run-full-pipeline` is
-provided explicitly. Use `--skip-pipeline` to plot from existing outputs.
-Manuscript-scale figures require the full evaluation outputs listed below.
-
-## Fig. 5: Slice-Wise Porosity
-
-Fig. 4 shows representative generated volumes and orthogonal slices selected
-for qualitative visualization. The displayed samples are illustrative;
-quantitative conclusions are based on the complete generated ensembles and the
-statistical evaluations reported in Figs. 6–9.
-
-Fig. 5 is an example slice-wise porosity comparison between a real and a
-generated volume at the same target porosity. Users may provide any
-corresponding real/generated pair to reproduce this qualitative visualization.
-The exact displayed pair is not used in the group-level quantitative analysis.
-
-```bash
-python scripts/plot_slice_porosity.py \
-  --real data/real256_sets_from_S1_strict/phi0p15/REAL_SAMPLE.raw \
-  --generated data/generated_phi_sets/phi0p15/GENERATED_SAMPLE.npz \
-  --shape 256 256 256 \
-  --target 0.15 \
-  --output results/figures/fig5_slice_porosity.png
-```
-
-`REAL_SAMPLE.raw` and `GENERATED_SAMPLE.npz` are example input placeholders
-that users must replace with any corresponding real/generated pair. This
-template reproduces the qualitative visualization workflow; it does not claim
-pixel-for-pixel reproduction of the displayed manuscript example. The command
-writes both the PNG and an adjacent CSV locally.
-
-## Fig. 6 and Supplementary Spatial Statistics
-
-Main-text Fig. 6 contains four panels: the `X`, `Y`, and `Z` directional
-two-point correlation functions `S2(r)` as panels (a-c), followed by the `S/V`
-comparison as panel (d). The direction-averaged `R = mean(X, Y, Z)` curve is
-retained for the Supplementary Material and is not part of main-text Fig. 6.
-
-Use these outputs for directional `S2`, lineal-path, and EDT pore-size figures:
+Directional two-point correlation is evaluated with:
 
 ```bash
 python scripts/evaluate_s2_lineal_edt.py \
-  --real_root data/real256_sets_from_S1_strict \
-  --gen_root data/generated_phi_sets \
+  --real_root <held-out-real-root> \
+  --gen_root data/generated_phi_sets_spatial \
   --out_root results/fig_s2 \
-  --targets 0.11 0.12 0.13 0.14 0.15 \
-  --r_max 128
+  --targets 0.11 0.12 0.13 0.14
 ```
 
-Output folder:
+Fig. 8a–c shows the X, Y, and Z curves at target 0.11. The other targets are
+supplementary. Fig. 8d uses the 6-neighbor face-interface S/V values written by
+the voxel-metric evaluation.
 
-```text
-results/fig_s2/
-```
-
-Within each porosity folder, `s2_X_*`, `s2_Y_*`, and `s2_Z_*` provide the
-main-text directional curves. `s2_R_*` is the supplementary direction-averaged
-curve.
-
-## Permeability and Voxel-Metric Figures
-
-Use this output for porosity, connected pore fraction, surface density, EDT summary, and OpenPNM permeability tables.
+## Figure 9: pore-network geometry and topology
 
 ```bash
-python scripts/evaluate_voxel_and_perm.py \
-  --input_root data/real256_sets_from_S1_strict \
-  --output_csv results/tables/real_voxel_perm.csv \
-  --group_name real \
-  --shape 256 256 256 \
-  --voxel_size 3.5e-6 \
-  --recursive \
-  --extensions .raw
+python scripts/evaluate_pore_network_6panel.py --config configs/main.yaml
+python scripts/evaluate_coordination_euler.py \
+  --real-root <held-out-real-root> \
+  --gen-root data/generated_phi_sets_spatial \
+  --out-root results/fig_pnm
+```
 
-python scripts/evaluate_voxel_and_perm.py \
-  --input_root data/generated_phi_sets \
-  --output_csv results/tables/generated_voxel_perm.csv \
-  --group_name gen \
-  --shape 256 256 256 \
-  --voxel_size 3.5e-6 \
-  --recursive \
-  --extensions .npz
+The six main-text panels at target 0.11 are pore radius, throat radius, throat
+shape factor, tortuosity, throat length, and coordination number. Results at
+targets 0.12–0.14 are supplementary.
 
+## Figure 10: main-sandstone permeability
+
+Run `scripts/evaluate_voxel_and_perm.py` for the real and generated roots,
+then compare the resulting tables:
+
+```bash
 python scripts/compare_metric_tables.py \
   --real-csv results/tables/real_voxel_perm.csv \
   --gen-csv results/tables/generated_voxel_perm.csv \
   --output-csv results/tables/permeability_comparison.csv \
-  --source-data-csv results/source_data/fig8_permeability.csv
+  --source-data-csv results/source_data/fig10_permeability.csv
 ```
 
-Output files:
+Fig. 10a reports Kx, Ky, Kz, and Kgeom at target 0.11. Fig. 10b reports Kgeom
+across targets 0.11–0.14. The laboratory-sandstone voxel size is 3.5 um.
 
-```text
-results/tables/real_voxel_perm.csv
-results/tables/generated_voxel_perm.csv
-results/tables/permeability_comparison.csv
-results/source_data/fig8_permeability.csv
-results/fig_perm/
-```
+## Figures 11–14: Fontainebleau extrapolation
 
-## Topology and Pore-Network Figures
+Place the three external `480^3` volumes at the paths in
+`configs/fontainebleau_config.yaml`, then run `--mode fontainebleau`. Repository
+labels 0.2045, 0.1743, and 0.1263 correspond to measured whole-volume
+porosities 0.2041, 0.1766, and 0.1289.
 
-Use these outputs for coordination number, Euler characteristic, and pore-network descriptor figures.
+- Fig. 11 compares real-crop porosity distributions and identifies the
+  training-patch range 0.1926–0.2215.
+- Fig. 12 shows directional S2 at measured porosity 0.1766.
+- Fig. 13 shows the six pore-network descriptors at 0.1766.
+- Fig. 14 shows permeability at 0.1766 and across all three conditions. Its
+  source table is `results/source_data/fig14_fontainebleau.csv`.
 
-```bash
-python scripts/evaluate_coordination_euler.py \
-  --real-root data/real256_sets_from_S1_strict \
-  --gen-root data/generated_phi_sets \
-  --out-root results/fig_pnm
-```
+Each condition compares 20 real subvolumes with 20 generated volumes. Results
+for measured porosity 0.1289 are supplementary.
 
-The complete Fontainebleau Real-Gen workflow, including all four real volumes,
-is reproduced with:
-
-```bash
-python run_pipeline.py --mode fontainebleau --config configs/main.yaml
-```
-
-For the extended six-panel pore-network diagnostic analysis:
-
-This extended diagnostic output is not identical to manuscript Fig. 7.
-Manuscript Fig. 7 combines pore radius, throat radius, throat shape factor,
-EDT radius, and coordination number from the corresponding evaluation outputs.
-Manuscript Fig. 7 uses the `phi0p15` group and excludes throat length,
-tortuosity, and Euler-characteristic outputs.
-
-```bash
-python scripts/evaluate_pore_network_6panel.py --config configs/main.yaml
-```
-
-This PNM six-panel step is included in `python run_pipeline.py --mode main
---config configs/main.yaml` and therefore also in `--mode full`. Verify paths
-and target values in `configs/main.yaml`; modification of the Python source
-file is not required. The manuscript-scale voxel size is read from
-`configs/main.yaml` as `data.voxel_size_m = 3.5e-6`.
-
-## Fontainebleau Validation Figures
-
-See `docs/fontainebleau_protocol.md` for the validation protocol. The default output folder is:
-
-```text
-results/fig_fontainebleau/
-```
-
-The Fontainebleau validation is included in:
-
-```bash
-python run_pipeline.py --mode fontainebleau --config configs/main.yaml
-python run_pipeline.py --mode full --config configs/main.yaml
-```
-
-The prepared Fontainebleau raw volume must exist at the path configured in `configs/fontainebleau_config.yaml`.
-
-## Summary Tables
-
-After generating results, write a compact manifest:
+## Summary outputs
 
 ```bash
 python src/metrics/summarize_all.py --root results
+python scripts/plot_all.py
 ```
 
-This writes:
-
-```text
-results/results_summary.json
-results/results_summary.csv
-```
-
-Summary files are generated locally from the released configuration and the
-data available to the user; they are not distributed in the public repository.
+See `docs/figure_mapping.md` for the complete figure-to-code registry and
+`docs/spatial_vqaware_workflow.md` for spatial-split and TP-AQB provenance.

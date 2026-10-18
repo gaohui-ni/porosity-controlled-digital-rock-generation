@@ -1,10 +1,11 @@
 # Checkpoint Policy
 
-The final trained checkpoints are publicly distributed under `savedmodels/`
-through Git LFS. File sizes and SHA256 checksums are listed in
+The files publicly distributed under `savedmodels/` through Git LFS are
+compatibility checkpoints from the earlier workflow. File sizes and SHA256
+checksums are listed in
 `docs/model_manifest.md`.
 
-The expected final model layout is:
+The compatibility model layout is:
 
 ```text
 savedmodels/
@@ -21,12 +22,16 @@ savedmodels/
 The two `unet_final.pth` files are larger than 100 MB and are therefore stored
 as Git LFS objects rather than ordinary GitHub blobs.
 
-Git LFS under `savedmodels/` is the canonical checkpoint distribution route
-for this release. The same files are not duplicated as GitHub Release assets;
+Git LFS under `savedmodels/` is the canonical distribution route for these
+compatibility files. The same files are not duplicated as GitHub Release assets;
 users should run `git lfs pull` after cloning. Identity is verified against the
 sizes and SHA256 checksums in `docs/model_manifest.md`.
 
-The repository also provides the complete source code, configuration files, public raw-data reference, random-seed settings, and documentation required to retrain the 3D VQ-VAE and the FiLM-conditioned latent DDPM. New training runs write checkpoints under `outputs/` by default:
+The repository also provides the source code, configuration files, public
+raw-data reference, random-seed settings, and documentation required to train
+the second-version spatial 3D VQ-VAE and FiLM-conditioned latent DDPM and to
+apply TP-AQB. New compatibility-path training runs write checkpoints under
+`outputs/` by default:
 
 - `outputs/main_sandstone/vqvae_final.pth`
 - `outputs/main_sandstone/unet_final.pth`
@@ -35,4 +40,10 @@ The repository also provides the complete source code, configuration files, publ
 - `outputs/fontainebleau_phi0p2045/unet_final.pth`
 - `outputs/fontainebleau_phi0p2045/latent_stats.npz`
 
-Using the supplied final checkpoints supports exact checkpoint-level reuse for generation. Independent retraining is expected to reproduce the methodology, porosity-control behavior, and statistical trends reported in the manuscript, but may not reproduce identical generated volumes because neural-network training and diffusion sampling are stochastic.
+The manuscript's second-version spatial workflow uses `ae_best.pth`,
+`unet_best_noise.pth`, calibrated sampling outputs, and a frozen 95-crop test
+cohort. Those files are not currently bundled. Therefore, the Git LFS files
+support exact checkpoint-level reuse only for the compatibility path, not exact
+reproduction of the reported second-version cohort. Independent retraining is
+expected to reproduce the methodology and statistical behavior rather than
+bitwise-identical samples.

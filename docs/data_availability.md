@@ -31,11 +31,17 @@ volume size of `480 × 480 × 480` voxels. Original file packaging and
 phase-label conventions may vary depending on the version supplied by the data
 provider.
 
-The validation dataset contains four three-dimensional sandstone samples:
+The second-version manuscript uses three three-dimensional sandstone samples:
 
 - volume size: 480 x 480 x 480 voxels;
 - voxel resolution: 5.68 um/voxel;
-- porosities: 0.1743, 0.1263, 0.0853, and 0.2045.
+- measured whole-volume porosities: 0.2041, 0.1766, and 0.1289;
+- repository filename/conditioning labels: 0.2045, 0.1743, and 0.1263.
+
+The 0.2041 rock is used to train the separate Fontainebleau model. The other
+two rocks provide lower-porosity cross-sample validation within the same
+lithology. Twenty real subvolumes and twenty generated volumes are compared at
+each condition. These subvolumes are not independent rock specimens.
 
 See `docs/fontainebleau_protocol.md` for the validation protocol.
 
@@ -57,11 +63,12 @@ Derived statistical results supporting the findings of the study are available f
 
 ## Trained Checkpoints
 
-The final trained VQ-VAE and latent-DDPM checkpoints are publicly distributed
+Compatibility VQ-VAE and latent-DDPM checkpoints are publicly distributed
 under `savedmodels/` through Git LFS. File sizes and SHA256 checksums are listed
-in `docs/model_manifest.md`. The repository also provides the complete
-main-sandstone training workflow for independently retraining the models from
-the released Mendeley Data volume.
+in `docs/model_manifest.md`. The second-version spatial checkpoints and frozen
+95-crop coordinate manifest are not bundled in the current repository. The
+repository provides their training, sampling, and TP-AQB workflow, but exact
+regeneration of the reported cohort requires those artifacts.
 
 ## Lightweight Synthetic Examples
 
@@ -91,13 +98,16 @@ Suggested wording for the manuscript:
 
 > The laboratory sandstone micro-CT volume data and associated metadata used in
 > this study are available in Mendeley Data at
-> https://doi.org/10.17632/vp2yw9c7jj.1. The source code, pretrained
+> https://doi.org/10.17632/vp2yw9c7jj.1. The source code, compatibility
 > checkpoints, model checksums, and reproduction instructions are publicly
 > available at
 > https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation.
 > The Fontainebleau sandstone digital rock samples used for validation were
 > obtained from a previously reported Australian National University (ANU)
 > digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not
-> redistributed by the authors. Derived statistical results and analysis data
+> redistributed by the authors. The second-version spatial checkpoints and
+> frozen 95-crop coordinate manifest are not bundled in the current repository
+> and are required for exact cohort-level regeneration. Derived statistical
+> results and analysis data
 > supporting the findings of this study are available from the corresponding
 > author upon reasonable request.

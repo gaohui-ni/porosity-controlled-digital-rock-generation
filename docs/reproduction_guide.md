@@ -10,10 +10,10 @@ python run_demo.py
 
 This runs the synthetic 64^3 workflow, checks quantile-based porosity control, and writes lightweight summaries under `examples/`.
 
-## Inspect the Full Workflow
+## Inspect the Second-Version Workflow
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml --dry-run
+python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 ```
 
 This prints the data preparation, training, generation, evaluation, and summary commands without launching GPU training.
@@ -21,16 +21,16 @@ This prints the data preparation, training, generation, evaluation, and summary 
 ## Main-Sandstone Manuscript Workflow
 
 ```bash
-python run_pipeline.py --mode main --config configs/main.yaml
+python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
 This requires the published sandstone micro-CT data, a CUDA-capable PyTorch installation, and enough memory for 256^3 training.
 
-The complete `full` workflow additionally requires access to the external ANU
+The separate validation additionally requires access to three external ANU
 Fontainebleau volumes, which are not redistributed:
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
 ## Result Summary

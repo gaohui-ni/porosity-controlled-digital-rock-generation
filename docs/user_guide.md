@@ -40,7 +40,9 @@ Evaluation scripts produce:
 python scripts/demo_quantile_binarization.py
 ```
 
-This checks the adaptive binarization step without requiring trained models.
+This checks the lightweight conventional quantile-matching helper without
+requiring trained models. The manuscript workflow uses TP-AQB through
+`scripts/apply_tp_aqb.py` and `src/sampling/tp_aqb.py`.
 
 The same workflow is also available as a notebook tutorial:
 
@@ -52,17 +54,23 @@ notebooks/tutorials/0001-basic-usage-synthetic-rock.ipynb
 
 ```bash
 python run_pipeline.py --mode demo --config configs/main.yaml
-python run_pipeline.py --mode main --config configs/main.yaml
+python run_pipeline.py --mode spatial --config configs/main.yaml
 python run_pipeline.py --mode fontainebleau --config configs/main.yaml
-python run_pipeline.py --mode full --config configs/main.yaml
 ```
 
-`main` covers the primary laboratory sandstone workflow. `fontainebleau`
-covers the independent validation workflow using external ANU volumes and
-`configs/fontainebleau_config.yaml`. `full` runs both workflows in sequence and
-therefore requires both datasets.
+`spatial` is the primary second-version laboratory-sandstone workflow.
+`fontainebleau` covers the independently trained validation experiment using
+three external ANU volumes and `configs/fontainebleau_config.yaml`. The `main`,
+`full`, and `final` modes are retained for compatibility with the earlier
+checkpoint layout.
 
-## Build Real Porosity Groups
+## Earlier Compatibility Commands
+
+The direct commands below describe the earlier checkpoint-compatible path.
+Their training schedule is intentionally unchanged pending separate
+confirmation. Use `--mode spatial` for the second-version manuscript workflow.
+
+### Build Real Porosity Groups
 
 ```bash
 python scripts/build_real_phi_groups.py \
@@ -75,7 +83,7 @@ python scripts/build_real_phi_groups.py \
   --out_root data/real256_sets_from_S1_strict
 ```
 
-## Train the Main Model
+### Train the Compatibility Model
 
 ```bash
 python scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py \
@@ -94,7 +102,7 @@ python scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py \
   --device cuda
 ```
 
-## Batch Generation
+### Batch Generation
 
 ```bash
 python scripts/generate_batch.py \

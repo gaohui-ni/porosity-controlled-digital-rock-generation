@@ -6,7 +6,7 @@ This document maps the repository contents to the Computers & Geosciences code, 
 
 The repository supports a manuscript at the interface of computing and geosciences:
 
-- computational contribution: 3D VQ-VAE, FiLM-conditioned latent diffusion, quantile-based porosity projection, and a reproducible digital-rock generation workflow;
+- computational contribution: spatially separated 3D VQ-VAE, FiLM-conditioned latent diffusion, topology-preserving adaptive quantile binarization (TP-AQB), and a reproducible digital-rock generation workflow;
 - geoscientific contribution: porosity-controllable reconstruction and validation of three-dimensional porous geomaterials from sandstone micro-CT data.
 
 ## Repository Requirements
@@ -24,7 +24,7 @@ The repository supports a manuscript at the interface of computing and geoscienc
 | Tutorials / how-to files | `notebooks/tutorials/`, `docs/user_guide.md`, `docs/reproducibility.md` |
 | User guide with inputs and outputs | `docs/user_guide.md` |
 | Data availability and redistribution limits | `docs/data_availability.md` |
-| Trained checkpoints | Large checkpoint files are distributed through Git LFS; layout and checksums are documented in `docs/checkpoints.md` and `docs/model_manifest.md` |
+| Checkpoints | Compatibility checkpoint files are distributed through Git LFS; layout, scope, and checksums are documented in `docs/checkpoints.md` and `docs/model_manifest.md` |
 | Figure/result reproduction map | `docs/figure_mapping.md`, `docs/figure_reproduction.md` |
 | Automated lightweight checks | `.github/workflows/tests.yml`, `tests/` |
 
@@ -39,23 +39,25 @@ python run_demo.py
 2. **Pipeline logic check without training**
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml --dry-run
+python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 ```
 
 3. **Main-sandstone workflow with the released Mendeley Data volume**
 
 ```bash
-python run_pipeline.py --mode main --config configs/main.yaml
+python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
-The complete `full` workflow additionally requires the external ANU
+The separate `fontainebleau` workflow additionally requires three external ANU
 Fontainebleau volumes, which are not redistributed in this repository.
 
 ## Data and Model Limitations
 
 The main sandstone micro-CT volume is referenced through Mendeley Data rather
 than stored in GitHub. The external ANU Fontainebleau volumes are not
-redistributed. Final checkpoints are distributed through Git LFS. The
+redistributed. Compatibility checkpoints are distributed through Git LFS; the
+second-version spatial checkpoints and frozen 95-crop coordinate manifest are
+not bundled. The
 repository provides synthetic examples, configurations, and
 training/generation/evaluation scripts so reviewers can inspect the workflow
 and rerun the portions for which they have the required data and compute
@@ -72,7 +74,7 @@ environment.
 
 - The public workflow configuration is `configs/main.yaml`.
 - Manuscript figure numbering is mapped in `docs/figure_mapping.md`.
-- Checkpoints are distributed through Git LFS as documented consistently in
+- Compatibility checkpoints are distributed through Git LFS as documented consistently in
   `README.md`, `docs/checkpoints.md`, and `docs/model_manifest.md`.
 - Core direct dependency versions from the experiment environment and
   reconstruction instructions are recorded under `environment/`.

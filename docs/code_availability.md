@@ -20,20 +20,23 @@ documented in the repository.
 
 **Programming language:** Python.
 
-**Program size:** Approximately 2.73 MB of uncompressed Git-tracked release
-content, excluding pretrained checkpoints, raw data, generated outputs, and
-Git metadata. This value was calculated from 125 tracked files after excluding
+**Program size:** Approximately 2.77 MiB of uncompressed Git-tracked release
+content, excluding checkpoints, raw data, generated outputs, and Git metadata.
+This value was calculated from 132 tracked files after excluding
 `savedmodels/`, `data/`, `results/`, and `outputs/`.
 
 **Source code availability:** The source code is publicly available in the
 GitHub repository *Porosity-Controlled 3D Digital Rock Generation* under the
 MIT License:
 https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation. The
-pretrained checkpoints are distributed through Git LFS, with file sizes and
+compatibility checkpoints are distributed through Git LFS, with file sizes and
 SHA-256 checksums documented in `docs/model_manifest.md`.
 
-The released checkpoints support model inference and analysis. Complete
-Fontainebleau validation additionally requires access to the external ANU
-volumes, which are not redistributed in this repository. Due to stochastic
+The released compatibility checkpoints support the earlier inference and
+analysis path. The second-version spatial checkpoints and frozen 95-crop
+coordinate manifest are not bundled; the repository includes the code needed
+to retrain and regenerate them. Complete Fontainebleau validation additionally
+requires access to three external ANU volumes, which are not redistributed in
+this repository. Due to stochastic
 sampling and hardware- or software-dependent numerical differences, generated
 volumes may not be bitwise identical across computational environments.

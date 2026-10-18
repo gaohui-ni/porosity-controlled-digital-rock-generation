@@ -1,8 +1,10 @@
-# Final Model Manifest
+# Compatibility Model Manifest
 
-This manifest records the final trained model files currently arranged under `savedmodels/`.
+This manifest records the earlier-workflow compatibility model files currently
+arranged under `savedmodels/`. These are not the second-version spatial
+checkpoints referenced by `--mode spatial`.
 
-The final trained checkpoints are publicly distributed under `savedmodels/`
+The compatibility checkpoints are publicly distributed under `savedmodels/`
 through Git LFS. The two `unet_final.pth` files exceed GitHub's normal 100 MB
 single-file limit and are stored as LFS objects. The SHA256 values below verify
 downloaded file identity.

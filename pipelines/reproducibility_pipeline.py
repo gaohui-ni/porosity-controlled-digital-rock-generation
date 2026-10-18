@@ -10,9 +10,9 @@ def run_quick_check():
     subprocess.run([sys.executable, "run_demo.py"], cwd=ROOT, check=True)
 
 
-def print_full_workflow():
+def print_manuscript_workflow():
     subprocess.run(
-        [sys.executable, "run_pipeline.py", "--mode", "full", "--config", "configs/main.yaml", "--dry-run"],
+        [sys.executable, "run_pipeline.py", "--mode", "spatial", "--config", "configs/main.yaml", "--dry-run"],
         cwd=ROOT,
         check=True,
     )
@@ -20,4 +20,4 @@ def print_full_workflow():
 
 if __name__ == "__main__":
     run_quick_check()
-    print_full_workflow()
+    print_manuscript_workflow()

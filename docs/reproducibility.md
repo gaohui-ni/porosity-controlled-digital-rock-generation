@@ -10,10 +10,12 @@ This repository supports the following levels of reproducibility:
 2. **Main-sandstone workflow reproduction through retraining**: use the public Mendeley Data volume, supplied configuration files, and training scripts to retrain the VQ-VAE and latent DDPM, generate porosity-controlled samples, and rerun the main-sandstone evaluation workflow.
 3. **Statistical manuscript-result reproduction**: independently retrained models are expected to reproduce the reported porosity-control accuracy, structural statistics, pore-network characteristics, and permeability trends within normal stochastic variation.
 
-The final trained checkpoints are distributed under `savedmodels/` through Git
-LFS and support reproduction of the inference and analysis workflow. Because
-diffusion sampling and numerical results can depend on random seeds, hardware,
-and software versions, bitwise-identical generated volumes are not guaranteed.
+Compatibility checkpoints are distributed under `savedmodels/` through Git
+LFS. The second-version spatial checkpoints and frozen 95-crop coordinate
+manifest are not bundled. The code reproduces the training, calibrated
+sampling, and TP-AQB workflow, but exact recreation of the reported paired
+cohort requires those artifacts. Bitwise-identical generated volumes are not
+guaranteed.
 
 ## Lightweight Functional Test
 
@@ -32,45 +34,47 @@ python run_pipeline.py --mode demo --config configs/main.yaml
 To inspect the manuscript-scale command sequence without launching training:
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml --dry-run
+python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 ```
 
 Available pipeline modes are:
 
 - `demo`: lightweight synthetic porosity-control check;
-- `main`: main laboratory sandstone workflow, including PNM six-panel descriptors;
+- `spatial`: primary second-version main-sandstone workflow with spatially
+  disjoint splits, calibrated FiLM sampling, and TP-AQB;
 - `fontainebleau`: independent Fontainebleau validation workflow;
-- `full`: `main` followed by `fontainebleau`;
-- `final`: generate and evaluate using final checkpoint files under `savedmodels/`, without retraining.
+- `main`, `full`, and `final`: earlier-workflow compatibility paths.
 
 ## Main Workflow
 
-The complete two-dataset pipeline is configured in `configs/main.yaml`.
-It additionally requires access to the external ANU Fontainebleau volumes,
-which are not redistributed in this repository:
+The primary second-version main-sandstone workflow is configured in
+`configs/main.yaml`:
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml
+python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
-To reproduce only the main laboratory sandstone results:
+This uses `x=[0,512), z=[0,512)` for training, `x=[0,512), z=[544,800)`
+for validation, and `x=[544,800)` for testing, with a 32-voxel exclusion gap.
+The reported evaluation compares 95 held-out real crops with 95 corresponding
+generated samples across target groups 0.11–0.14.
+
+Run the separate Fontainebleau experiment after its three external volumes are
+available:
 
 ```bash
-python run_pipeline.py --mode main --config configs/main.yaml
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
-To use the final supplied checkpoints without retraining:
+The earlier commands remain available for checkpoint compatibility:
 
 ```bash
 python run_pipeline.py --mode final --config configs/main.yaml
 ```
 
-The `final` mode still requires the raw comparison volumes used by the
-evaluation stages, including the external Fontainebleau volumes. For
-main-sandstone-only reproduction, use `--mode main` with the released
-Mendeley Data volume.
-
-The equivalent step-by-step commands are:
+The following step-by-step commands document that compatibility path. Their
+training schedule is intentionally left unchanged pending separate
+confirmation and does not define the second-version spatial experiment:
 
 ```bash
 python scripts/build_real_phi_groups.py \
@@ -201,7 +205,7 @@ For a figure-oriented mapping from manuscript result groups to commands and outp
 ## Fontainebleau Workflow
 
 The Fontainebleau validation can be launched through the official entry point
-after the four user-obtained, standardized volumes exist at the paths declared
+after the three user-obtained, standardized volumes exist at the paths declared
 in `configs/fontainebleau_config.yaml`. These external third-party ANU
 Fontainebleau volumes are not redistributed because the authors do not hold
 redistribution rights. Users
@@ -225,8 +229,8 @@ An equivalent generation-only command is:
 python scripts/generate_batch.py \
   --ckpt_dir outputs/fontainebleau_phi0p2045 \
   --out_root data/generated_fontainebleau_sets \
-  --targets 0.2045 0.1743 0.1263 0.0853 \
-  --n_per_target 50 \
+  --targets 0.2045 0.1743 0.1263 \
+  --n_per_target 20 \
   --poro_center 0.13 \
   --device cuda
 ```
@@ -236,15 +240,17 @@ After `git lfs pull`, use
 
 ## Current Limitations
 
-- Final trained checkpoints are distributed under `savedmodels/` through Git
-  LFS and verified by `scripts/verify_final_models.py`. The complete workflow
-  can also be reproduced through model retraining. See `docs/checkpoints.md`.
+- Compatibility checkpoints are distributed under `savedmodels/` through Git
+  LFS and verified by `scripts/verify_final_models.py`. See
+  `docs/checkpoints.md` for their scope.
+- The second-version spatial checkpoints and frozen 95-crop coordinate manifest
+  are currently absent; exact cohort-level reproduction needs those files.
 - Manuscript-scale permeability and pore-network results require `porespy`, `openpnm`, and substantial compute time.
 - Because training and sampling are stochastic, exact generated volumes and numerically identical outputs are not guaranteed.
 
 ## Release GPU Smoke Test Status
 
-The released main-sandstone and Fontainebleau checkpoints were each loaded on
+The released compatibility main-sandstone and Fontainebleau checkpoints were each loaded on
 GPU and used to generate one binary sample. Both outputs contained readable
 three-dimensional `seg` arrays with consistent porosity metadata. The
 main-sandstone sample also entered the post-processing smoke workflow

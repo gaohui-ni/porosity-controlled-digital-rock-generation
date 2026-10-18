@@ -1,37 +1,47 @@
 # Figure Registry
 
-This registry maps the current manuscript Figures 1–9 to their code, inputs,
-and locally generated outputs. The official full reproduction entry point is:
+This registry maps Figures 1–14 in the second-version manuscript to the
+repository implementation, required inputs, and locally generated outputs.
+The primary main-sandstone entry point is:
 
 ```bash
-python run_pipeline.py --mode full --config configs/main.yaml
+python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
+
+Run the Fontainebleau workflow separately after placing the three external
+volumes at the configured paths.
 
 | Figure | Result | Script or implementation | Required input | Local output |
 | --- | --- | --- | --- | --- |
-| Fig. 1 | 3D VQ-VAE architecture and reconstruction stage | `scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py --stage vqvae`; `src/models/vqvae3d.py` | Main sandstone raw volume and `configs/main.yaml` | `outputs/main_sandstone/vqvae_final.pth` and VQ-VAE training logs |
-| Fig. 2 | Conditional latent-space DDPM architecture | `scripts/train_256_vqvae_ddpm_lat64_v6_light96_full.py --stage ddpm`; `src/models/unet3d_film.py` | Raw training volume and trained VQ-VAE | `outputs/main_sandstone/unet_final.pth`, `latent_stats.npz`, and DDPM logs |
-| Fig. 3 | Adaptive quantile binarization (AQB) | `scripts/demo_quantile_binarization.py`; `src/sampling/quantile_binarization.py` | Decoded probability volume and target porosity | Binary segmentation, threshold, and achieved-porosity report under `examples/` |
-| Fig. 4 | Representative generated volumes and orthogonal slices selected for qualitative visualization. The displayed samples are illustrative; quantitative conclusions are based on the complete generated ensembles and the statistical evaluations reported in Figs. 6–9. | `scripts/generate_batch.py` | Released checkpoints and targets 0.11–0.15 | Representative volumes and orthogonal slices selected from generated ensembles |
-| Fig. 5 | Example slice-wise porosity comparison between a real and a generated volume at the same target porosity. Users may provide any corresponding real/generated pair to reproduce this qualitative visualization. The exact displayed pair is not used in the group-level quantitative analysis. | `scripts/plot_slice_porosity.py` | Any corresponding real/generated pair and its target porosity | PNG and adjacent CSV |
-| Fig. 6 | Four main-text panels: (a-c) two-point correlation function S2(r) in the X, Y, and Z directions; (d) S/V comparison | `scripts/evaluate_s2_lineal_edt.py`; `scripts/evaluate_voxel_and_perm.py` | `data/real256_sets_from_S1_strict/` and `data/generated_phi_sets/` | X/Y/Z curves under `results/fig_s2/` and S/V data under `results/tables/*_voxel_perm.csv` |
-| Fig. 7 | At phi=0.15: (a) pore radius, (b) throat radius, (c) throat shape factor, (d) EDT radius, and (e) coordination number | `scripts/evaluate_pore_network_6panel.py`; `scripts/evaluate_coordination_euler.py` | Real and generated `phi0p15` groups | `results/fig_pnm/`; manuscript panels exclude throat length, tortuosity, and Euler-characteristic outputs |
-| Fig. 8 | (a) Kx, Ky, Kz, and Kgeom at phi=0.15; (b) Kgeom at phi=0.11–0.15 | `scripts/evaluate_voxel_and_perm.py`; `scripts/compare_metric_tables.py` | Real/generated binary groups, voxel size 3.5 um | `results/tables/real_voxel_perm.csv`, `generated_voxel_perm.csv`, and `permeability_comparison.csv` |
-| Fig. 9 | (a) Fontainebleau Kx, Ky, Kz, and Kgeom at phi=0.2045; (b) Kgeom at all four validation porosities | `python run_pipeline.py --mode fontainebleau --config configs/main.yaml` | Four external Fontainebleau volumes, released checkpoint, voxel size 5.68 um | `results/fig_fontainebleau/` and `results/tables/fontainebleau_*` |
+| Fig. 1 | 3D VQ-VAE representation and reconstruction | `scripts/train_256_vqvae_ddpm_spatial_vqaware_v3_film.py`; `src/models/vqvae3d.py` | Main `800^3` sandstone volume | Spatial-workflow VQ-VAE checkpoint and logs |
+| Fig. 2 | FiLM-conditioned latent DDPM | `scripts/train_256_vqvae_ddpm_spatial_vqaware_v3_film.py`; `src/models/unet3d_film.py` | Trained VQ-VAE and spatially separated training crops | DDPM checkpoint, latent statistics, and logs |
+| Fig. 3 | TP-AQB procedure | `scripts/apply_tp_aqb.py`; `src/sampling/tp_aqb.py` | Decoded probability volume, reference segmentation, and target porosity | TP-AQB segmentation and diagnostic JSON |
+| Fig. 4 | Representative 3D morphology, pore space, and 2D slices at target porosities 0.11–0.14 | Spatial generation and TP-AQB outputs | Spatial-workflow checkpoints and targets | Selected volumes and rendered slices |
+| Fig. 5 | FiLM ablation under a fixed threshold of 0.5 | Spatial training script, ablation and calibrated sampling stages | Conditional and no-condition checkpoints | Per-target ablation statistics and plot inputs |
+| Fig. 6 | Porosity distributions for Real, Gen1 (fixed threshold), and Gen2 (TP-AQB) across 95 paired samples | Spatial sampling and TP-AQB stages | Frozen 95-crop test cohort and calibrated probability volumes | Pair-level porosity table and boxplot inputs |
+| Fig. 7 | Slice-wise porosity along z for a representative real/generated pair at target 0.13 | `scripts/plot_slice_porosity.py` | A corresponding real/generated pair | PNG and adjacent CSV |
+| Fig. 8 | (a–c) directional two-point correlation at target 0.11; (d) S/V across targets 0.11–0.14 | `scripts/evaluate_s2_lineal_edt.py`; `scripts/evaluate_voxel_and_perm.py` | Held-out real cohort and TP-AQB generated cohort | Curves under `results/fig_s2/` and voxel tables under `results/tables/` |
+| Fig. 9 | Pore radius, throat radius, throat shape factor, tortuosity, throat length, and coordination number at target 0.11 | `scripts/evaluate_pore_network_6panel.py`; `scripts/evaluate_coordination_euler.py` | Real/generated target-0.11 groups | PNM outputs under `results/fig_pnm/` |
+| Fig. 10 | (a) directional and geometric-mean permeability at target 0.11; (b) geometric-mean permeability across targets 0.11–0.14 | `scripts/evaluate_voxel_and_perm.py`; `scripts/compare_metric_tables.py` | Real/generated binary groups; 3.5 um voxel size | `results/tables/*_voxel_perm.csv`, `permeability_comparison.csv`, and `results/source_data/fig10_permeability.csv` |
+| Fig. 11 | Fontainebleau subvolume porosity distributions for one training rock and two lower-porosity validation rocks | `scripts/prepare_fontainebleau_real_sets.py` | Three external `480^3` Fontainebleau volumes | Real-set manifest and porosity table |
+| Fig. 12 | Directional two-point correlation at measured porosity 0.1766 | `scripts/evaluate_s2_lineal_edt.py` through `--mode fontainebleau` | Real/generated Fontainebleau groups | Fontainebleau S2 outputs |
+| Fig. 13 | Fontainebleau pore-network geometry and topology at measured porosity 0.1766 | PNM and coordination evaluation through `--mode fontainebleau` | Real/generated Fontainebleau groups | Fontainebleau PNM outputs |
+| Fig. 14 | (a) directional and geometric-mean permeability at measured porosity 0.1766; (b) permeability across the three conditions | Fontainebleau permeability and comparison stages | Three real volumes, generated groups, and 5.68 um voxel size | `results/fig_fontainebleau/`, `results/tables/fontainebleau_*`, and `results/source_data/fig14_fontainebleau.csv` |
 
-Figures 1–3 are manuscript schematics assembled from the listed model and
-algorithm implementations. Figures 4–9 use numerical or volumetric outputs
-generated by the listed scripts. Derived figure-source CSV files are generated
-locally and are not distributed in the public repository.
+Figures 1–3 are method schematics assembled from the listed implementations.
+Figures 4–14 use numerical or volumetric outputs generated by those workflows.
+Supplementary figures contain the remaining porosity conditions described in
+the manuscript.
 
-`evaluate_s2_lineal_edt.py` also writes the direction-averaged `R` curve
-(`R = mean(X, Y, Z)`). That curve is used in the Supplementary Material and is
-not a panel of main-text Fig. 6.
+The frozen 95-crop coordinate manifest and the second-version spatial
+checkpoints are not currently bundled. The repository contains the workflow
+needed to regenerate them, but exact recreation of the reported cohort also
+requires those artifacts.
 
-For a lightweight synthetic figure check:
+For a lightweight synthetic figure-path check:
 
 ```bash
 python scripts/reproduce_figures.py --config configs/main.yaml
 ```
 
-For detailed commands, see `docs/figure_reproduction.md`.
+For detailed commands and limitations, see `docs/figure_reproduction.md`.

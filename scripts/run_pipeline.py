@@ -362,7 +362,7 @@ def main_pipeline(cfg, config_path="configs/main.yaml", checkpoint_dir=None, tra
                 "--output-csv",
                 comparison_csv,
                 "--source-data-csv",
-                str(Path(paths["source_data_results"]) / "fig8_permeability.csv"),
+                str(Path(paths["source_data_results"]) / "fig10_permeability.csv"),
             ],
         ),
         (
@@ -409,9 +409,9 @@ def main_pipeline(cfg, config_path="configs/main.yaml", checkpoint_dir=None, tra
                 "--pnm-root",
                 paths["topology_results"],
                 "--s2-output",
-                str(Path(paths["source_data_results"]) / "fig6_s2.csv"),
+                str(Path(paths["source_data_results"]) / "fig8_s2.csv"),
                 "--pnm-output",
-                str(Path(paths["source_data_results"]) / "fig7_pnm.csv"),
+                str(Path(paths["source_data_results"]) / "fig9_pnm.csv"),
             ],
         ),
         (
@@ -620,7 +620,7 @@ def fontainebleau_pipeline(cfg, train_models=True):
                 "--output-csv",
                 comparison_csv,
                 "--source-data-csv",
-                str(Path(paths["source_data_results"]) / "fig9_fontainebleau.csv"),
+                str(Path(paths["source_data_results"]) / "fig14_fontainebleau.csv"),
             ],
         ),
         (
