@@ -43,3 +43,35 @@ paths:
 
 demo:
   summary_root: examples
+
+# Spatially separated VQ-VAE/DDPM workflow introduced after the v0.1.1
+# manuscript release.  The legacy main/full/final modes remain unchanged;
+# select it explicitly with ``run_pipeline.py --mode spatial``.
+spatial_vqaware:
+  raw_path: data/raw/Bei_800x800x800.raw
+  checkpoint_dir: outputs/spatial_vqaware
+  probability_root: outputs/spatial_vqaware/condition_sweep
+  generated_root: data/generated_phi_sets_spatial
+  device: cuda
+  variant: vq
+  condition_mode: film
+  n_train_samples: 1000
+  n_val_samples: 64
+  batch_vae: 1
+  batch_ddpm: 1
+  epochs_vae: 15
+  epochs_ddpm: 40
+  local_phi_weight: 0.10
+  boundary_weight: 0.05
+  dice_weight: 0.20
+  lambda_codebook: 0.0
+  codebook_sample_voxels: 8192
+  training_poro_center: 0.13
+  training_poro_scale: 0.02
+  training_poro_clip: 5.0
+  sampling_poro_scale: 0.011804
+  sample_checkpoint: unet_best_noise.pth
+  targets: [0.11, 0.12, 0.13, 0.14]
+  samples_per_target: 20
+  seed: 20260928
+  tp_aqb_config: configs/tp_aqb_v2.yaml

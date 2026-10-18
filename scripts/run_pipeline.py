@@ -100,6 +100,114 @@ def demo_pipeline(cfg):
     ]
 
 
+def spatial_vqaware_pipeline(cfg):
+    """Build the post-v0.1.1 spatial-split VQ/DDPM/TP-AQB workflow.
+
+    This is an additive mode: the manuscript ``main``, ``full``, and ``final``
+    modes keep their released commands and checkpoint format.  The spatial
+    mode uses the same 800^3 parent rock while enforcing disjoint train,
+    validation, and test regions inside the new training entry point.
+    """
+    exp = cfg["spatial_vqaware"]
+    script = "scripts/train_256_vqvae_ddpm_spatial_vqaware_v3_film.py"
+    targets = ",".join(str(value) for value in exp["targets"])
+
+    common = [
+        sys.executable,
+        script,
+        "--raw_path",
+        exp["raw_path"],
+        "--save_dir",
+        exp["checkpoint_dir"],
+        "--device",
+        exp["device"],
+        "--variant",
+        exp["variant"],
+        "--condition_mode",
+        exp["condition_mode"],
+        "--n_train_samples",
+        str(exp["n_train_samples"]),
+        "--n_val_samples",
+        str(exp["n_val_samples"]),
+        "--batch_vae",
+        str(exp["batch_vae"]),
+        "--batch_ddpm",
+        str(exp["batch_ddpm"]),
+        "--local_phi_weight",
+        str(exp["local_phi_weight"]),
+        "--boundary_weight",
+        str(exp["boundary_weight"]),
+        "--dice_weight",
+        str(exp["dice_weight"]),
+        "--lambda_codebook",
+        str(exp["lambda_codebook"]),
+        "--codebook_sample_voxels",
+        str(exp["codebook_sample_voxels"]),
+        "--seed",
+        str(exp["seed"]),
+    ]
+
+    training_condition = [
+        "--poro_center",
+        str(exp["training_poro_center"]),
+        "--poro_scale",
+        str(exp["training_poro_scale"]),
+        "--poro_clip",
+        str(exp["training_poro_clip"]),
+    ]
+    return [
+        (
+            "Train spatial-split EMA VQ-VAE",
+            common
+            + ["--stage", "vqvae", "--epochs_vae", str(exp["epochs_vae"])]
+            + training_condition,
+        ),
+        (
+            "Compute spatial-split latent statistics",
+            common + ["--stage", "stats"] + training_condition,
+        ),
+        (
+            "Train FiLM latent DDPM with validation selection",
+            common
+            + ["--stage", "ddpm", "--epochs_ddpm", str(exp["epochs_ddpm"])]
+            + training_condition,
+        ),
+        (
+            "Generate calibrated probability volumes",
+            common
+            + [
+                "--stage",
+                "sample",
+                "--poro_center",
+                str(exp["training_poro_center"]),
+                "--poro_scale",
+                str(exp["sampling_poro_scale"]),
+                "--poro_clip",
+                str(exp["training_poro_clip"]),
+                "--sample_targets",
+                targets,
+                "--samples_per_target",
+                str(exp["samples_per_target"]),
+                "--sample_checkpoint",
+                exp["sample_checkpoint"],
+            ],
+        ),
+        (
+            "Apply topology-preserving AQB v2",
+            [
+                sys.executable,
+                "scripts/apply_tp_aqb.py",
+                "--input-root",
+                exp["probability_root"],
+                "--output-root",
+                exp["generated_root"],
+                "--config",
+                exp["tp_aqb_config"],
+            ],
+        ),
+    ]
+
+
 def main_pipeline(cfg, config_path="configs/main.yaml", checkpoint_dir=None, train_models=True):
     data = cfg["data"]
     train = cfg["training"]
@@ -596,7 +704,11 @@ def main():
         )
     )
     parser.add_argument("--config", default="configs/main.yaml")
-    parser.add_argument("--mode", choices=["demo", "main", "fontainebleau", "full", "final"], default="demo")
+    parser.add_argument(
+        "--mode",
+        choices=["demo", "main", "fontainebleau", "full", "final", "spatial"],
+        default="demo",
+    )
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -607,6 +719,8 @@ def main():
     cfg = load_config(ROOT / args.config)
     if args.mode == "demo":
         steps = demo_pipeline(cfg)
+    elif args.mode == "spatial":
+        steps = spatial_vqaware_pipeline(cfg)
     elif args.mode == "main":
         steps = main_pipeline(cfg, config_path=args.config)
     elif args.mode == "fontainebleau":

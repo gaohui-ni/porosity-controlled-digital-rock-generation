@@ -47,7 +47,11 @@ The repository contains:
 
 - 3D VQ-VAE and vector-quantized latent representation learning.
 - FiLM-conditioned latent DDPM for target-porosity controlled generation.
-- Quantile-based binarization for matching prescribed porosity.
+- Quantile-based binarization for matching prescribed porosity, plus an
+  optional topology- and throat-preserving TP-AQB v2 postprocessor.
+- A spatially disjoint train/validation/test workflow with EMA vector
+  quantization, validation-based checkpoint selection, FiLM ablation, and
+  calibrated conditional sampling.
 - Training, sampling, batch-generation, and Fontainebleau validation scripts.
 - Evaluation utilities for porosity, directional two-point correlation function `S2`, pore-size statistics, topology, pore-network features, and OpenPNM permeability workflows.
 - Synthetic examples that can be used without restricted raw micro-CT data.
@@ -147,7 +151,16 @@ Available modes:
 - `main`: main laboratory sandstone workflow, including training, generation, spatial statistics, permeability, topology, and PNM six-panel descriptors;
 - `fontainebleau`: independent Fontainebleau validation workflow;
 - `full`: `main` followed by `fontainebleau`;
-- `final`: generate and evaluate using final checkpoint files under `savedmodels/`, without retraining.
+- `final`: generate and evaluate using final checkpoint files under `savedmodels/`, without retraining;
+- `spatial`: run the newer spatial-split EMA-VQ/DDPM workflow and apply
+  TP-AQB v2. This mode is additive and does not change the released
+  `main/full/final` checkpoint contract.
+
+The spatial workflow uses the same released `800^3` parent sandstone volume,
+but reserves disjoint regions for training, validation, and final testing. Its
+configuration is under `spatial_vqaware` in `configs/main.yaml`; implementation
+and provenance are documented in
+[docs/spatial_vqaware_workflow.md](docs/spatial_vqaware_workflow.md).
 
 For a lightweight reviewer sanity check:
 
@@ -199,6 +212,7 @@ python run_pipeline.py --mode full --config configs/main.yaml
 python run_pipeline.py --mode main --config configs/main.yaml
 python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 python run_pipeline.py --mode final --config configs/main.yaml
+python run_pipeline.py --mode spatial --config configs/main.yaml
 python src/metrics/summarize_all.py --root results
 python scripts/plot_all.py
 ```

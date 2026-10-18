@@ -10,6 +10,7 @@ dependencies:
   - pandas
   - matplotlib
   - scikit-image
+  - numba
   - pyyaml
   - tqdm
   - pytorch

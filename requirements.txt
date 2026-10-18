@@ -3,6 +3,7 @@ scipy
 pandas
 matplotlib
 scikit-image
+numba
 pyyaml
 tqdm
 torch

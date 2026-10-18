@@ -4,7 +4,9 @@ Use this top-level wrapper for reviewer-facing reproduction:
 
     python run_pipeline.py --mode full --config configs/main.yaml
 
-Available modes are demo, main, fontainebleau, full, and final.
+Available modes are demo, main, fontainebleau, full, final, and spatial.  The
+spatial mode exposes the newer disjoint-region EMA-VQ/DDPM/TP-AQB workflow;
+the released manuscript modes retain their original checkpoint contract.
 
 The implementation lives in ``scripts/run_pipeline.py`` so that the public
 entry point remains stable while the internal workflow can stay modular.
