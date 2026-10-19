@@ -154,9 +154,9 @@ def test_code_availability_and_readme_match_release_policy():
         assert expected in statement
 
     assert "python run_pipeline.py --mode spatial" in readme
-    assert "three external ANU volumes" in readme
+    assert "三块外部 ANU 岩心数据" in readme
     assert "A release archive may also be provided" not in readme
-    assert "## Authors" in readme
+    assert "## 作者" in readme
     assert "Gaohui Ni, Yanyan Ma, Shaowei Ma, Yuxin Yang, Xuefeng Liu, and Hao Ni" in readme
 
 

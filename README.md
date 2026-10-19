@@ -1,87 +1,66 @@
-# Porosity-Controllable 3D Porous Media Generation
+# 孔隙度可控的三维多孔介质生成
 
-Core implementation for the manuscript **A Porosity-Controllable Generative Framework for Three-Dimensional Porous Media Based on Discrete Latent-Space Diffusion**.
+本仓库是论文 **A Porosity-Controllable Generative Framework for
+Three-Dimensional Porous Media Based on Discrete Latent-Space Diffusion** 的
+核心代码实现。
 
-## Authors
+## 作者
 
 Gaohui Ni, Yanyan Ma, Shaowei Ma, Yuxin Yang, Xuefeng Liu, and Hao Ni
 
-This repository implements the second-version manuscript workflow for
-porosity-controllable 3D digital rock generation: a spatially separated 3D
-VQ-VAE, a FiLM-conditioned latent DDPM, and topology-preserving adaptive
-quantile binarization (TP-AQB) for precise output porosity matching.
+## 方法简介
 
-## Methodological Contributions
+第二版论文采用“离散潜空间生成 + 双重孔隙度控制”的三维数字岩心生成框架：
 
-The method addresses three practical problems in 3D digital-rock generation:
-the cost of voxel-space diffusion, learning from limited physical samples,
-and controlling porosity without discarding important pore connections.
+1. 使用三维 VQ-VAE 将 `256^3` 微米 CT 子体压缩为
+   `32 x 64 x 64 x 64` 离散潜变量；
+2. 使用 FiLM 将目标孔隙度注入潜空间 DDPM 的去噪过程；
+3. 使用拓扑保持自适应分位数二值化（TP-AQB）精确匹配最终孔隙度，同时
+   尽量保护骨架、喉道邻域、连通性和比表面积。
 
-The principal methodological novelty lies in a dual-control discrete
-latent-space framework that couples learned porosity-dependent structural
-generation with exact output-space porosity enforcement for efficient and
-physically evaluated `256^3` digital-rock generation under limited-sample
-conditions.
+主砂岩实验使用空间上互不重叠的训练、验证和测试区域。最终比较包括测试区
+95 个真实样本和 95 个对应条件下的生成样本。目标孔隙度为 `0.11`、`0.12`、
+`0.13` 和 `0.14`，四组分别包含 8、29、39 和 19 对样本。
 
-A lightweight 3D VQ-VAE compresses `256^3`-voxel micro-CT volumes into a
-`32 x 64 x 64 x 64` discrete latent tensor. Continuous target porosity
-modulates latent denoising features through FiLM. TP-AQB starts from the
-model's fixed-threshold structure, adjusts the pore count under skeleton,
-throat-neighborhood, and topology constraints, and uses equal-count local
-swaps to reduce specific-surface drift.
+Fontainebleau 实验在同一岩性内验证跨样本孔隙度外推能力：使用一块
+`480^3` 岩心训练，并在两块更低孔隙度岩心上验证。该实验单独训练模型，
+并不是主砂岩模型的零样本迁移，也不表示跨岩性泛化。
 
-The main sandstone evaluation uses 95 real samples from the spatially held-out
-test region and 95 generated samples conditioned on their corresponding real
-porosities. The four nominal groups contain 8, 29, 39, and 19 pairs at target
-porosities `0.11`, `0.12`, `0.13`, and `0.14`. Evaluation covers directional
-two-point correlation, specific surface area, pore-network geometry and local
-topology, and directional and geometric-mean permeability.
+更详细的方法、代码位置和证据范围见
+[docs/methodological_novelty.md](docs/methodological_novelty.md)。
 
-A separately trained Fontainebleau experiment evaluates cross-sample
-porosity extrapolation within the same lithology. One `480^3` rock is used for
-training and two lower-porosity rocks are used for validation. This is not a
-zero-shot transfer of the laboratory-sandstone model and is not presented as
-cross-lithology generalization.
+## 仓库内容
 
-Implementation locations, manuscript mappings, validation evidence, and the
-scope of these framework-level claims are documented in
-[docs/methodological_novelty.md](docs/methodological_novelty.md).
+- 三维 VQ-VAE 与离散潜变量表示学习；
+- FiLM 条件潜空间 DDPM；
+- TP-AQB v2：在满足目标孔隙体素数的同时保护关键拓扑结构；
+- 空间隔离的训练、验证和测试流程；
+- EMA 向量量化、验证集选模、FiLM 消融和条件校准采样；
+- 训练、采样、批量生成和 Fontainebleau 验证脚本；
+- 孔隙度、定向两点相关函数 `S2`、比表面积、孔喉网络、拓扑和渗透率评估；
+- 无需受限原始数据即可运行的轻量合成示例。
 
-## Scope
+仓库仍保留轻量 top-N 分位数二值化代码，用于演示和旧权重兼容。论文第二版
+所述的主要后处理方法是 TP-AQB，二者不能混同。
 
-The repository contains:
-
-- 3D VQ-VAE and vector-quantized latent representation learning.
-- FiLM-conditioned latent DDPM for target-porosity controlled generation.
-- TP-AQB v2 for exact pore-count matching with topology, skeleton,
-  throat-neighborhood, and specific-surface safeguards.
-- A lightweight top-N quantile implementation retained for demonstrations and
-  legacy checkpoint compatibility.
-- A spatially disjoint train/validation/test workflow with EMA vector
-  quantization, validation-based checkpoint selection, FiLM ablation, and
-  calibrated conditional sampling.
-- Training, sampling, batch-generation, and Fontainebleau validation scripts.
-- Evaluation utilities for porosity, directional two-point correlation function `S2`, pore-size statistics, topology, pore-network features, and OpenPNM permeability workflows.
-- Synthetic examples that can be used without restricted raw micro-CT data.
-
-## Repository Structure
+## 目录结构
 
 ```text
-configs/      Example YAML configurations.
-src/          Importable model, data, training, sampling, metric, and utility code.
-scripts/      Command-line workflows for training, generation, and evaluation.
-examples/     Small synthetic demo data and demo outputs.
-docs/         Installation, user guide, reproducibility, and data/code availability notes.
-data/         Placeholder folders for user-provided raw data.
-outputs/      Placeholder folder for generated checkpoints and outputs.
-results/      Placeholder folder for generated figures, curves, and tables.
-savedmodels/  Earlier-workflow compatibility checkpoints distributed through Git LFS.
-environment/  Exact package versions used for the manuscript-scale workflow.
+configs/      YAML 配置文件
+src/          模型、数据、训练、采样、指标和工具代码
+scripts/      训练、生成和评估命令行脚本
+examples/     小型合成数据和演示输出
+docs/         安装、使用、复现和数据/代码可用性说明
+data/         用户提供原始数据的占位目录
+outputs/      新训练权重和中间输出目录
+results/      图、曲线、表格和汇总结果目录
+savedmodels/  通过 Git LFS 发布的旧流程兼容权重
+environment/  论文实验环境的依赖版本
 ```
 
-## Installation
+## 安装
 
-Conda is recommended:
+推荐使用 Conda：
 
 ```bash
 conda env create -f environment/environment-lock.yml
@@ -89,7 +68,7 @@ conda activate vq256_cuda
 pip install -e .
 ```
 
-Alternatively:
+也可以直接安装依赖：
 
 ```bash
 pip install -r requirements.txt
@@ -97,38 +76,34 @@ pip install -r requirements_optional.txt
 pip install -e .
 ```
 
-`porespy` and `openpnm` are optional for the lightweight demo but required for
-pore-network and permeability workflows. Core direct dependency versions from
-the manuscript environment are pinned in
-`environment/environment-lock.yml` and `environment/requirements-lock.txt`.
-Environment reconstruction guidance and the recorded runtime versions are
-provided in [docs/dependency_versions.md](docs/dependency_versions.md).
+轻量演示不需要 `porespy` 和 `openpnm`；孔喉网络与渗透率计算需要安装
+`requirements_optional.txt`。完整环境说明见
+[docs/dependency_versions.md](docs/dependency_versions.md)。
 
-## Computational Requirements
+## 计算与数据要求
 
-- Lightweight demo, notebooks, and unit tests: CPU only; no raw micro-CT data or trained checkpoint is required.
-- Manuscript-scale training and generation: CUDA-capable PyTorch installation recommended; default generated/comparison sample size is `256 x 256 x 256` voxels.
-- Pore-network and permeability workflows: install `requirements_optional.txt`; these steps can be memory- and time-intensive.
-- Raw data: the default full configuration expects the released Mendeley file at `data/raw/Bei_800x800x800.raw` with shape `800 x 800 x 800`, following [docs/data_availability.md](docs/data_availability.md).
-- Voxel size: the manuscript-scale laboratory sandstone data use `3.5e-6` m/voxel, configured as `data.voxel_size_m` in [configs/main.yaml](configs/main.yaml).
+- 轻量演示、Notebook 和单元测试可仅使用 CPU；
+- `256^3` 尺度的训练和批量生成建议使用支持 CUDA 的 NVIDIA GPU；
+- 孔喉网络和渗透率计算对内存和时间要求较高；
+- 主砂岩原始数据默认路径为 `data/raw/Bei_800x800x800.raw`，形状为
+  `800 x 800 x 800`；
+- 主砂岩体素尺寸为 `3.5e-6` m/voxel，在 `configs/main.yaml` 中配置；
+- Fontainebleau 实验需要用户自行取得三块外部 ANU 岩心数据。
 
-## Minimal Demo
-
-Run the synthetic porosity-matching demo:
+## 最小演示
 
 ```bash
 python scripts/demo_quantile_binarization.py
 ```
 
-Expected behavior:
+该命令会：
 
-- writes `examples/demo_input.npy`;
-- writes `examples/demo_output/demo_seg.npy`;
-- prints the target porosity, achieved porosity, check porosity, and adaptive threshold.
+- 写入 `examples/demo_input.npy`；
+- 写入 `examples/demo_output/demo_seg.npy`；
+- 输出目标孔隙度、实际孔隙度和自适应阈值。
 
-This demo is intentionally lightweight and does not require restricted micro-CT data or trained checkpoints.
-
-A notebook version of this workflow is available at:
+此演示只检查轻量分位数匹配代码，不需要原始微米 CT 数据或模型权重。相关
+Notebook 位于：
 
 ```text
 notebooks/tutorials/0001-basic-usage.ipynb
@@ -137,179 +112,149 @@ notebooks/tutorials/0002-porosity-control.ipynb
 notebooks/tutorials/0003-fontainebleau-validation.ipynb
 ```
 
-## Official Reproduction Entry Point
+## 论文第二版复现入口
 
-`run_pipeline.py` is the official top-level entry point for the repository workflows.
-`scripts/run_pipeline.py` is the internal modular implementation called by the top-level entry point and should not be used directly for reviewer reproduction.
+仓库顶层的 `run_pipeline.py` 是统一入口；`scripts/run_pipeline.py` 是其调用的
+内部实现。
 
-The second-version main-sandstone implementation uses the publicly released
-Mendeley Data volume:
+主砂岩第二版流程：
 
 ```bash
 python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
-Run `--mode fontainebleau` separately when the three external ANU volumes are
-available. They are not redistributed in this repository. The `full` command
-is retained for the earlier compatibility workflow and should not be confused
-with the second-version `spatial` path.
-
-Available modes:
-
-- `demo`: lightweight synthetic porosity-control check;
-- `spatial`: second-version manuscript implementation for spatially separated
-  EMA-VQ/DDPM training, calibrated FiLM sampling, and TP-AQB v2;
-- `fontainebleau`: separately trained Fontainebleau validation and
-  porosity-extrapolation workflow;
-- `main`: compatibility workflow for the earlier main-sandstone checkpoint;
-- `full`: compatibility `main` workflow followed by `fontainebleau`;
-- `final`: inference and evaluation with the compatibility checkpoints under
-  `savedmodels/`, without retraining.
-
-The `spatial` workflow is the primary implementation corresponding to the
-second-version manuscript. It uses the released `800^3` parent sandstone
-volume and reserves disjoint regions for training, validation, and final
-testing. Its configuration is under `spatial_vqaware` in `configs/main.yaml`;
-implementation and provenance are documented in
-[docs/spatial_vqaware_workflow.md](docs/spatial_vqaware_workflow.md).
-
-The current `savedmodels/` files belong to the earlier compatibility workflow.
-The second-version spatial checkpoint set and the frozen 95-crop test-cohort
-manifest are not bundled in this revision; the `spatial` workflow must
-therefore be retrained before calibrated sampling.
-
-For a lightweight reviewer sanity check:
+Fontainebleau 三岩心实验需要在外部数据就绪后单独运行：
 
 ```bash
-python run_demo.py
+python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
-To inspect the second-version main-sandstone command sequence without
-launching training or generation:
+可用模式：
+
+- `demo`：轻量合成孔隙度控制检查；
+- `spatial`：论文第二版的空间隔离 EMA-VQ/DDPM、FiLM 校准采样和 TP-AQB；
+- `fontainebleau`：单独训练的 Fontainebleau 跨样本孔隙度外推实验；
+- `main`：旧版主砂岩权重兼容流程；
+- `full`：旧版 `main` 后接 `fontainebleau` 的兼容流程；
+- `final`：使用 `savedmodels/` 中兼容权重进行推理和评估，不重新训练。
+
+`spatial` 是与论文第二版对应的主流程。空间划分、实现细节和来源见
+[docs/spatial_vqaware_workflow.md](docs/spatial_vqaware_workflow.md)。
+
+当前 `savedmodels/` 中的文件属于旧版兼容流程。论文第二版使用的空间模型
+权重以及冻结的 95 样本坐标清单尚未包含在仓库中。因此，当前代码可以重新
+训练和执行完整方法，但精确复现论文中的 95 对样本还需要补充这些文件。
+
+## 检查流程但不启动训练
 
 ```bash
 python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 ```
 
-`--dry-run` is a pipeline logic test. It builds the same ordered command sequence as the selected reproduction run and writes `results/pipeline_<mode>_manifest.json`, but it does not train models, generate samples, or evaluate outputs.
+`--dry-run` 只生成有序命令和流程清单，不会训练模型、生成样本或执行评估。
+输出清单为 `results/pipeline_spatial_manifest.json`。
 
-Compatibility `full` runs and current `spatial` runs write separate command
-manifests and output roots. In particular:
+轻量审稿检查：
 
-- current command manifest: `results/pipeline_spatial_manifest.json`;
-- current checkpoint and model outputs: `outputs/spatial_vqaware/`;
-- TP-AQB volumes: `data/generated_phi_sets_spatial/`;
-- compatibility command manifest: `results/pipeline_full_manifest.json`;
-- figure-oriented outputs: `results/fig_s2/`, `results/fig_perm/`, `results/fig_pnm/`, and `results/fig_fontainebleau/`;
-- manuscript tables: `results/tables/`;
-- summary files: `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`.
+```bash
+python run_demo.py
+```
 
-## Tests
+## 输出位置
 
-Install the lightweight test dependency and run:
+- 当前空间流程权重和中间结果：`outputs/spatial_vqaware/`；
+- TP-AQB 生成体：`data/generated_phi_sets_spatial/`；
+- 空间统计结果：`results/fig_s2/`；
+- 孔喉网络结果：`results/fig_pnm/`；
+- 渗透率结果：`results/fig_perm/`；
+- Fontainebleau 结果：`results/fig_fontainebleau/`；
+- 表格：`results/tables/`；
+- 图源数据：`results/source_data/`；
+- 汇总：`results/results_summary.json`、`results/summary.json` 和
+  `results/results_summary.csv`。
+
+## 论文图件对应关系
+
+论文第二版包括 Fig. 1–14。完整的图件—代码—输入—输出对应关系见：
+
+- [docs/figure_mapping.md](docs/figure_mapping.md)
+- [docs/figure_reproduction.md](docs/figure_reproduction.md)
+
+其中主要数值图包括：
+
+- Fig. 5：FiLM 条件消融；
+- Fig. 6：95 对样本的 Real、Gen1 和 Gen2 孔隙度比较；
+- Fig. 8：定向 `S2` 和比表面积；
+- Fig. 9：孔半径、喉道半径、形状因子、曲折度、喉道长度和配位数；
+- Fig. 10：主砂岩方向渗透率和几何平均渗透率；
+- Fig. 11–14：Fontainebleau 孔隙度分布、空间统计、孔喉网络和渗透率。
+
+## Fontainebleau 数据口径
+
+论文报告的整块岩心实测孔隙度与仓库历史文件标签不同：
+
+| 仓库标签 | 论文实测整块孔隙度 | 用途 |
+| ---: | ---: | --- |
+| 0.2045 | 0.2041 | 训练岩心 |
+| 0.1743 | 0.1766 | 未见验证岩心 |
+| 0.1263 | 0.1289 | 未见验证岩心 |
+
+每个条件比较 20 个真实 `256^3` 子体和 20 个生成体。真实子体来自对应的一块
+母岩心，不能视为 20 个相互独立的岩石样本。详细协议见
+[docs/fontainebleau_protocol.md](docs/fontainebleau_protocol.md)。
+
+训练轮数配置在本次文档更新中保持不变，等待后续单独确认。
+
+## 测试
 
 ```bash
 pip install -r requirements_dev.txt
 pytest tests/
 ```
 
-The tests cover conventional quantile matching, TP-AQB exact pore counts and
-topology preservation, porosity calculation, directional two-point
-correlation-function output shapes, and pipeline dry-run behavior.
+测试覆盖分位数匹配、TP-AQB 目标孔隙体素数与拓扑保护、孔隙度、定向两点
+相关函数、流程 dry-run、图号注册表和 Fontainebleau 配置一致性。
 
-## Reproduce Manuscript Outputs
-
-The second-version manuscript-scale experiment is configured in [configs/main.yaml](configs/main.yaml). [configs/experiment_main.yaml](configs/experiment_main.yaml) is retained as a backward-compatible copy/example. See [docs/figure_reproduction.md](docs/figure_reproduction.md) for a command-by-command figure reproduction map. The pipeline writes figure-oriented outputs under `results/`:
-
-- `results/fig_s2/`: directional two-point correlation function `S2`, lineal-path, and EDT pore-size curves.
-- `results/fig_perm/`: permeability-related tables and plots.
-- `results/fig_pnm/`: topology and pore-network descriptors.
-- `results/fig_fontainebleau/`: Fontainebleau validation outputs.
-- `results/tables/`: CSV tables used for manuscript plots.
-
-Current manuscript commands:
+## 结果汇总
 
 ```bash
-python run_pipeline.py --mode spatial --config configs/main.yaml
-python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 python src/metrics/summarize_all.py --root results
 python scripts/plot_all.py
 ```
 
-The `main`, `full`, and `final` modes remain available for compatibility with
-the earlier checkpoint layout.
-
-The summary command writes `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`. A short manuscript-to-code map is provided in [docs/figure_mapping.md](docs/figure_mapping.md).
-
-For a lightweight figure-output sanity check and figure-path helper:
+轻量图件路径检查：
 
 ```bash
 python scripts/reproduce_figures.py --config configs/main.yaml
 ```
 
-By default, this helper runs only the synthetic demo and validates the
-figure-output path. It never starts manuscript-scale training unless
-`--run-full-pipeline` is supplied explicitly. To plot from existing outputs
-without running even the demo, use `--skip-pipeline`. Manuscript-scale figures
-are generated from the full evaluation outputs listed in
-[docs/figure_reproduction.md](docs/figure_reproduction.md).
+该脚本默认只运行合成演示并检查图件输出路径；只有显式添加
+`--run-full-pipeline` 时才会启动论文尺度流程。
 
-The repository-to-journal requirements map is provided in
-[docs/journal_compliance.md](docs/journal_compliance.md). Summary files are
-generated locally by the evaluation workflow and are not distributed in the
-public repository.
+## 数据可用性
 
-## Main Manuscript Workflow
-
-See [docs/reproducibility.md](docs/reproducibility.md) and [docs/user_guide.md](docs/user_guide.md) for the full workflow.
-
-At a high level:
-
-1. Place the binary `800^3` laboratory sandstone volume under `data/raw/`.
-2. Run the spatially separated 3D VQ-VAE and FiLM latent-DDPM workflow.
-3. Generate calibrated probability volumes and apply TP-AQB v2.
-4. Compare the 95 held-out real samples and 95 matched-condition generated
-   samples across the four nominal porosity groups.
-5. Evaluate spatial statistics, specific surface area, pore-network geometry,
-   local topology, and permeability.
-6. Run the separately trained three-volume Fontainebleau experiment when the
-   third-party data are available.
-
-## Data Availability
-
-The laboratory sandstone micro-CT volume data and associated metadata used in this study are available in Mendeley Data:
+主砂岩微米 CT 数据及元数据发布于 Mendeley Data：
 
 https://doi.org/10.17632/vp2yw9c7jj.1
 
-The repository also includes synthetic examples and scripts that allow reviewers and users to test the workflow on provided or user-supplied binary 3D volumes.
+Fontainebleau 岩心属于第三方 ANU 数据，本仓库不重新分发。用户需要从原始
+提供方获取并按照 `0 = solid`、`1 = pore` 的 `uint8` 约定进行标准化。详见
+[docs/data_availability.md](docs/data_availability.md)。
 
-See [docs/data_availability.md](docs/data_availability.md).
+## 兼容模型权重
 
-## Released Compatibility Models and Checkpoints
-
-### Download pretrained checkpoints
-
-The checkpoints currently tracked under `savedmodels/` with Git LFS reproduce
-the earlier compatibility workflow. They do not replace the `ae_best.pth`,
-`unet_best_noise.pth`, and calibrated sampling configuration used by the
-second-version spatial workflow. Clone the repository and retrieve these files
-before running compatibility checkpoint inference:
+当前 Git LFS 中的权重用于旧版兼容流程，不是论文第二版 `spatial` 流程的
+`ae_best.pth` 和 `unet_best_noise.pth`。
 
 ```bash
 git lfs install
 git clone https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation.git
 cd porosity-controlled-digital-rock-generation
 git lfs pull
-```
-
-Verify the downloaded files against the SHA256 values in
-[docs/model_manifest.md](docs/model_manifest.md), then run:
-
-```bash
 python run_pipeline.py --mode final --config configs/main.yaml
 ```
 
-The compatibility model layout is:
+权重布局：
 
 ```text
 savedmodels/
@@ -323,35 +268,19 @@ savedmodels/
     `-- latent_stats.npz
 ```
 
-The two `unet_final.pth` files exceed the normal GitHub 100 MB single-file limit
-and therefore require Git LFS. Checksums are provided in
-[docs/model_manifest.md](docs/model_manifest.md).
+文件大小、SHA256 和适用范围见：
 
-The VQ-VAE, FiLM-conditioned latent-DDPM, calibrated sampling, and TP-AQB
-workflow is provided so users can retrain using the publicly available raw
-data and `configs/main.yaml`.
+- [docs/model_manifest.md](docs/model_manifest.md)
+- [docs/checkpoints.md](docs/checkpoints.md)
 
-A completed training run produces:
+扩散采样具有随机性，且数值结果可能受到硬件和软件环境影响。独立重训练应复现
+方法和统计趋势，而不保证生成完全相同的体数据。
 
-- `vqvae_final.pth`
-- `unet_final.pth`
-- `latent_stats.npz`
+## 引用
 
-The released checkpoints enable reuse of the earlier compatibility inference
-and analysis workflow. Exact reproduction of the second-version 95-pair cohort
-additionally requires its spatial checkpoints and frozen crop manifest.
-Because diffusion sampling is stochastic and numerical
-results can depend on hardware and software versions, generated volumes may not
-be bitwise identical across computational environments. Independently retrained
-models are expected to reproduce the workflow and statistical behavior rather
-than identical samples.
+如果使用本仓库，请引用相关论文。机器可读引用信息见
+[CITATION.cff](CITATION.cff)。
 
-See [docs/checkpoints.md](docs/checkpoints.md) for details.
+## 许可证
 
-## Citation
-
-If you use this repository, please cite the associated manuscript. A machine-readable citation file is provided in [CITATION.cff](CITATION.cff).
-
-## License
-
-This project is released under the MIT License. See [LICENSE](LICENSE).
+本项目使用 MIT License，详见 [LICENSE](LICENSE)。
