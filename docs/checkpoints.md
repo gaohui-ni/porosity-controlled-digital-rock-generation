@@ -1,14 +1,24 @@
 # Checkpoint Policy
 
-The files publicly distributed under `savedmodels/` through Git LFS are
-compatibility checkpoints from the earlier workflow. File sizes and SHA256
-checksums are listed in
-`docs/model_manifest.md`.
+The files publicly distributed under `savedmodels/` include the second-version
+spatial final-sampling package and compatibility checkpoints from the earlier
+workflow. File sizes and SHA256 checksums are listed in
+`docs/model_manifest.md` and the spatial package's `MANIFEST.sha256`.
 
-The compatibility model layout is:
+The model layout is:
 
 ```text
 savedmodels/
+|-- spatial_vqaware_v2/
+|   |-- R03_calibrated/
+|   |   |-- ae_best.pth
+|   |   |-- calib_A_scale.pth
+|   |   `-- latent_stats.npz
+|   |-- optional_precalibration/unet_best_noise.pth
+|   |-- test_cohort_v1/test_crop_porosity_all_100.csv
+|   `-- final_test_v2/
+|       |-- final_test_seed_manifest.csv
+|       `-- FINAL_TEST_PAIR_MANIFEST.csv
 |-- main_sandstone/
 |   |-- vqvae_final.pth
 |   |-- unet_final.pth
@@ -19,11 +29,11 @@ savedmodels/
     `-- latent_stats.npz
 ```
 
-The two `unet_final.pth` files are larger than 100 MB and are therefore stored
-as Git LFS objects rather than ordinary GitHub blobs.
+All `.pth` and `.npz` files below `savedmodels/` are stored as Git LFS objects
+rather than ordinary GitHub blobs.
 
 Git LFS under `savedmodels/` is the canonical distribution route for these
-compatibility files. The same files are not duplicated as GitHub Release assets;
+files. The same files are not duplicated as GitHub Release assets;
 users should run `git lfs pull` after cloning. Identity is verified against the
 sizes and SHA256 checksums in `docs/model_manifest.md`.
 
@@ -40,10 +50,10 @@ apply TP-AQB. New compatibility-path training runs write checkpoints under
 - `outputs/fontainebleau_phi0p2045/unet_final.pth`
 - `outputs/fontainebleau_phi0p2045/latent_stats.npz`
 
-The manuscript's second-version spatial workflow uses `ae_best.pth`,
-`unet_best_noise.pth`, calibrated sampling outputs, and a frozen 95-crop test
-cohort. Those files are not currently bundled. Therefore, the Git LFS files
-support exact checkpoint-level reuse only for the compatibility path, not exact
-reproduction of the reported second-version cohort. Independent retraining is
-expected to reproduce the methodology and statistical behavior rather than
-bitwise-identical samples.
+The final manuscript sampling run uses `R03_calibrated/ae_best.pth`,
+`R03_calibrated/latent_stats.npz`, and
+`R03_calibrated/calib_A_scale.pth`. The last file contains model tensors
+bitwise identical to the optional pre-calibration `unet_best_noise.pth`, but
+records the calibrated `poro_scale=0.011804` instead of `0.02`. The frozen crop,
+seed, and pair manifests permit exact cohort reconstruction from the published
+raw volume. Generated volumes are omitted because they occupy about 5.9 GB.

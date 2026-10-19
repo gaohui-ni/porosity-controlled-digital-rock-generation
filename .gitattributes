@@ -1,2 +1,4 @@
 savedmodels/**/*.pth filter=lfs diff=lfs merge=lfs -text
 savedmodels/**/*.npz filter=lfs diff=lfs merge=lfs -text
+savedmodels/spatial_vqaware_v2/** -text
+savedmodels/spatial_vqaware_v2/**/*.csv -text -diff

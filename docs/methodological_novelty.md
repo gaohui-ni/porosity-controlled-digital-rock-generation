@@ -115,6 +115,6 @@ See `docs/figure_mapping.md` for the corresponding scripts and inputs.
   independent rock specimens.
 - TP-AQB enforces pore count and preserves the generated reference topology; it
   does not directly impose real-rock pore-network or permeability targets.
-- The current Git LFS checkpoints belong to the earlier compatibility
-  workflow. Second-version spatial checkpoints and the frozen 95-crop cohort
-  manifest are not included in this revision.
+- The second-version calibrated spatial checkpoint, matching VQ-VAE and latent
+  statistics, and frozen Test-95 provenance are released through Git LFS under
+  `savedmodels/spatial_vqaware_v2/`. The generated 3D volumes are not bundled.

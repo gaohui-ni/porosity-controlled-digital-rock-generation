@@ -10,12 +10,12 @@ This repository supports the following levels of reproducibility:
 2. **Main-sandstone workflow reproduction through retraining**: use the public Mendeley Data volume, supplied configuration files, and training scripts to retrain the VQ-VAE and latent DDPM, generate porosity-controlled samples, and rerun the main-sandstone evaluation workflow.
 3. **Statistical manuscript-result reproduction**: independently retrained models are expected to reproduce the reported porosity-control accuracy, structural statistics, pore-network characteristics, and permeability trends within normal stochastic variation.
 
-Compatibility checkpoints are distributed under `savedmodels/` through Git
-LFS. The second-version spatial checkpoints and frozen 95-crop coordinate
-manifest are not bundled. The code reproduces the training, calibrated
-sampling, and TP-AQB workflow, but exact recreation of the reported paired
-cohort requires those artifacts. Bitwise-identical generated volumes are not
-guaranteed.
+Compatibility checkpoints and the second-version spatial final-sampling
+package are distributed under `savedmodels/` through Git LFS. The spatial
+package contains the calibrated R03 checkpoint, matching VQ-VAE and latent
+statistics, the 100-crop table, and the 95-sample seed and pair manifests.
+Generated volumes are regenerated locally. Hardware-dependent numerical
+differences remain possible.
 
 ## Lightweight Functional Test
 
@@ -243,8 +243,8 @@ After `git lfs pull`, use
 - Compatibility checkpoints are distributed under `savedmodels/` through Git
   LFS and verified by `scripts/verify_final_models.py`. See
   `docs/checkpoints.md` for their scope.
-- The second-version spatial checkpoints and frozen 95-crop coordinate manifest
-  are currently absent; exact cohort-level reproduction needs those files.
+- The second-version spatial weights and Test-95 manifests are under
+  `savedmodels/spatial_vqaware_v2/`; run `git lfs pull` before using them.
 - Manuscript-scale permeability and pore-network results require `porespy`, `openpnm`, and substantial compute time.
 - Because training and sampling are stochastic, exact generated volumes and numerically identical outputs are not guaranteed.
 

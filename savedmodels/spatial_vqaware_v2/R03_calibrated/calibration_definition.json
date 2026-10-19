@@ -1,0 +1,10 @@
+{
+  "slope_armB": 0.5902,
+  "M": 1.6943409013893598,
+  "S0": 0.02,
+  "scale_A": 0.011803999999999999,
+  "source": "/home/hipeson/vq-vae/exp_spatial_vqaware_20260928/07_ablation/armB_vq_nocodebook/unet_best_noise.pth",
+  "source_weight_sha256": "0df5e3d845296db5af61e95130825c716c75f371bdaacfdf46339d26bb07d925",
+  "col128_norm": 1.3465183973312378,
+  "rationale": "armB's delivered-porosity slope is 0.59020; the condition enters through ONE column of cond_mlp.0, so delivered(m) = armB_native(0.13 + m*(phi-0.13)); m = 1/slope makes the delivered slope 1.0 and balances the error across targets."
+}

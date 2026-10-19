@@ -63,12 +63,12 @@ Derived statistical results supporting the findings of the study are available f
 
 ## Trained Checkpoints
 
-Compatibility VQ-VAE and latent-DDPM checkpoints are publicly distributed
-under `savedmodels/` through Git LFS. File sizes and SHA256 checksums are listed
-in `docs/model_manifest.md`. The second-version spatial checkpoints and frozen
-95-crop coordinate manifest are not bundled in the current repository. The
-repository provides their training, sampling, and TP-AQB workflow, but exact
-regeneration of the reported cohort requires those artifacts.
+The second-version spatial VQ-VAE, latent statistics, calibrated DDPM
+checkpoint, frozen 100-crop table, 95-sample seed mapping, and pair manifest
+are distributed under `savedmodels/spatial_vqaware_v2/`. Compatibility
+checkpoints are also distributed under `savedmodels/` through Git LFS. File
+sizes and SHA256 checksums are listed in `docs/model_manifest.md` and the
+spatial package's `MANIFEST.sha256`.
 
 ## Lightweight Synthetic Examples
 
@@ -105,9 +105,9 @@ Suggested wording for the manuscript:
 > The Fontainebleau sandstone digital rock samples used for validation were
 > obtained from a previously reported Australian National University (ANU)
 > digital rock dataset (Arns et al., 2007; Xiao et al., 2024) and are not
-> redistributed by the authors. The second-version spatial checkpoints and
-> frozen 95-crop coordinate manifest are not bundled in the current repository
-> and are required for exact cohort-level regeneration. Derived statistical
+> redistributed by the authors. The second-version spatial final-sampling
+> checkpoints and frozen Test-95 provenance are distributed through Git LFS
+> under `savedmodels/spatial_vqaware_v2/`. Derived statistical
 > results and analysis data
 > supporting the findings of this study are available from the corresponding
 > author upon reasonable request.

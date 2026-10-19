@@ -39,6 +39,9 @@ savedmodels/*.pt
 !savedmodels/fontainebleau_phi0p2045/
 !savedmodels/fontainebleau_phi0p2045/*.pth
 !savedmodels/fontainebleau_phi0p2045/*.npz
+!savedmodels/spatial_vqaware_v2/
+!savedmodels/spatial_vqaware_v2/**/*.pth
+!savedmodels/spatial_vqaware_v2/**/*.npz
 
 # temporary analysis outputs
 results/temp/

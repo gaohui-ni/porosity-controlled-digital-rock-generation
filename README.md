@@ -173,10 +173,12 @@ testing. Its configuration is under `spatial_vqaware` in `configs/main.yaml`;
 implementation and provenance are documented in
 [docs/spatial_vqaware_workflow.md](docs/spatial_vqaware_workflow.md).
 
-The current `savedmodels/` files belong to the earlier compatibility workflow.
-The second-version spatial checkpoint set and the frozen 95-crop test-cohort
-manifest are not bundled in this revision; the `spatial` workflow must
-therefore be retrained before calibrated sampling.
+The second-version final sampling package is released under
+`savedmodels/spatial_vqaware_v2/`. It contains the calibrated R03 checkpoint,
+the matching VQ-VAE and latent statistics, the frozen 100-crop table (95 crops
+used in the four manuscript groups), and the final seed and pair manifests.
+The earlier compatibility checkpoint sets remain available in their existing
+directories.
 
 For a lightweight reviewer sanity check:
 
@@ -192,6 +194,25 @@ python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 ```
 
 `--dry-run` is a pipeline logic test. It builds the same ordered command sequence as the selected reproduction run and writes `results/pipeline_<mode>_manifest.json`, but it does not train models, generate samples, or evaluate outputs.
+
+To regenerate the frozen Test-95 probability volumes from the released final
+sampling package, first run `git lfs pull`, place the published raw volume at
+the configured path, and execute:
+
+```bash
+python scripts/generate_spatial_test95.py \
+  --raw-path data/raw/Bei_800x800x800.raw \
+  --device cuda
+
+python scripts/apply_tp_aqb.py \
+  --input-root outputs/spatial_test95/gen \
+  --output-root data/generated_phi_sets_spatial_test95 \
+  --config configs/tp_aqb_v2.yaml
+```
+
+The first command reproduces the single probability field and fixed/top-N
+baselines for each crop. The second command applies the manuscript TP-AQB v2
+recipe to those probability fields.
 
 Compatibility `full` runs and current `spatial` runs write separate command
 manifests and output roots. In particular:
@@ -285,15 +306,12 @@ The repository also includes synthetic examples and scripts that allow reviewers
 
 See [docs/data_availability.md](docs/data_availability.md).
 
-## Released Compatibility Models and Checkpoints
+## Released Models and Checkpoints
 
 ### Download pretrained checkpoints
 
-The checkpoints currently tracked under `savedmodels/` with Git LFS reproduce
-the earlier compatibility workflow. They do not replace the `ae_best.pth`,
-`unet_best_noise.pth`, and calibrated sampling configuration used by the
-second-version spatial workflow. Clone the repository and retrieve these files
-before running compatibility checkpoint inference:
+All `.pth` and `.npz` files under `savedmodels/` are tracked with Git LFS.
+Clone the repository and retrieve the LFS objects before checkpoint inference:
 
 ```bash
 git lfs install
@@ -309,10 +327,18 @@ Verify the downloaded files against the SHA256 values in
 python run_pipeline.py --mode final --config configs/main.yaml
 ```
 
-The compatibility model layout is:
+The released model layout is:
 
 ```text
 savedmodels/
+|-- spatial_vqaware_v2/
+|   |-- R03_calibrated/
+|   |   |-- ae_best.pth
+|   |   |-- calib_A_scale.pth
+|   |   `-- latent_stats.npz
+|   |-- optional_precalibration/unet_best_noise.pth
+|   |-- test_cohort_v1/test_crop_porosity_all_100.csv
+|   `-- final_test_v2/*_MANIFEST.csv
 |-- main_sandstone/
 |   |-- vqvae_final.pth
 |   |-- unet_final.pth
@@ -323,9 +349,14 @@ savedmodels/
     `-- latent_stats.npz
 ```
 
-The two `unet_final.pth` files exceed the normal GitHub 100 MB single-file limit
-and therefore require Git LFS. Checksums are provided in
-[docs/model_manifest.md](docs/model_manifest.md).
+Checksums are provided in [docs/model_manifest.md](docs/model_manifest.md) and
+`savedmodels/spatial_vqaware_v2/MANIFEST.sha256`.
+
+After `git lfs pull`, verify the spatial release with:
+
+```bash
+python scripts/verify_spatial_release.py --check-tensors
+```
 
 The VQ-VAE, FiLM-conditioned latent-DDPM, calibrated sampling, and TP-AQB
 workflow is provided so users can retrain using the publicly available raw
@@ -337,9 +368,10 @@ A completed training run produces:
 - `unet_final.pth`
 - `latent_stats.npz`
 
-The released checkpoints enable reuse of the earlier compatibility inference
-and analysis workflow. Exact reproduction of the second-version 95-pair cohort
-additionally requires its spatial checkpoints and frozen crop manifest.
+The released spatial package records the exact weights, crop selection, and
+seed mapping used by the 95-pair test. Generated probability and binary volumes
+are not bundled because they occupy approximately 5.9 GB; they can be
+regenerated from the released package and the published `800^3` source volume.
 Because diffusion sampling is stochastic and numerical
 results can depend on hardware and software versions, generated volumes may not
 be bitwise identical across computational environments. Independently retrained

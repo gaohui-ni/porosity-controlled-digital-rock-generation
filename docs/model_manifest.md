@@ -1,15 +1,29 @@
-# Compatibility Model Manifest
+# Model Manifest
 
-This manifest records the earlier-workflow compatibility model files currently
-arranged under `savedmodels/`. These are not the second-version spatial
-checkpoints referenced by `--mode spatial`.
+This manifest records the released second-version spatial package and the
+earlier-workflow compatibility files under `savedmodels/`.
 
 The compatibility checkpoints are publicly distributed under `savedmodels/`
 through Git LFS. The two `unet_final.pth` files exceed GitHub's normal 100 MB
 single-file limit and are stored as LFS objects. The SHA256 values below verify
 downloaded file identity.
 
-## File Layout
+## Second-version spatial package
+
+The exact file hashes for all 13 release artifacts are recorded in
+`savedmodels/spatial_vqaware_v2/MANIFEST.sha256`. The principal model files are:
+
+| File | Size bytes | SHA256 |
+| --- | ---: | --- |
+| `savedmodels/spatial_vqaware_v2/R03_calibrated/ae_best.pth` | 10510532 | `4ee13a88647be589c318bc811b5ae97b186c9a9cde2ffa23ea6355d8b5695041` |
+| `savedmodels/spatial_vqaware_v2/R03_calibrated/calib_A_scale.pth` | 46702970 | `1d5ef756a068fbd5d180b68f6f7f86e7b294c6bd312fb2a09486b679b439ce15` |
+| `savedmodels/spatial_vqaware_v2/R03_calibrated/latent_stats.npz` | 1649 | `25df1f39889214817b62a8eb8d6d68c8fc48cbcde7d12cc8320618bf82d5a921` |
+| `savedmodels/spatial_vqaware_v2/optional_precalibration/unet_best_noise.pth` | 46703882 | `f3e68a21c843998dd9f6536a4c69fb35a9582b40bac463a80c0090b3d66c8ba9` |
+
+The calibrated and pre-calibration DDPM files contain 68 bitwise-identical
+model tensors. They differ only in the saved conditioning scale.
+
+## Compatibility File Layout
 
 ```text
 savedmodels/

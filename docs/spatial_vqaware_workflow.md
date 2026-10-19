@@ -111,9 +111,12 @@ data/generated_phi_sets_spatial/
 `-- phi_<target>/*_tp_aqb.npz
 ```
 
-No new trained checkpoint is bundled by this code update. Reproducing the
-spatial workflow therefore requires running its VAE, latent-statistics, and
-DDPM stages before sampling.
+New training runs write the files above under `outputs/`. For final Test-95
+sampling without retraining, use the released artifacts under
+`savedmodels/spatial_vqaware_v2/R03_calibrated/`. The final DDPM filename is
+`calib_A_scale.pth`; its model tensors match the selected
+`unet_best_noise.pth`, while its saved conditioning scale is calibrated to
+`0.011804`.
 
 ## Manuscript evaluation cohort
 
@@ -122,8 +125,25 @@ held-out testing region and 95 generated samples conditioned on the real
 porosity of each crop. The nominal group sizes are `8`, `29`, `39`, and `19`
 for target porosities `0.11`, `0.12`, `0.13`, and `0.14`, respectively.
 
-The frozen 95-crop coordinate manifest and its second-version trained
-checkpoints are not bundled in this revision. The implemented `spatial` mode
-therefore reproduces the model-training, calibrated condition-sweep, and
-TP-AQB stages, but exact regeneration of the reported 95-pair cohort requires
-those frozen artifacts.
+The frozen 100-crop table (95 included in the four manuscript groups), final
+seed mapping, pair manifest, matching VQ-VAE, latent statistics, and calibrated
+R03 DDPM checkpoint are released under `savedmodels/spatial_vqaware_v2/`.
+The 5.9 GB generated probability and binary volumes are not bundled and must be
+regenerated locally from the published raw volume.
+
+```bash
+git lfs pull
+python scripts/generate_spatial_test95.py \
+  --raw-path data/raw/Bei_800x800x800.raw \
+  --device cuda
+
+python scripts/apply_tp_aqb.py \
+  --input-root outputs/spatial_test95/gen \
+  --output-root data/generated_phi_sets_spatial_test95 \
+  --config configs/tp_aqb_v2.yaml
+```
+
+`generate_spatial_test95.py` uses the exact crop porosity and released seed for
+each of the 95 samples. Its `on` output is the conventional exact top-N
+baseline; the second command produces the TP-AQB v2 segmentation used by the
+current workflow.

@@ -21,9 +21,9 @@ python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
 The `main`, `full`, and `final` modes remain available only for compatibility
-with the earlier checkpoint layout. The second-version spatial checkpoints and
-frozen 95-crop coordinate manifest are not currently bundled, so exact
-recreation of the reported paired cohort requires those artifacts.
+with the earlier checkpoint layout. The second-version calibrated spatial
+checkpoint and frozen crop, seed, and pair manifests are released under
+`savedmodels/spatial_vqaware_v2/`.
 
 ## Figures 1–3: method schematics
 

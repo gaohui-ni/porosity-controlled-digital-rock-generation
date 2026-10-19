@@ -1,3 +1,5 @@
+import csv
+from collections import Counter
 from pathlib import Path
 import subprocess
 import sys
@@ -115,6 +117,55 @@ def test_figure_registry_maps_all_manuscript_figures():
     assert "fig14_fontainebleau.csv" in registry
 
 
+def test_spatial_v2_release_has_frozen_test95_provenance():
+    release = ROOT / "savedmodels" / "spatial_vqaware_v2"
+    required = (
+        "R03_calibrated/ae_best.pth",
+        "R03_calibrated/calib_A_scale.pth",
+        "R03_calibrated/latent_stats.npz",
+        "R03_calibrated/calibration_definition.json",
+        "optional_precalibration/unet_best_noise.pth",
+        "test_cohort_v1/test_crop_porosity_all_100.csv",
+        "final_test_v2/final_test_seed_manifest.csv",
+        "final_test_v2/FINAL_TEST_PAIR_MANIFEST.csv",
+        "spatial_split.json",
+        "MANIFEST.sha256",
+    )
+    for relative in required:
+        assert (release / relative).is_file(), relative
+
+    manifest = (release / "MANIFEST.sha256").read_text(encoding="utf-8")
+    assert "4ee13a88647be589c318bc811b5ae97b186c9a9cde2ffa23ea6355d8b5695041" in manifest
+    assert "1d5ef756a068fbd5d180b68f6f7f86e7b294c6bd312fb2a09486b679b439ce15" in manifest
+
+    def rows(relative):
+        with (release / relative).open(newline="", encoding="utf-8-sig") as handle:
+            return list(csv.DictReader(handle))
+
+    cohort = rows("test_cohort_v1/test_crop_porosity_all_100.csv")
+    seeds = rows("final_test_v2/final_test_seed_manifest.csv")
+    pairs = rows("final_test_v2/FINAL_TEST_PAIR_MANIFEST.csv")
+    assert len(cohort) == 100
+    assert len(seeds) == len(pairs) == 95
+    assert Counter(row["target_group"] for row in cohort) == {
+        "none": 5,
+        "0.11": 8,
+        "0.12": 29,
+        "0.13": 39,
+        "0.14": 19,
+    }
+    used_ids = {row["crop_id"] for row in cohort if row["target_group"] != "none"}
+    assert used_ids == {row["crop_id"] for row in seeds}
+    assert used_ids == {row["crop_id"] for row in pairs}
+
+    generator = (ROOT / "scripts" / "generate_spatial_test95.py").read_text(
+        encoding="utf-8"
+    )
+    assert "calib_A_scale.pth" in generator
+    assert "poro_scale=0.011804" in generator
+    assert "scripts/apply_tp_aqb.py" in generator
+
+
 def test_documented_main_workflow_matches_canonical_configuration():
     reproducibility = (ROOT / "docs" / "reproducibility.md").read_text(encoding="utf-8")
     user_guide = (ROOT / "docs" / "user_guide.md").read_text(encoding="utf-8")
@@ -147,7 +198,7 @@ def test_code_availability_and_readme_match_release_policy():
         "+86-151-9298-7839",
         "1946978288@qq.com",
         "Year first available:** 2026",
-        "Program size:** Approximately 2.77 MiB",
+        "Program size:** Approximately 2.79 MiB",
         "Git LFS",
         "MIT License",
     ):

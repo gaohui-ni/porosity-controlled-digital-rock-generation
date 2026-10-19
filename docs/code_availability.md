@@ -20,9 +20,9 @@ documented in the repository.
 
 **Programming language:** Python.
 
-**Program size:** Approximately 2.77 MiB of uncompressed Git-tracked release
+**Program size:** Approximately 2.79 MiB of uncompressed Git-tracked release
 content, excluding checkpoints, raw data, generated outputs, and Git metadata.
-This value was calculated from 132 tracked files after excluding
+This value was calculated from 134 tracked files after excluding
 `savedmodels/`, `data/`, `results/`, and `outputs/`.
 
 **Source code availability:** The source code is publicly available in the
@@ -33,9 +33,9 @@ compatibility checkpoints are distributed through Git LFS, with file sizes and
 SHA-256 checksums documented in `docs/model_manifest.md`.
 
 The released compatibility checkpoints support the earlier inference and
-analysis path. The second-version spatial checkpoints and frozen 95-crop
-coordinate manifest are not bundled; the repository includes the code needed
-to retrain and regenerate them. Complete Fontainebleau validation additionally
+analysis path. The second-version spatial final-sampling weights and frozen
+95-crop, seed, and pair manifests are distributed under
+`savedmodels/spatial_vqaware_v2/`. Complete Fontainebleau validation additionally
 requires access to three external ANU volumes, which are not redistributed in
 this repository. Due to stochastic
 sampling and hardware- or software-dependent numerical differences, generated

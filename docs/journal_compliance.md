@@ -55,10 +55,10 @@ Fontainebleau volumes, which are not redistributed in this repository.
 
 The main sandstone micro-CT volume is referenced through Mendeley Data rather
 than stored in GitHub. The external ANU Fontainebleau volumes are not
-redistributed. Compatibility checkpoints are distributed through Git LFS; the
-second-version spatial checkpoints and frozen 95-crop coordinate manifest are
-not bundled. The
-repository provides synthetic examples, configurations, and
+redistributed. Compatibility checkpoints and the second-version spatial
+final-sampling package are distributed through Git LFS. The package includes
+the frozen crop, seed, and pair manifests but omits the 5.9 GB generated
+volumes. The repository provides synthetic examples, configurations, and
 training/generation/evaluation scripts so reviewers can inspect the workflow
 and rerun the portions for which they have the required data and compute
 environment.
@@ -74,7 +74,7 @@ environment.
 
 - The public workflow configuration is `configs/main.yaml`.
 - Manuscript figure numbering is mapped in `docs/figure_mapping.md`.
-- Compatibility checkpoints are distributed through Git LFS as documented consistently in
+- Released spatial and compatibility checkpoints are distributed through Git LFS as documented consistently in
   `README.md`, `docs/checkpoints.md`, and `docs/model_manifest.md`.
 - Core direct dependency versions from the experiment environment and
   reconstruction instructions are recorded under `environment/`.

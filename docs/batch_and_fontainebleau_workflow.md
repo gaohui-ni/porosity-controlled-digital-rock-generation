@@ -9,8 +9,8 @@ python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
 It generates calibrated probability volumes and applies TP-AQB for target
-groups 0.11–0.14. The frozen 95-crop test manifest and second-version spatial
-checkpoints are not bundled in the current repository.
+groups 0.11–0.14. The final calibrated weights and frozen Test-95 manifests are
+released under `savedmodels/spatial_vqaware_v2/`.
 
 The direct command below belongs to the earlier compatibility path:
 
