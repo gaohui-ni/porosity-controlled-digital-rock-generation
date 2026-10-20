@@ -66,3 +66,14 @@ The workflow:
 The currently released Fontainebleau files under `savedmodels/` belong to the
 earlier compatibility workflow. Their role and checksums are recorded in
 `docs/model_manifest.md`.
+
+## Public reproducibility boundary
+
+The repository does not currently distribute a confirmed formal-v2
+Fontainebleau checkpoint, the complete 20-real/20-generated crop and seed
+manifests, or the frozen source-data bundle used for Figs. 11–14 and Table 3.
+Local records contain both a later TP-AQB-v2 20-window expansion and a
+five-sample permeability source path. Until the authors select and publish one
+complete provenance chain, the declared 20/20 design must not be interpreted
+as directly reproducible from the public files. No compatibility checkpoint
+may be substituted silently. See `docs/fontainebleau_provenance_audit.md`.

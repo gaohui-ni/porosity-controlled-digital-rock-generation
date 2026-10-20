@@ -109,6 +109,17 @@ porosities 0.2041, 0.1766, and 0.1289.
 Each condition compares 20 real subvolumes with 20 generated volumes. Results
 for measured porosity 0.1289 are supplementary.
 
+The preceding sentence records the manuscript design, not a claim that the
+public repository currently contains all 20/20 artifacts. The formal
+second-version Fontainebleau checkpoint, complete seed/crop manifests, and
+Fig. 11–14 source bundle are not included. The available
+`savedmodels/fontainebleau_phi0p2045/` files belong to the historical
+compatibility path. Because local evidence contains conflicting 20-sample and
+5-sample provenance for some permeability products, consult
+`docs/fontainebleau_provenance_audit.md`; the current public release cannot
+directly reproduce the final numerical figures without the missing frozen
+artifacts and an author-confirmed provenance selection.
+
 ## Summary outputs
 
 ```bash

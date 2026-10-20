@@ -24,7 +24,7 @@ The repository supports a manuscript at the interface of computing and geoscienc
 | Tutorials / how-to files | `notebooks/tutorials/`, `docs/user_guide.md`, `docs/reproducibility.md` |
 | User guide with inputs and outputs | `docs/user_guide.md` |
 | Data availability and redistribution limits | `docs/data_availability.md` |
-| Checkpoints | Compatibility checkpoint files are distributed through Git LFS; layout, scope, and checksums are documented in `docs/checkpoints.md` and `docs/model_manifest.md` |
+| Checkpoints | Formal second-version main-sandstone and historical compatibility files are distributed through Git LFS; layout, scope, and checksums are documented in `docs/checkpoints.md` and `docs/model_manifest.md` |
 | Figure/result reproduction map | `docs/figure_mapping.md`, `docs/figure_reproduction.md` |
 | Automated lightweight checks | `.github/workflows/tests.yml`, `tests/` |
 
@@ -62,6 +62,13 @@ volumes. The repository provides synthetic examples, configurations, and
 training/generation/evaluation scripts so reviewers can inspect the workflow
 and rerun the portions for which they have the required data and compute
 environment.
+
+The formal main-sandstone Test-95 package is directly verifiable and can be
+regenerated from the released Mendeley volume. Fontainebleau is more limited:
+the repository exposes retraining/evaluation code and historical compatibility
+weights, but not a confirmed formal-v2 checkpoint plus complete Fig. 11–14
+provenance bundle. This limitation is disclosed rather than treating the
+compatibility checkpoint as the paper's final extrapolation model.
 
 ## Computational Requirements
 

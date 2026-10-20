@@ -5,8 +5,12 @@ raw_shape: [480, 480, 480]
 voxel_size_um: 5.68
 patch_size: 256
 stride: 32
-# Repository target labels follow the local filenames. The corresponding
-# whole-volume measured porosities reported in the manuscript are listed below.
+# Exactly three parent rocks are used by the current manuscript. Repository
+# target keys retain historical filenames; measured manuscript porosities are
+# mapped explicitly below. Do not add a historical fourth rock to this run.
+# The declared 20/20 design remains here, but the public repository does not
+# include the final-v2 Fontainebleau checkpoint or a complete sample manifest;
+# see docs/fontainebleau_provenance_audit.md before claiming direct reproduction.
 real_samples_per_target: 20
 training_porosity: 0.2045
 unseen_targets: [0.1743, 0.1263]

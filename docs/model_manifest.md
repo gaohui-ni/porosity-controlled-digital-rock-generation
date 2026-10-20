@@ -23,6 +23,8 @@ The exact file hashes for all 13 release artifacts are recorded in
 The calibrated and pre-calibration DDPM files contain 68 bitwise-identical
 model tensors. They differ only in the saved conditioning scale.
 
+This spatial package is the formal second-version main-sandstone release.
+
 ## Compatibility File Layout
 
 ```text
@@ -56,6 +58,12 @@ On Windows PowerShell:
 Get-FileHash -Algorithm SHA256 savedmodels/main_sandstone/unet_final.pth
 Get-FileHash -Algorithm SHA256 savedmodels/fontainebleau_phi0p2045/unet_final.pth
 ```
+
+The `fontainebleau_phi0p2045` files are compatibility checkpoints only. They
+are not identified as the formal second-version Fig. 11–14 weights and must
+not be used to claim direct reproduction of those figures. No confirmed
+formal-v2 Fontainebleau checkpoint or complete final cohort manifest is
+currently released; see `docs/fontainebleau_provenance_audit.md`.
 
 For checksum and checkpoint-metadata validation:
 

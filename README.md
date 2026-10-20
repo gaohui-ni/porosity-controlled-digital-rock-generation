@@ -75,7 +75,7 @@ docs/         Installation, user guide, reproducibility, and data/code availabil
 data/         Placeholder folders for user-provided raw data.
 outputs/      Placeholder folder for generated checkpoints and outputs.
 results/      Placeholder folder for generated figures, curves, and tables.
-savedmodels/  Earlier-workflow compatibility checkpoints distributed through Git LFS.
+savedmodels/  Second-version spatial release plus historical compatibility checkpoints (Git LFS).
 environment/  Exact package versions used for the manuscript-scale workflow.
 ```
 
@@ -137,7 +137,7 @@ notebooks/tutorials/0002-porosity-control.ipynb
 notebooks/tutorials/0003-fontainebleau-validation.ipynb
 ```
 
-## Official Reproduction Entry Point
+## Official Reproduction Entry Points
 
 `run_pipeline.py` is the official top-level entry point for the repository workflows.
 `scripts/run_pipeline.py` is the internal modular implementation called by the top-level entry point and should not be used directly for reviewer reproduction.
@@ -195,13 +195,21 @@ python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 
 `--dry-run` is a pipeline logic test. It builds the same ordered command sequence as the selected reproduction run and writes `results/pipeline_<mode>_manifest.json`, but it does not train models, generate samples, or evaluate outputs.
 
-To regenerate the frozen Test-95 probability volumes from the released final
-sampling package, first run `git lfs pull`, place the published raw volume at
-the configured path, and execute:
+### A. Reproduce the formal second-version Test-95 generation
+
+This is the only released-weight entry point for the manuscript's 95 paired
+main-sandstone samples. First run `git lfs pull`, place the published raw
+volume at the configured path, and execute the fully explicit command:
 
 ```bash
 python scripts/generate_spatial_test95.py \
   --raw-path data/raw/Bei_800x800x800.raw \
+  --checkpoint-dir savedmodels/spatial_vqaware_v2/R03_calibrated \
+  --checkpoint calib_A_scale.pth \
+  --cohort-csv savedmodels/spatial_vqaware_v2/test_cohort_v1/test_crop_porosity_all_100.csv \
+  --outdir outputs/spatial_test95/gen \
+  --manifest-dir outputs/spatial_test95 \
+  --seed-base 2026093000 \
   --device cuda
 
 python scripts/apply_tp_aqb.py \
@@ -213,6 +221,32 @@ python scripts/apply_tp_aqb.py \
 The first command reproduces the single probability field and fixed/top-N
 baselines for each crop. The second command applies the manuscript TP-AQB v2
 recipe to those probability fields.
+
+The generator binds `ae_best.pth`, `calib_A_scale.pth`, `latent_stats.npz`,
+the frozen 100-crop table and the released seed-base convention. It writes
+local 95-row seed and pair manifests whose identities can be compared with the
+released reference manifests. It validates the formal FiLM checkpoint and
+calibrated `poro_scale=0.011804` before sampling.
+
+### B. Retrain the second-version model from scratch
+
+```bash
+python run_pipeline.py --mode spatial --config configs/main.yaml
+```
+
+This starts a new 15-epoch VQ-VAE and 40-epoch latent-DDPM training run. It is
+not the command for directly regenerating the frozen Test-95 cohort from the
+published weights.
+
+### C. Historical compatibility inference
+
+```bash
+python run_pipeline.py --mode final --config configs/main.yaml
+```
+
+This loads `savedmodels/main_sandstone/vqvae_final.pth`, `unet_final.pth` and
+its compatibility `latent_stats.npz`. It does not reproduce the formal
+second-version Test-95 result.
 
 Compatibility `full` runs and current `spatial` runs write separate command
 manifests and output roots. In particular:
@@ -321,10 +355,11 @@ git lfs pull
 ```
 
 Verify the downloaded files against the SHA256 values in
-[docs/model_manifest.md](docs/model_manifest.md), then run:
+[docs/model_manifest.md](docs/model_manifest.md). For the formal spatial
+release run:
 
 ```bash
-python run_pipeline.py --mode final --config configs/main.yaml
+python scripts/verify_spatial_release.py --check-tensors
 ```
 
 The released model layout is:
@@ -362,11 +397,17 @@ The VQ-VAE, FiLM-conditioned latent-DDPM, calibrated sampling, and TP-AQB
 workflow is provided so users can retrain using the publicly available raw
 data and `configs/main.yaml`.
 
-A completed training run produces:
+A newly completed historical compatibility training run produces:
 
 - `vqvae_final.pth`
 - `unet_final.pth`
 - `latent_stats.npz`
+
+A newly completed `spatial` training run instead writes `ae_best.pth`,
+`unet_best_noise.pth`, and `latent_stats.npz` under
+`outputs/spatial_vqaware/`. Formal Test-95 sampling uses the released
+`ae_best.pth`, calibrated `calib_A_scale.pth`, and matching `latent_stats.npz`
+under `savedmodels/spatial_vqaware_v2/R03_calibrated/`.
 
 The released spatial package records the exact weights, crop selection, and
 seed mapping used by the 95-pair test. Generated probability and binary volumes

@@ -6,6 +6,7 @@ import sys
 
 import numpy as np
 import pandas as pd
+import yaml
 
 from src.utils.volume_io import load_npz_array
 from src.utils.naming import phi_tag
@@ -137,6 +138,9 @@ def test_spatial_v2_release_has_frozen_test95_provenance():
     manifest = (release / "MANIFEST.sha256").read_text(encoding="utf-8")
     assert "4ee13a88647be589c318bc811b5ae97b186c9a9cde2ffa23ea6355d8b5695041" in manifest
     assert "1d5ef756a068fbd5d180b68f6f7f86e7b294c6bd312fb2a09486b679b439ce15" in manifest
+    assert "3021fb0deb1cfc3c2f676ad5c9a7fd840963aa2eeb4f8eb938911b13463dfecc" in manifest
+    assert "9088902a0331558f3fb86e72243c6391ccf21f99baa5870315931231107cffe5" in manifest
+    assert "5d0946c441869f3d1d677cd016706ddb4e2eb7751070b3c637497919a4627800" in manifest
 
     def rows(relative):
         with (release / relative).open(newline="", encoding="utf-8-sig") as handle:
@@ -164,6 +168,26 @@ def test_spatial_v2_release_has_frozen_test95_provenance():
     assert "calib_A_scale.pth" in generator
     assert "poro_scale=0.011804" in generator
     assert "scripts/apply_tp_aqb.py" in generator
+
+
+def test_second_version_spatial_schedule_and_release_paths_are_explicit():
+    config = yaml.safe_load((ROOT / "configs" / "main.yaml").read_text(encoding="utf-8"))
+    spatial = config["spatial_vqaware"]
+    assert spatial["epochs_vae"] == 15
+    assert spatial["epochs_ddpm"] == 40
+    assert spatial["condition_mode"] == "film"
+    assert spatial["targets"] == [0.11, 0.12, 0.13, 0.14]
+
+    release = ROOT / "savedmodels" / "spatial_vqaware_v2"
+    assert (release / "R03_calibrated" / "ae_best.pth").is_file()
+    assert (release / "R03_calibrated" / "calib_A_scale.pth").is_file()
+    assert (release / "R03_calibrated" / "latent_stats.npz").is_file()
+    assert (release / "final_test_v2" / "FINAL_TEST_PAIR_MANIFEST.csv").is_file()
+
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    assert "scripts/generate_spatial_test95.py" in readme
+    assert "--checkpoint calib_A_scale.pth" in readme
+    assert "Historical compatibility inference" in readme
 
 
 def test_documented_main_workflow_matches_canonical_configuration():
@@ -198,7 +222,7 @@ def test_code_availability_and_readme_match_release_policy():
         "+86-151-9298-7839",
         "1946978288@qq.com",
         "Year first available:** 2026",
-        "Program size:** Approximately 2.79 MiB",
+        "Program size:** Approximately 2.81 MiB",
         "Git LFS",
         "MIT License",
     ):

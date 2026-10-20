@@ -15,6 +15,30 @@ The released compatibility checkpoints retain their original architecture and
 file names. Spatial-workflow checkpoints are written separately under
 `outputs/spatial_vqaware/` and are not interchangeable with those files.
 
+## Delivered training run
+
+The frozen second-version package records the run that actually produced the
+delivered checkpoints:
+
+| Module | Actual training schedule | Selected checkpoint |
+| --- | ---: | ---: |
+| 3D VQ-VAE | 15 epochs | epoch 13 (one-based; checkpoint `epoch=12`) |
+| Latent DDPM | 40 epochs | epoch 35 (one-based; checkpoint `epoch=34`) |
+
+- best VAE validation loss: `0.019152`;
+- best DDPM validation noise loss: `0.052244`;
+- VAE elapsed time: `3.03 h`;
+- DDPM elapsed time: `1.64 h`;
+- total training time: `4.67 h`.
+
+These values come from the frozen training histories and checkpoint metadata.
+Some serialized checkpoint `cfg` fields and
+`optional_precalibration/run_cfg.json` retain exploratory/default maxima such
+as `80` or `150`; they are provenance records, not evidence that the delivered
+models were trained for those maxima. The canonical retraining schedule is
+`epochs_vae: 15` and `epochs_ddpm: 40` under `spatial_vqaware` in
+`configs/main.yaml`. Frozen checkpoint bytes are intentionally unchanged.
+
 ## Data isolation
 
 The workflow uses the same binary `800 x 800 x 800` parent sandstone volume

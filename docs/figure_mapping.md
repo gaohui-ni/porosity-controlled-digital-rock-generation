@@ -15,7 +15,7 @@ volumes at the configured paths.
 | --- | --- | --- | --- | --- |
 | Fig. 1 | 3D VQ-VAE representation and reconstruction | `scripts/train_256_vqvae_ddpm_spatial_vqaware_v3_film.py`; `src/models/vqvae3d.py` | Main `800^3` sandstone volume | Spatial-workflow VQ-VAE checkpoint and logs |
 | Fig. 2 | FiLM-conditioned latent DDPM | `scripts/train_256_vqvae_ddpm_spatial_vqaware_v3_film.py`; `src/models/unet3d_film.py` | Trained VQ-VAE and spatially separated training crops | DDPM checkpoint, latent statistics, and logs |
-| Fig. 3 | TP-AQB procedure | `scripts/apply_tp_aqb.py`; `src/sampling/tp_aqb.py` | Decoded probability volume, reference segmentation, and target porosity | TP-AQB segmentation and diagnostic JSON |
+| Fig. 3 | TP-AQB procedure | `scripts/apply_tp_aqb.py`; `src/sampling/tp_aqb.py` | Generated probability volume, target porosity, and fixed-threshold reference derived from the generated probabilities | TP-AQB segmentation and diagnostic JSON |
 | Fig. 4 | Representative 3D morphology, pore space, and 2D slices at target porosities 0.11–0.14 | Spatial generation and TP-AQB outputs | Spatial-workflow checkpoints and targets | Selected volumes and rendered slices |
 | Fig. 5 | FiLM ablation under a fixed threshold of 0.5 | Spatial training script, ablation and calibrated sampling stages | Conditional and no-condition checkpoints | Per-target ablation statistics and plot inputs |
 | Fig. 6 | Porosity distributions for Real, Gen1 (fixed threshold), and Gen2 (TP-AQB) across 95 paired samples | Spatial sampling and TP-AQB stages | Frozen 95-crop test cohort and calibrated probability volumes | Pair-level porosity table and boxplot inputs |
@@ -36,6 +36,23 @@ the manuscript.
 The frozen crop, seed, and pair manifests and the second-version calibrated
 spatial checkpoints are released under `savedmodels/spatial_vqaware_v2/`.
 Generated probability and binary volumes remain local derived outputs.
+
+TP-AQB never reads a real test rock's specific surface, pore-network metrics,
+or permeability as a control target. Its preservation reference is generated
+internally from the model probability field at the fixed threshold.
+
+The public release includes the formal FiLM-ON checkpoint, but not a frozen
+FiLM-OFF/no-condition checkpoint. Reproducing all numerical points of Fig. 5
+therefore requires retraining the no-condition arm with the spatial training
+script (`condition_mode: none`) and evaluating it with the same frozen cohort;
+the current release cannot directly reproduce the complete ablation from
+published weights alone.
+
+For Figs. 11–14, the public repository supplies code and historical
+compatibility checkpoints but not the confirmed final-v2 Fontainebleau
+checkpoint, generated-volume manifest, or complete figure source bundle. See
+`docs/fontainebleau_provenance_audit.md`; direct numerical reproduction is
+currently limited.
 
 For a lightweight synthetic figure-path check:
 

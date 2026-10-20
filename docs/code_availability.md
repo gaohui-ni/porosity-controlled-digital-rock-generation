@@ -20,9 +20,9 @@ documented in the repository.
 
 **Programming language:** Python.
 
-**Program size:** Approximately 2.79 MiB of uncompressed Git-tracked release
+**Program size:** Approximately 2.81 MiB (2,943,739 bytes) of uncompressed Git-tracked release
 content, excluding checkpoints, raw data, generated outputs, and Git metadata.
-This value was calculated from 134 tracked files after excluding
+This value was recalculated for the v0.2.0 candidate from 136 tracked files after excluding
 `savedmodels/`, `data/`, `results/`, and `outputs/`.
 
 **Source code availability:** The source code is publicly available in the
@@ -37,6 +37,10 @@ analysis path. The second-version spatial final-sampling weights and frozen
 95-crop, seed, and pair manifests are distributed under
 `savedmodels/spatial_vqaware_v2/`. Complete Fontainebleau validation additionally
 requires access to three external ANU volumes, which are not redistributed in
-this repository. Due to stochastic
+this repository. The public release does not yet include the confirmed
+formal-v2 Fontainebleau checkpoint and complete final sample/figure manifests,
+so Figs. 11–14 cannot currently be reproduced numerically from this repository
+alone; the exact limitation is disclosed in
+`docs/fontainebleau_provenance_audit.md`. Due to stochastic
 sampling and hardware- or software-dependent numerical differences, generated
 volumes may not be bitwise identical across computational environments.

@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - uses: actions/setup-python@v5
         with:
@@ -18,7 +20,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install numpy pandas scipy scikit-image numba pyyaml pytest
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -e . --no-deps
+
+      - name: Verify formal spatial release
+        run: python scripts/verify_spatial_release.py --check-tensors
 
       - name: Run unit tests
         run: pytest tests/
@@ -29,8 +35,10 @@ jobs:
       - name: Check full pipeline commands
         run: python run_pipeline.py --mode full --config configs/main.yaml --dry-run
 
+      - name: Check second-version spatial pipeline commands
+        run: python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
+
       - name: Check top-level reviewer entrypoints
         run: |
-          python run_pipeline.py --mode full --config configs/main.yaml --dry-run
           python scripts/evaluate_all.py --config configs/main.yaml --dry-run
           python scripts/reproduce_figures.py --config configs/main.yaml --dry-run
