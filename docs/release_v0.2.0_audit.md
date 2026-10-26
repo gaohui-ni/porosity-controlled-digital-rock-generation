@@ -1,5 +1,10 @@
 # v0.2.0 pre-release repair and acceptance audit
 
+> **Historical audit notice.** This document records the repository state and
+> acceptance checks as of 2026-10-20. It is not the current training-provenance
+> authority. See `FINAL_FUEL_REPRO_AUDIT.md` for the current status, including
+> the still-unresolved VQ-VAE 15-versus-80 epoch conflict.
+
 Audit date: 2026-10-20. Baseline commit:
 `6da2bab4bfa704caf14e9530cc76a8c12941b688`.
 

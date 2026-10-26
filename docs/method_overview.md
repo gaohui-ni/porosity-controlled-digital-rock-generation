@@ -5,10 +5,12 @@ physical-matching step:
 
 1. Discrete latent representation learning using a 3D VQ-VAE.
 2. Porosity-conditioned latent DDPM training with FiLM modulation.
-3. Inference-time topology-preserving adaptive quantile binarization (TP-AQB),
-   initialized from the fixed-threshold structure and constrained around
-   skeleton and throat neighborhoods, for exact target-porosity matching with
-   reduced specific-surface drift.
+3. Inference-time adaptive quantile binarization (TP-AQB) with constrained
+   voxel adjustment and topological consistency checking, initialized from the
+   fixed-threshold structure and safeguarded around skeleton and throat
+   neighborhoods. The constraints are intended to reduce alterations to
+   critical pore connections while matching target porosity and limiting
+   specific-surface drift; they do not guarantee invariant topology.
 
 The main experiment uses spatially disjoint train/validation/test regions.
 The separate Fontainebleau experiment trains on one rock and evaluates two

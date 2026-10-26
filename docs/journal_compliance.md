@@ -7,7 +7,10 @@ reproducibility expectations for the current **Fuel** submission.
 
 The repository supports a manuscript at the interface of computing and geosciences:
 
-- computational contribution: spatially separated 3D VQ-VAE, FiLM-conditioned latent diffusion, topology-preserving adaptive quantile binarization (TP-AQB), and a reproducible digital-rock generation workflow;
+- computational contribution: spatially separated 3D VQ-VAE,
+  FiLM-conditioned latent diffusion, and TP-AQB with constrained voxel
+  adjustment and topological consistency checking intended to reduce
+  alterations to critical pore connections;
 - geoscientific contribution: porosity-controllable reconstruction and validation of three-dimensional porous geomaterials from sandstone micro-CT data.
 
 ## Repository Requirements
@@ -43,11 +46,28 @@ python run_demo.py
 python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 ```
 
-3. **Main-sandstone workflow with the released Mendeley Data volume**
+3. **A. Train the main-sandstone model from scratch**
 
 ```bash
 python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
+
+This command performs training, condition-sweep generation, and TP-AQB. It
+does not generate the formal released-weight Test-95 cohort or calculate all
+scientific metrics for Figs. 8–10.
+
+4. **B. Generate and stage Test-95 from released weights**
+
+Run `scripts/generate_spatial_test95.py`, `scripts/apply_tp_aqb.py`, and
+`scripts/evaluate_spatial_test95.py` in that order, using the commands in
+`docs/figure_reproduction.md`. The third command validates and stages branches;
+it is not the complete scientific evaluation.
+
+5. **C. Compute scientific metrics and reproduce figures**
+
+Run the metric-specific Fig. 8–10 commands in
+`docs/figure_reproduction.md`. `src/metrics/summarize_all.py` may then inventory
+the CSV/JSON files already produced; it does not calculate metrics or figures.
 
 The separate historical `fontainebleau` compatibility workflow additionally
 requires three external ANU Fontainebleau volumes, which are not redistributed
@@ -88,5 +108,6 @@ compatibility checkpoint as the paper's final extrapolation model.
 - Core direct dependency versions from the experiment environment and
   reconstruction instructions are recorded under `environment/`.
 - `results/results_summary.json`, `results/summary.json`, and
-  `results/results_summary.csv` are generated locally by the evaluation
-  workflow and are not distributed in the public repository.
+  `results/results_summary.csv` are local inventories of existing result
+  files. They are not distributed and are not themselves scientific metric
+  outputs.
