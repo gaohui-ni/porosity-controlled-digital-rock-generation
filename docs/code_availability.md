@@ -4,8 +4,7 @@
 
 **Developer and technical contact:** Gaohui Ni, College of Science, China
 University of Petroleum (East China), No. 66 West Changjiang Road, Huangdao
-District, Qingdao, Shandong 266580, China; telephone: +86-151-9298-7839;
-email: 1946978288@qq.com.
+District, Qingdao, Shandong 266580, China; email: 1946978288@qq.com.
 
 **Year first available:** 2026.
 

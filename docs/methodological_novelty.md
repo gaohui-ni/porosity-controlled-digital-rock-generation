@@ -45,16 +45,17 @@ not by itself establish exact output porosity.
 
 ## Precise porosity matching through TP-AQB
 
-`src/sampling/tp_aqb.py` implements topology-preserving adaptive quantile
-binarization. The fixed-threshold volume `P >= 0.5` supplies the generated
-structure and specific-surface reference. TP-AQB then adds or removes voxels
-until `round(phi_target * N)` pore voxels are present while:
+`src/sampling/tp_aqb.py` implements adaptive quantile binarization with
+constrained voxel adjustment and topological consistency checking. The
+fixed-threshold volume `P >= 0.5` supplies the generated structure and
+specific-surface reference. TP-AQB then adds or removes voxels until
+`round(phi_target * N)` pore voxels are present while:
 
 - using 26-connectivity for pore space and 6-connectivity for solid space;
 - allowing deletion only at simple points;
 - protecting skeleton and narrow-throat neighborhoods;
 - preventing interacting deletions within one wave;
-- verifying global topology after each wave; and
+- checking global topology after each wave; and
 - using equal-count local pore-solid swaps to reduce specific-surface drift.
 
 This differs from the conventional top-N quantile helper retained in
@@ -89,8 +90,10 @@ lower-porosity volumes of the same lithology for validation. The reported
 whole-volume porosities are `0.2041`, `0.1766`, and `0.1289`; the repository's
 legacy filename and target labels are `0.2045`, `0.1743`, and `0.1263`.
 
-Twenty generated and twenty real `256^3` subvolumes are compared at each
-condition. The two validation rocks lie below the training-patch porosity range
+The final recorded comparison contains twenty generated and twenty real
+`256^3` subvolumes at each condition. Earlier 5+5 records document a historical
+precursor batch, not the final sample-count definition. The two validation
+rocks lie below the training-patch porosity range
 of `0.1926` to `0.2215`. This supports cross-sample porosity extrapolation
 within Fontainebleau sandstone. It is not zero-shot transfer from the main
 laboratory sandstone and does not establish universal cross-lithology
@@ -113,8 +116,10 @@ See `docs/figure_mapping.md` for the corresponding scripts and inputs.
   volume.
 - Fontainebleau comparison patches come from three parent volumes and are not
   independent rock specimens.
-- TP-AQB enforces pore count and preserves the generated reference topology; it
-  does not directly impose real-rock pore-network or permeability targets.
+- TP-AQB enforces pore count through constrained voxel adjustment, checks
+  topological consistency, and is designed to reduce alterations to critical
+  pore connections. It does not guarantee invariant topology or directly
+  impose real-rock pore-network or permeability targets.
 - The second-version calibrated spatial checkpoint, matching VQ-VAE and latent
   statistics, and frozen Test-95 provenance are released through Git LFS under
   `savedmodels/spatial_vqaware_v2/`. The generated 3D volumes are not bundled.

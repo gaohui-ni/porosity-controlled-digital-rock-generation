@@ -40,11 +40,11 @@ it does not claim that a command was run when only its interface was tested.
   no-condition checkpoint is not bundled.
 - Fuel Fig. 11 / Table 3 Fontainebleau reproduction: the candidate epoch-75
   checkpoint, EXT3X implementation, complete seed/crop manifests, and exact
-  source-data chain are not bundled. A local 20-real/20-generated-per-condition
-  permeability table was found, but its companion notes still attribute the
-  external values to an older 5+5 source and contradict the 20+20 lineage.
-  The historical 80/150 compatibility weights are not accepted as a
-  substitute.
+  source-data chain are not bundled. Local records support a final
+  20-real/20-generated-per-condition comparison and identify 5+5 as its
+  historical precursor, but no released hash/manifest ties the inspected
+  20+20 table to the final Fuel figure and table. The historical 80/150
+  compatibility weights are not accepted as a substitute.
 
 ## Re-run commands
 

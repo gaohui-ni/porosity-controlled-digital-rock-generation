@@ -96,16 +96,22 @@ sampling uses the frozen weight with `poro_scale=0.011804`; training uses
 
 ## TP-AQB v2
 
-`src/sampling/tp_aqb.py` implements topology- and throat-preserving adaptive
-quantile binarization. It starts from the model's own `P >= 0.5` structure,
+`src/sampling/tp_aqb.py` implements adaptive quantile binarization with
+constrained voxel adjustment, throat-neighborhood safeguards, and topological
+consistency checking. It starts from the model's own `P >= 0.5` structure,
 then adds or removes voxels until the requested pore count is reached while:
 
-- preserving 26-connected pore and 6-connected solid topology;
+- using 26-connected pore and 6-connected solid definitions in the
+  consistency checks;
 - deleting only simple points;
 - protecting skeleton and narrow-throat neighborhoods;
 - preventing interacting deletions within one wave;
 - checking global topology after every wave;
 - optionally repairing surface drift by equal-count local swaps.
+
+These safeguards are intended to reduce alterations to critical pore
+connections. They do not establish that every topological descriptor is
+strictly invariant after adjustment.
 
 TP-AQB v2 fixes a low-porosity defect in v1: the remaining deletion deficit is
 recomputed at every relaxation level and every wave, so the algorithm cannot
