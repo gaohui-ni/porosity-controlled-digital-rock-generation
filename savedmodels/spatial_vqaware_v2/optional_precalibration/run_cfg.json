@@ -1,5 +1,5 @@
 {
-  "raw_path": "/home/hipeson/vq-vae/S1.raw",
+  "raw_path": "data/raw/Bei_800x800x800.raw",
   "raw_shape": [
     800,
     800,
@@ -94,7 +94,7 @@
   "amp": true,
   "save_interval": 5,
   "log_interval": 50,
-  "save_dir": "exp_spatial_vqaware_20260928/07_ablation/armB_vq_nocodebook",
+  "save_dir": "outputs/spatial_vqaware/optional_precalibration",
   "device": "cuda",
   "num_workers": 0,
   "pin_memory": true,

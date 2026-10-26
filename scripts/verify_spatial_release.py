@@ -20,6 +20,29 @@ def sha256(path):
     return digest.hexdigest()
 
 
+def git_lfs_oid(path):
+    """Return the declared SHA256 for a Git LFS pointer, otherwise ``None``."""
+    if path.stat().st_size > 2048:
+        return None
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except UnicodeDecodeError:
+        return None
+    if not lines or lines[0].strip() != "version https://git-lfs.github.com/spec/v1":
+        return None
+    for line in lines[1:]:
+        if line.startswith("oid sha256:"):
+            oid = line.removeprefix("oid sha256:").strip()
+            if len(oid) == 64 and all(char in "0123456789abcdef" for char in oid):
+                return oid
+    raise ValueError(f"Malformed Git LFS pointer: {path}")
+
+
+def content_sha256(path):
+    """Hash a real file or use the content OID declared by an LFS pointer."""
+    return git_lfs_oid(path) or sha256(path)
+
+
 def read_csv(path):
     with path.open(newline="", encoding="utf-8-sig") as handle:
         return list(csv.DictReader(handle))
@@ -41,7 +64,11 @@ def main():
         if not path.is_file():
             failures.append(f"missing: {relative}")
             continue
-        actual = sha256(path)
+        try:
+            actual = content_sha256(path)
+        except ValueError as exc:
+            failures.append(str(exc))
+            continue
         entries.append(relative)
         if actual != expected:
             failures.append(

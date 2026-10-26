@@ -23,6 +23,11 @@ The exact file hashes for all 13 release artifacts are recorded in
 The calibrated and pre-calibration DDPM files contain 68 bitwise-identical
 model tensors. They differ only in the saved conditioning scale.
 
+This spatial package is the frozen main-sandstone sampling release. Its file
+identity is verified, while exact VQ-VAE training-history reproduction remains
+blocked by the 15-versus-80 metadata conflict recorded in
+`savedmodels/spatial_vqaware_v2/MANUSCRIPT_PROVENANCE.json`.
+
 ## Compatibility File Layout
 
 ```text
@@ -56,6 +61,11 @@ On Windows PowerShell:
 Get-FileHash -Algorithm SHA256 savedmodels/main_sandstone/unet_final.pth
 Get-FileHash -Algorithm SHA256 savedmodels/fontainebleau_phi0p2045/unet_final.pth
 ```
+
+The `fontainebleau_phi0p2045` files are compatibility checkpoints only. They
+must not be used to claim direct reproduction of Fuel Fig. 11. The exact
+epoch-75/EXT3X checkpoint, sampler, seed manifest, and source table are not
+currently released; see `docs/fontainebleau_provenance_audit.md`.
 
 For checksum and checkpoint-metadata validation:
 

@@ -3,7 +3,7 @@
 
 The command keeps the repository's standard generated-sample layout:
 
-    <output-root>/phi_<tag>/<sample>.npz
+    <output-root>/phi<tag>/<sample>.npz
 
 Every output contains a ``seg`` array compatible with the existing evaluation
 scripts.  TP-AQB reads only the generated probability field and requested
@@ -24,7 +24,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.sampling.tp_aqb import surface_count, swap_repair, tp_aqb_segment
-from src.utils.naming import phi_tag
+from src.utils.naming import phi_dir
 
 
 def load_recipe(path):
@@ -70,7 +70,7 @@ def process_probability(path, output_root, backbone, repair, save_probability=Fa
             f"{path}: TP-AQB pore count {actual} != requested {expected}"
         )
 
-    target_dir = Path(output_root) / f"phi_{phi_tag(target)}"
+    target_dir = Path(output_root) / phi_dir(target)
     target_dir.mkdir(parents=True, exist_ok=True)
     output = target_dir / f"{Path(path).stem}_tp_aqb.npz"
     metadata = {
@@ -116,6 +116,7 @@ def main():
         raise FileNotFoundError(f"No {args.pattern} files under {args.input_root}")
 
     failures = []
+    converted = 0
     for index, path in enumerate(paths, 1):
         try:
             output, metadata = process_probability(
@@ -129,6 +130,7 @@ def main():
                 f"[{index}/{len(paths)}] {path.name} -> {output} "
                 f"phi={metadata['achieved_porosity']:.8f}"
             )
+            converted += 1
         except (KeyError, ValueError) as exc:
             # A condition-sweep folder may contain unrelated NPZ summaries.
             failures.append(f"{path}: {exc}")
@@ -137,6 +139,12 @@ def main():
         print("Skipped incompatible files:")
         for failure in failures:
             print(f"  {failure}")
+    print(
+        f"Converted {converted} compatible probability volume(s); "
+        f"skipped {len(failures)}."
+    )
+    if converted == 0:
+        raise SystemExit("No compatible probability volumes were converted")
 
 
 if __name__ == "__main__":

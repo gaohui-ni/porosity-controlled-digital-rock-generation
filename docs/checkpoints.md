@@ -57,3 +57,9 @@ bitwise identical to the optional pre-calibration `unet_best_noise.pth`, but
 records the calibrated `poro_scale=0.011804` instead of `0.02`. The frozen crop,
 seed, and pair manifests permit exact cohort reconstruction from the published
 raw volume. Generated volumes are omitted because they occupy about 5.9 GB.
+
+The exact frozen file identities are known, but the VQ-VAE's complete training
+history is not: `ae_best.pth` embeds `epochs_vae=80` and stores best epoch 12
+(zero-based), while the Fuel manuscript states 15 epochs. Until the original
+complete log is supplied, this provenance point is explicitly blocked in
+`savedmodels/spatial_vqaware_v2/MANUSCRIPT_PROVENANCE.json`.

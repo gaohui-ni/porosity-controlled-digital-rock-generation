@@ -26,7 +26,7 @@
 name: TP-AQB
 version: 2
 candidate: S1
-supersedes: TP-AQB v1 (bug fix only; see TP_AQB_V2_REGRESSION_REPORT.md)
+supersedes: TP-AQB v1 (bug-fix provenance summarized below; the historical regression report is not distributed)
 
 # ---- backbone: the R3 arm of the section-13 ladder, frozen ---------------
 # Byte-identical to run_screen.ARMS["R3"] and to v1's backbone block.
@@ -67,12 +67,13 @@ inputs:
 
 # ---- provenance ---------------------------------------------------------
 hashes:
-  tp_aqb_v2.py:          2d14b997ebfcef40a1595e11c408b3444ed195938b59966e3a6c017cce69e889
-  tp_aqb.py (v1):        d0c507e9c09182a4d66e4409569298156014d0c9cf7a63053533c7201656add1
-  test_low_phi.py:       14c94b380ab9330c88fa542b1c5c42971ea8b4a3a4dbf02119983b420d904e18
-  a5_v2_rerun.py:        67da90b533591784c4895e1a1c1a90d1ec186af2419e30f0159a8ecaea7c5dd2
-  a5_compare.py:         e172321b412c24ffd2ca1ff8a155d43a03b753ff85af3ec2a45cf1e86e851edf
-  a5_ef_subset.py:       50270d779af66492e4a045c13623c27e0fb76e98cbcc64e0989616fa54cc3ab7
+  "src/sampling/tp_aqb.py": 2d14b997ebfcef40a1595e11c408b3444ed195938b59966e3a6c017cce69e889
+
+# Historical experiment-side names retained in the frozen research record but
+# not distributed by this repository: TP_AQB_V2_REGRESSION_REPORT.md,
+# test_low_phi.py, a5_v2_rerun.py, a5_compare.py, and a5_ef_subset.py.
+# The historical file called tp_aqb_v2.py is published here, unchanged in
+# algorithmic content, as src/sampling/tp_aqb.py; the hash above verifies it.
 
 # ---- the A4 stress test that reaches the bug ----------------------------
 low_porosity_stress_test:

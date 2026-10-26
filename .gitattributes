@@ -2,3 +2,8 @@ savedmodels/**/*.pth filter=lfs diff=lfs merge=lfs -text
 savedmodels/**/*.npz filter=lfs diff=lfs merge=lfs -text
 savedmodels/spatial_vqaware_v2/** -text
 savedmodels/spatial_vqaware_v2/**/*.csv -text -diff
+# Release manifests are byte-level provenance records.  Keep their repository
+# representation LF-only on every platform so MANIFEST.sha256 is portable.
+savedmodels/spatial_vqaware_v2/final_test_v2/*.csv text eol=lf diff
+savedmodels/spatial_vqaware_v2/test_cohort_v1/*.csv text eol=lf diff
+*.csv text eol=lf

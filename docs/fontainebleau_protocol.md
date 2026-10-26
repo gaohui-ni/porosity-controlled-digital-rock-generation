@@ -28,9 +28,9 @@ obtain them from the original provider, standardize them to binary `uint8`
 with `0 = solid` and `1 = pore`, and declare their local paths under
 `real_volumes` in `configs/fontainebleau_config.yaml`.
 
-The currently configured VQ-VAE and latent-DDPM training schedules are retained
-unchanged pending separate confirmation; this documentation update does not
-resolve or revise the epoch-count question.
+The currently configured 80/150 VQ-VAE/DDPM schedule is the historical
+compatibility workflow. It is not the candidate epoch-75/EXT3X lineage for
+Fuel Fig. 11 and Table 3.
 
 - VQ-VAE training: 80 epochs
 - Latent DDPM training: 150 epochs
@@ -45,8 +45,9 @@ from 20 independent rocks.
 
 The evaluation covers directional two-point correlation, pore/throat geometry,
 tortuosity, throat length, coordination number, and directional plus
-geometric-mean permeability. The `0.1766` condition is the representative main
-text case; results for `0.1289` are reported in the Supplementary Material.
+geometric-mean permeability. The current Fuel main-text comparison contains
+all three conditions in Fig. 11 and Table 3. The 0.2041 condition is an
+in-sample training reference; only 0.1766 and 0.1289 are external conditions.
 
 ## Command
 
@@ -59,10 +60,20 @@ The workflow:
 1. extracts 20 porosity-matched real crops from each configured volume;
 2. generates 20 samples at each corresponding nominal target;
 3. runs the voxel, spatial-statistics, pore-network, and permeability analyses;
-4. writes outputs under `results/fig_fontainebleau/`, tables under
-   `results/tables/`, and Fig. 14 source data under
-   `results/source_data/fig14_fontainebleau.csv`.
+4. writes compatibility outputs under `results/fig_fontainebleau/` and
+   `results/tables/`. These outputs must not be relabelled as Fuel Fig. 11.
 
 The currently released Fontainebleau files under `savedmodels/` belong to the
 earlier compatibility workflow. Their role and checksums are recorded in
 `docs/model_manifest.md`.
+
+## Public reproducibility boundary
+
+The repository does not currently distribute a confirmed formal-v2
+Fontainebleau checkpoint, EXT3X sampler, complete crop/seed manifests, or the
+frozen source-data bundle used for Fuel Fig. 11 and Table 3.
+Local records contain both a later TP-AQB-v2 20-window expansion and a
+five-sample permeability source path. Until the authors select and publish one
+complete provenance chain, the declared 20/20 design must not be interpreted
+as directly reproducible from the public files. No compatibility checkpoint
+may be substituted silently. See `docs/fontainebleau_provenance_audit.md`.

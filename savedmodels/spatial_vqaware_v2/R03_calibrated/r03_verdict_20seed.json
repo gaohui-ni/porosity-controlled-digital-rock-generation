@@ -8,7 +8,7 @@
   },
   "baseline": {
     "label": "armB_vq_nocodebook",
-    "source": "/home/hipeson/vq-vae/exp_spatial_vqaware_20260928/07_ablation/ablation_metrics.json",
+    "source": "unreleased source analysis; verified by the retained sha256 field",
     "sha256": "0b1e1ffc62f30600bc00a174fa0c74b263b8b17c349617c5ccb9fb1cf3795fc2",
     "s2_l1_mean": 0.019276840165272414,
     "sv_mean_mean": 0.07034637853503227,

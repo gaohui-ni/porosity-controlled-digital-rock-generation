@@ -1,5 +1,7 @@
 import argparse
 import json
+
+# Demo/placeholder plotting helper; not a Fuel main-figure reproduction entry point.
 import sys
 from pathlib import Path
 

@@ -15,6 +15,30 @@ The released compatibility checkpoints retain their original architecture and
 file names. Spatial-workflow checkpoints are written separately under
 `outputs/spatial_vqaware/` and are not interchangeable with those files.
 
+## Delivered training run
+
+The frozen second-version package records the run that actually produced the
+delivered checkpoints:
+
+| Module | Actual training schedule | Selected checkpoint |
+| --- | ---: | ---: |
+| 3D VQ-VAE | 15 epochs | epoch 13 (one-based; checkpoint `epoch=12`) |
+| Latent DDPM | 40 epochs | epoch 35 (one-based; checkpoint `epoch=34`) |
+
+- best VAE validation loss: `0.019152`;
+- best DDPM validation noise loss: `0.052244`;
+- VAE elapsed time: `3.03 h`;
+- DDPM elapsed time: `1.64 h`;
+- total training time: `4.67 h`.
+
+These values come from the frozen training histories and checkpoint metadata.
+Some serialized checkpoint `cfg` fields and
+`optional_precalibration/run_cfg.json` retain exploratory/default maxima such
+as `80` or `150`; they are provenance records, not evidence that the delivered
+models were trained for those maxima. The canonical retraining schedule is
+`epochs_vae: 15` and `epochs_ddpm: 40` under `spatial_vqaware` in
+`configs/main.yaml`. Frozen checkpoint bytes are intentionally unchanged.
+
 ## Data isolation
 
 The workflow uses the same binary `800 x 800 x 800` parent sandstone volume
@@ -108,7 +132,7 @@ outputs/spatial_vqaware/
 `-- condition_sweep/*.npz
 
 data/generated_phi_sets_spatial/
-`-- phi_<target>/*_tp_aqb.npz
+`-- phi<target>/*_tp_aqb.npz
 ```
 
 New training runs write the files above under `outputs/`. For final Test-95
@@ -141,9 +165,16 @@ python scripts/apply_tp_aqb.py \
   --input-root outputs/spatial_test95/gen \
   --output-root data/generated_phi_sets_spatial_test95 \
   --config configs/tp_aqb_v2.yaml
+
+python scripts/evaluate_spatial_test95.py \
+  --manifest outputs/spatial_test95/FINAL_TEST_PAIR_MANIFEST.csv \
+  --gen-root outputs/spatial_test95/gen \
+  --tpaqb-root data/generated_phi_sets_spatial_test95 \
+  --out-root results/spatial_test95
 ```
 
 `generate_spatial_test95.py` uses the exact crop porosity and released seed for
 each of the 95 samples. Its `on` output is the conventional exact top-N
 baseline; the second command produces the TP-AQB v2 segmentation used by the
-current workflow.
+current workflow. The third command validates and joins all branches by
+`crop_id`, then stages the canonical `phi0p11`-style directory trees.

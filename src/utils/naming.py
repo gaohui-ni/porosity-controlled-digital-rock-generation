@@ -9,3 +9,8 @@ def phi_tag(phi: float) -> str:
         .rstrip(".")
         .replace(".", "p")
     )
+
+
+def phi_dir(phi: float) -> str:
+    """Return the canonical porosity directory name used by evaluators."""
+    return f"phi{phi_tag(phi)}"

@@ -2,6 +2,9 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
+# Legacy dual-loss compatibility model. Fuel Fig. 1 uses VectorQuantizerEMA
+# in scripts/train_256_vqvae_ddpm_spatial_vqaware_v3_film.py, not this class.
+
 class ResBlock3D(nn.Module):
     def __init__(self, c: int):
         super().__init__()
