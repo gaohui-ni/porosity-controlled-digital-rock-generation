@@ -34,6 +34,8 @@ slope is 0.5902; the condition enters through one column of `cond_mlp.0`;
 - `final_test_v2/final_test_seed_manifest.csv` — 95 rows.
 - `final_test_v2/FINAL_TEST_PAIR_MANIFEST.csv` — 95 rows x 18 columns.
 - `spatial_split.json` — original path `03_latent_stats/v1/spatial_split.json`.
+- `MANUSCRIPT_PROVENANCE.json` — machine-readable checkpoint identity and the
+  unresolved 15-versus-80 VQ-VAE training-history gate.
 
 ## Verification and hash conventions
 
@@ -44,7 +46,7 @@ slope is 0.5902; the condition enters through one column of `cond_mlp.0`;
   `f3e68a21...`. The separate `45866df1453ecf4f` digest in `FINAL_REPORT.md`
   uses sorted key names + little-endian float32 tensor bytes.
 - Clone with Git LFS support, enter this directory, fetch the required LFS
-  objects, and verify all 13 entries:
+objects, and verify every manifest entry:
 
 ```bash
 git lfs pull --include="savedmodels/spatial_vqaware_v2/**"
@@ -69,9 +71,9 @@ their byte-level SHA256 values platform independent.
 - `final_test_v2/gen/` — the 5.9 GB generated probability/OFF/ON volumes.
 - `calib_B_col128.pth` / `calib_B_col128_m2.pth` — equivalence cross-checks,
   not read by the T1 driver.
-- Fontainebleau v2 checkpoints and complete final cohort manifests. The files
-  under `savedmodels/fontainebleau_phi0p2045/` are historical compatibility
-  checkpoints, not formal Fig. 11–14 second-version weights.
+- Fuel Fig. 11 Fontainebleau checkpoint, EXT3X sampler, and complete source
+  manifests. The files under `savedmodels/fontainebleau_phi0p2045/` are
+  historical compatibility checkpoints and do not reproduce Fuel Fig. 11.
 
 ## Code
 
@@ -89,4 +91,6 @@ python scripts/generate_spatial_test95.py \
 The generated `*_prob.npz` files can then be processed with
 `scripts/apply_tp_aqb.py`. The driver writes new local manifests under
 `outputs/spatial_test95/` and never overwrites the released reference
-manifests in this directory.
+manifests in this directory. Run `scripts/evaluate_spatial_test95.py` afterward
+to join by `crop_id` and stage real, fixed-threshold, top-N, and actual TP-AQB
+trees without redefining the legacy `phi_post_aqb` field.

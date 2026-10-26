@@ -6,3 +6,4 @@ savedmodels/spatial_vqaware_v2/**/*.csv -text -diff
 # representation LF-only on every platform so MANIFEST.sha256 is portable.
 savedmodels/spatial_vqaware_v2/final_test_v2/*.csv text eol=lf diff
 savedmodels/spatial_vqaware_v2/test_cohort_v1/*.csv text eol=lf diff
+*.csv text eol=lf

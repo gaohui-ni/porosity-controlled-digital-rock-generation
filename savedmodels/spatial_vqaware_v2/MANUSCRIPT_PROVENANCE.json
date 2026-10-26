@@ -1,0 +1,32 @@
+{
+  "scope": "Fuel manuscript spatial Test-95 workflow",
+  "status": "exact_training_history_blocked",
+  "checkpoint_selection": {
+    "vae": {
+      "path": "R03_calibrated/ae_best.pth",
+      "sha256": "4ee13a88647be589c318bc811b5ae97b186c9a9cde2ffa23ea6355d8b5695041",
+      "checkpoint_epoch_zero_based": 12,
+      "embedded_epochs_vae": 80
+    },
+    "ddpm": {
+      "path": "R03_calibrated/calib_A_scale.pth",
+      "sha256": "1d5ef756a068fbd5d180b68f6f7f86e7b294c6bd312fb2a09486b679b439ce15",
+      "checkpoint_epoch_zero_based": 34,
+      "embedded_epochs_ddpm": 40
+    },
+    "latent_stats": {
+      "path": "R03_calibrated/latent_stats.npz",
+      "sha256": "25df1f39889214817b62a8eb8d6d68c8fc48cbcde7d12cc8320618bf82d5a921"
+    }
+  },
+  "repository_inputs": {
+    "config_main_sha256_before_fuel_repair": "bf4b468ae52139df9a38d514a14ad86365c4491a057245b1fcd8942b5d0980fa",
+    "tp_aqb_recipe_sha256_before_fuel_repair": "a257e5eb6a22ee6d03a150985aeafafbe6536e40eadc7d7375cce794863d8bed",
+    "spatial_training_script_sha256": "381c5e89dd2b1f856f83f94b47c9be19aea17a5cdd14e03ff8fc58fe7d5b8aac"
+  },
+  "manuscript_claim": {
+    "epochs_vae": 15,
+    "epochs_ddpm": 40
+  },
+  "audit_conclusion": "The exact released weights are identified, but the available checkpoint metadata conflicts with the manuscript's 15-epoch VQ-VAE statement and no complete training log is bundled. Exact training-history reproduction remains blocked; the repository must not infer 15 or 80 solely from a generic config."
+}

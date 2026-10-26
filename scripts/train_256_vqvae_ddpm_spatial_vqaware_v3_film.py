@@ -1,43 +1,10 @@
-# Stage 7E -- FiLM porosity-control iteration (armB lineage).
+# Public spatial EMA-VQ-VAE / FiLM-DDPM implementation.
 #
-# DERIVED FROM: train_256_vqvae_ddpm_spatial_vqaware_v2.py
-#   sha256 dc0f5785549cf41b37396c56f9632e7240034149c1822c4c6f1f6454d079d500
-#
-# The parent script is the FROZEN Stage 7 trainer: its hash is recorded in
-# the arm D provenance and in 07_ablation/armD_vae/VAE_ACCEPTANCE.md, so it
-# must not be edited.  This copy is the sanctioned alternative -- the same
-# pattern by which the arm D VAE script was derived from the same parent.
-#
-# What was added, and NOTHING else -- four hunks, verified by diffing this
-# file's body against the parent, not by reading this comment:
-#
-#   1. train_ddpm(): an `--init_unet` warm-start block, inserted just before
-#      `opt = torch.optim.Adam(...)`.  Weights ONLY -- the optimiser state is
-#      deliberately not restored, because a rescale of the condition input
-#      would import a stale curvature estimate for that weight.
-#   2. parse_args(): --poro_center / --poro_scale / --poro_clip.  In the
-#      parent these are CFG DEFAULTS ONLY (0.13 / 0.02 / 5.0) with no CLI
-#      surface, so the arm B baseline could not be varied at all.
-#   3. parse_args(): --init_unet, plus its four `cfg.* = args.*` wirings in
-#      main().
-#   4. The parent has no trailing newline; this copy does.
-#
-# Sampling, the DDPM objective, the dataset, the VQ-VAE and the latent
-# normalization are UNCHANGED.  Any divergence from the parent beyond the
-# list above is a defect, not a feature.
-#
-# CORRECTION 2026-09-30.  An earlier revision of this header also claimed
-# `--phi_balanced_bins` and `--film_hidden/--film_depth/--film_act/
-# --film_out_scale/--film_zero_init`.  NONE OF THOSE FLAGS EXISTED in the
-# code: each appeared exactly once in this comment block and nowhere else,
-# so a round launched with `--phi_balanced_bins 14` would have died in
-# argparse while the header advertised the capability.  The claims are
-# removed rather than implemented, because the rounds that need them must
-# declare their own additions in their own derived script (one derived
-# script per round, so every round stays reproducible from its own file).
-# The behavioural provenance anchor is the BODY hash (this file with
-# everything above the shebang stripped), which is unaffected by comment
-# edits: body sha256 b7b0039a225df2e23417b41fea8d1e7b9225ec01ef7b1e89fd2ea58e51fe3c7c
+# Verified user-facing differences that matter for released-weight sampling
+# are the configurable checkpoint directory, raw-data path, and UNet loading
+# behavior. Historical claims about an unavailable parent file, an exact diff
+# hunk count, or all other sections being unchanged are intentionally omitted;
+# they cannot be reproduced from files bundled in this repository.
 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
