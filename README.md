@@ -216,11 +216,19 @@ python scripts/apply_tp_aqb.py \
   --input-root outputs/spatial_test95/gen \
   --output-root data/generated_phi_sets_spatial_test95 \
   --config configs/tp_aqb_v2.yaml
+
+python scripts/evaluate_spatial_test95.py \
+  --manifest outputs/spatial_test95/FINAL_TEST_PAIR_MANIFEST.csv \
+  --gen-root outputs/spatial_test95/gen \
+  --tpaqb-root data/generated_phi_sets_spatial_test95 \
+  --out-root results/spatial_test95
 ```
 
 The first command reproduces the single probability field and fixed/top-N
 baselines for each crop. The second command applies the manuscript TP-AQB v2
-recipe to those probability fields.
+recipe to those probability fields. The third joins all four branches by
+`crop_id`, preserves top-N as a diagnostic, and stages actual TP-AQB outputs
+as the Fuel manuscript's Gen2 branch.
 
 The generator binds `ae_best.pth`, `calib_A_scale.pth`, `latent_stats.npz`,
 the frozen 100-crop table and the released seed-base convention. It writes
@@ -234,9 +242,13 @@ calibrated `poro_scale=0.011804` before sampling.
 python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
-This starts a new 15-epoch VQ-VAE and 40-epoch latent-DDPM training run. It is
-not the command for directly regenerating the frozen Test-95 cohort from the
-published weights.
+This starts a new 15-epoch VQ-VAE and 40-epoch latent-DDPM training run as
+currently specified by the Fuel manuscript configuration. It is not the
+command for directly regenerating the frozen Test-95 cohort from the published
+weights. The released VQ-VAE embeds an 80-epoch configuration and stores best
+epoch 12 (zero-based); because the complete original training log is missing,
+the frozen checkpoint's exact 15-versus-80 training history remains blocked.
+See `savedmodels/spatial_vqaware_v2/MANUSCRIPT_PROVENANCE.json`.
 
 ### C. Historical compatibility inference
 

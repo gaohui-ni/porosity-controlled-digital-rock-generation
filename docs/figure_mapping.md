@@ -1,63 +1,37 @@
-# Figure Registry
+# Fuel Manuscript Figure Registry
 
-This registry maps Figures 1–14 in the second-version manuscript to the
-repository implementation, required inputs, and locally generated outputs.
-The primary main-sandstone entry point is:
+This registry follows the current Fuel manuscript, whose main text contains
+**Figures 1–11**. Older repository references to main-text Figs. 12–14 are
+historical/supplementary mappings and are not part of this registry.
 
-```bash
-python run_pipeline.py --mode spatial --config configs/main.yaml
-```
+| Figure | Fuel manuscript content | Reproducibility source |
+| --- | --- | --- |
+| Fig. 1 | 3D EMA VQ-VAE | `VectorQuantizerEMA` and the encoder/decoder in `scripts/train_256_vqvae_ddpm_spatial_vqaware_v3_film.py` |
+| Fig. 2 | FiLM-conditioned latent DDPM | The same spatial training script and the released calibrated checkpoint/configuration |
+| Fig. 3 | TP-AQB | `src/sampling/tp_aqb.py`, `scripts/apply_tp_aqb.py`, and `configs/tp_aqb_v2.yaml` |
+| Fig. 4 | Representative morphology, pore space, and slices at 0.11–0.14 | Frozen Test-95 probability fields followed by TP-AQB; panel volume IDs must be recorded with the figure source data |
+| Fig. 5 | FiLM ablation with fixed threshold 0.5 | The ablation's own conditional/no-condition checkpoints, targets, and seeds; TP-AQB is excluded |
+| Fig. 6 | Real vs Gen1 fixed threshold vs Gen2 TP-AQB, 95 paired crops | `generate_spatial_test95.py`, `apply_tp_aqb.py`, then `evaluate_spatial_test95.py`; join by `crop_id` |
+| Fig. 7 | Slice-wise porosity for a representative target-0.13 pair | `scripts/plot_slice_porosity.py`; the selected `crop_id` and branch must accompany source data |
+| Fig. 8 | Spatial correlation/lineal-path/specific-surface evaluation | Existing metric scripts run on `results/spatial_test95/stage/real` and `stage/tpaqb` |
+| Fig. 9 | Pore-network geometry and topology | `evaluate_pore_network_6panel.py` and `evaluate_coordination_euler.py` on the staged real/TP-AQB trees |
+| Fig. 10 | Main-sandstone directional and geometric-mean permeability | `evaluate_voxel_and_perm.py` on the same staged real/TP-AQB cohort |
+| Fig. 11 | Fontainebleau permeability at 0.2041, 0.1766, and 0.1289 | Manuscript-specific epoch-75/EXT3X lineage remains blocked until the exact checkpoint, sampler, seeds, and source tables are available |
 
-Run the Fontainebleau workflow separately after placing the three external
-volumes at the configured paths.
+## Critical branch labels
 
-| Figure | Result | Script or implementation | Required input | Local output |
-| --- | --- | --- | --- | --- |
-| Fig. 1 | 3D VQ-VAE representation and reconstruction | `scripts/train_256_vqvae_ddpm_spatial_vqaware_v3_film.py`; `src/models/vqvae3d.py` | Main `800^3` sandstone volume | Spatial-workflow VQ-VAE checkpoint and logs |
-| Fig. 2 | FiLM-conditioned latent DDPM | `scripts/train_256_vqvae_ddpm_spatial_vqaware_v3_film.py`; `src/models/unet3d_film.py` | Trained VQ-VAE and spatially separated training crops | DDPM checkpoint, latent statistics, and logs |
-| Fig. 3 | TP-AQB procedure | `scripts/apply_tp_aqb.py`; `src/sampling/tp_aqb.py` | Generated probability volume, target porosity, and fixed-threshold reference derived from the generated probabilities | TP-AQB segmentation and diagnostic JSON |
-| Fig. 4 | Representative 3D morphology, pore space, and 2D slices at target porosities 0.11–0.14 | Spatial generation and TP-AQB outputs | Spatial-workflow checkpoints and targets | Selected volumes and rendered slices |
-| Fig. 5 | FiLM ablation under a fixed threshold of 0.5 | Spatial training script, ablation and calibrated sampling stages | Conditional and no-condition checkpoints | Per-target ablation statistics and plot inputs |
-| Fig. 6 | Porosity distributions for Real, Gen1 (fixed threshold), and Gen2 (TP-AQB) across 95 paired samples | Spatial sampling and TP-AQB stages | Frozen 95-crop test cohort and calibrated probability volumes | Pair-level porosity table and boxplot inputs |
-| Fig. 7 | Slice-wise porosity along z for a representative real/generated pair at target 0.13 | `scripts/plot_slice_porosity.py` | A corresponding real/generated pair | PNG and adjacent CSV |
-| Fig. 8 | (a–c) directional two-point correlation at target 0.11; (d) S/V across targets 0.11–0.14 | `scripts/evaluate_s2_lineal_edt.py`; `scripts/evaluate_voxel_and_perm.py` | Held-out real cohort and TP-AQB generated cohort | Curves under `results/fig_s2/` and voxel tables under `results/tables/` |
-| Fig. 9 | Pore radius, throat radius, throat shape factor, tortuosity, throat length, and coordination number at target 0.11 | `scripts/evaluate_pore_network_6panel.py`; `scripts/evaluate_coordination_euler.py` | Real/generated target-0.11 groups | PNM outputs under `results/fig_pnm/` |
-| Fig. 10 | (a) directional and geometric-mean permeability at target 0.11; (b) geometric-mean permeability across targets 0.11–0.14 | `scripts/evaluate_voxel_and_perm.py`; `scripts/compare_metric_tables.py` | Real/generated binary groups; 3.5 um voxel size | `results/tables/*_voxel_perm.csv`, `permeability_comparison.csv`, and `results/source_data/fig10_permeability.csv` |
-| Fig. 11 | Fontainebleau subvolume porosity distributions for one training rock and two lower-porosity validation rocks | `scripts/prepare_fontainebleau_real_sets.py` | Three external `480^3` Fontainebleau volumes | Real-set manifest and porosity table |
-| Fig. 12 | Directional two-point correlation at measured porosity 0.1766 | `scripts/evaluate_s2_lineal_edt.py` through `--mode fontainebleau` | Real/generated Fontainebleau groups | Fontainebleau S2 outputs |
-| Fig. 13 | Fontainebleau pore-network geometry and topology at measured porosity 0.1766 | PNM and coordination evaluation through `--mode fontainebleau` | Real/generated Fontainebleau groups | Fontainebleau PNM outputs |
-| Fig. 14 | (a) directional and geometric-mean permeability at measured porosity 0.1766; (b) permeability across the three conditions | Fontainebleau permeability and comparison stages | Three real volumes, generated groups, and 5.68 um voxel size | `results/fig_fontainebleau/`, `results/tables/fontainebleau_*`, and `results/source_data/fig14_fontainebleau.csv` |
+- `*_off.raw` / `stage/fixed`: FiLM plus threshold 0.5 (**Gen1**).
+- `*_on.raw` / `stage/topn`: historical exact top-N diagnostic. The legacy
+  manifest column `phi_post_aqb` retains this meaning and is not TP-AQB.
+- `stage/tpaqb`: actual TP-AQB v2 output (**Gen2** and the final generated
+  branch used by Figs. 4 and 6–10 unless a caption explicitly says otherwise).
 
-Figures 1–3 are method schematics assembled from the listed implementations.
-Figures 4–14 use numerical or volumetric outputs generated by those workflows.
-Supplementary figures contain the remaining porosity conditions described in
-the manuscript.
+`src/models/vqvae3d.py` is a legacy dual-loss compatibility implementation; it
+is not the EMA codebook implementation represented by Fuel Fig. 1.
 
-The frozen crop, seed, and pair manifests and the second-version calibrated
-spatial checkpoints are released under `savedmodels/spatial_vqaware_v2/`.
-Generated probability and binary volumes remain local derived outputs.
+The 95 crops are overlapping subvolumes from one spatially held-out region,
+not 95 independent parent specimens. Group sizes are fixed at 8/29/39/19 for
+nominal porosities 0.11/0.12/0.13/0.14.
 
-TP-AQB never reads a real test rock's specific surface, pore-network metrics,
-or permeability as a control target. Its preservation reference is generated
-internally from the model probability field at the fixed threshold.
-
-The public release includes the formal FiLM-ON checkpoint, but not a frozen
-FiLM-OFF/no-condition checkpoint. Reproducing all numerical points of Fig. 5
-therefore requires retraining the no-condition arm with the spatial training
-script (`condition_mode: none`) and evaluating it with the same frozen cohort;
-the current release cannot directly reproduce the complete ablation from
-published weights alone.
-
-For Figs. 11–14, the public repository supplies code and historical
-compatibility checkpoints but not the confirmed final-v2 Fontainebleau
-checkpoint, generated-volume manifest, or complete figure source bundle. See
-`docs/fontainebleau_provenance_audit.md`; direct numerical reproduction is
-currently limited.
-
-For a lightweight synthetic figure-path check:
-
-```bash
-python scripts/reproduce_figures.py --config configs/main.yaml
-```
-
-For detailed commands and limitations, see `docs/figure_reproduction.md`.
+See `docs/figure_reproduction.md` for commands and
+`docs/fuel_repro_status.md` for passed, failed, not-run, and blocked items.

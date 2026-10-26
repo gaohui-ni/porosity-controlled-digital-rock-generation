@@ -105,17 +105,18 @@ def test_slice_porosity_profile_uses_z_axis():
 def test_figure_registry_maps_all_manuscript_figures():
     registry = (ROOT / "docs" / "figure_mapping.md").read_text(encoding="utf-8")
 
-    for number in range(1, 15):
+    for number in range(1, 12):
         assert f"| Fig. {number} |" in registry
-    assert "| Figure | Result | Script or implementation | Required input | Local output |" in registry
+    for number in range(12, 15):
+        assert f"| Fig. {number} |" not in registry
+    assert "| Figure | Fuel manuscript content | Reproducibility source |" in registry
     assert "scripts/plot_slice_porosity.py" in registry
-    assert "Gen1 (fixed threshold)" in registry
-    assert "Gen2 (TP-AQB)" in registry
-    assert "across 95 paired samples" in registry
-    assert "throat length, and coordination number at target 0.11" in registry
-    assert "fig10_permeability.csv" in registry
-    assert "measured porosity 0.1766" in registry
-    assert "fig14_fontainebleau.csv" in registry
+    assert "Gen1 fixed threshold vs Gen2 TP-AQB" in registry
+    assert "95 paired crops" in registry
+    assert "Pore-network geometry and topology" in registry
+    assert "Main-sandstone directional and geometric-mean permeability" in registry
+    assert "0.2041, 0.1766, and 0.1289" in registry
+    assert "epoch-75/EXT3X lineage remains blocked" in registry
 
 
 def test_spatial_v2_release_has_frozen_test95_provenance():

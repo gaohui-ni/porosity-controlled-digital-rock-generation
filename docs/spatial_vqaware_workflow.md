@@ -132,7 +132,7 @@ outputs/spatial_vqaware/
 `-- condition_sweep/*.npz
 
 data/generated_phi_sets_spatial/
-`-- phi_<target>/*_tp_aqb.npz
+`-- phi<target>/*_tp_aqb.npz
 ```
 
 New training runs write the files above under `outputs/`. For final Test-95
@@ -165,9 +165,16 @@ python scripts/apply_tp_aqb.py \
   --input-root outputs/spatial_test95/gen \
   --output-root data/generated_phi_sets_spatial_test95 \
   --config configs/tp_aqb_v2.yaml
+
+python scripts/evaluate_spatial_test95.py \
+  --manifest outputs/spatial_test95/FINAL_TEST_PAIR_MANIFEST.csv \
+  --gen-root outputs/spatial_test95/gen \
+  --tpaqb-root data/generated_phi_sets_spatial_test95 \
+  --out-root results/spatial_test95
 ```
 
 `generate_spatial_test95.py` uses the exact crop porosity and released seed for
 each of the 95 samples. Its `on` output is the conventional exact top-N
 baseline; the second command produces the TP-AQB v2 segmentation used by the
-current workflow.
+current workflow. The third command validates and joins all branches by
+`crop_id`, then stages the canonical `phi0p11`-style directory trees.

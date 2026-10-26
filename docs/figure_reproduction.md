@@ -1,131 +1,106 @@
-# Figure Reproduction Map
+# Fuel Figure Reproduction
 
-## Workflow selection
+## 1. Frozen Test-95 generation and branch assembly
 
-The second-version main-sandstone workflow is:
-
-```bash
-python run_pipeline.py --mode spatial --config configs/main.yaml
-```
-
-Inspect its ordered commands without launching computation:
+Generate the released probability fields and the two historical binary
+baselines:
 
 ```bash
-python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
+python scripts/generate_spatial_test95.py \
+  --raw-path data/raw/Bei_800x800x800.raw \
+  --device cuda
 ```
 
-The independently trained Fontainebleau experiment is:
+Generate actual TP-AQB v2 outputs:
 
 ```bash
-python run_pipeline.py --mode fontainebleau --config configs/main.yaml
+python scripts/apply_tp_aqb.py \
+  --input-root outputs/spatial_test95/gen \
+  --output-root data/generated_phi_sets_spatial_test95 \
+  --config configs/tp_aqb_v2.yaml
 ```
 
-The `main`, `full`, and `final` modes remain available only for compatibility
-with the earlier checkpoint layout. The second-version calibrated spatial
-checkpoint and frozen crop, seed, and pair manifests are released under
-`savedmodels/spatial_vqaware_v2/`.
+Join all branches by `crop_id`, validate 95 unique crops and group sizes
+8/29/39/19, and stage the existing evaluators' directory trees:
 
-## Figures 1–3: method schematics
+```bash
+python scripts/evaluate_spatial_test95.py \
+  --manifest outputs/spatial_test95/FINAL_TEST_PAIR_MANIFEST.csv \
+  --gen-root outputs/spatial_test95/gen \
+  --tpaqb-root data/generated_phi_sets_spatial_test95 \
+  --out-root results/spatial_test95
+```
 
-- Fig. 1 is based on the 3D VQ-VAE implementation in
-  `src/models/vqvae3d.py` and the spatial training script.
-- Fig. 2 is based on FiLM-conditioned latent diffusion in
-  `src/models/unet3d_film.py` and the same spatial training script.
-- Fig. 3 represents TP-AQB in `src/sampling/tp_aqb.py` and
-  `scripts/apply_tp_aqb.py`. The lightweight top-N quantile demo is not the
-  manuscript TP-AQB algorithm.
+The historical `phi_post_aqb`/`*_on.raw` data are exact top-N, not TP-AQB.
+The wrapper preserves them as `stage/topn` and writes separate
+`phi_tpaqb`/`tpaqb_path` fields in its augmented manifest.
 
-## Figures 4–7: morphology and porosity control
+## 2. Fuel Figs. 8–10
 
-- Fig. 4 uses representative TP-AQB outputs at targets 0.11–0.14.
-- Fig. 5 compares conditional and no-condition sampling at a fixed threshold
-  of 0.5; adaptive binarization is intentionally excluded from this ablation.
-- Fig. 6 compares 95 paired samples: Real, Gen1 (FiLM plus fixed threshold),
-  and Gen2 (FiLM plus TP-AQB). Group sizes are 8, 29, 39, and 19 at targets
-  0.11, 0.12, 0.13, and 0.14.
-- Fig. 7 uses `scripts/plot_slice_porosity.py` for a representative pair at
-  target 0.13.
-
-## Figure 8: spatial statistics and specific surface
-
-Directional two-point correlation is evaluated with:
+Use the final TP-AQB branch consistently:
 
 ```bash
 python scripts/evaluate_s2_lineal_edt.py \
-  --real_root <held-out-real-root> \
-  --gen_root data/generated_phi_sets_spatial \
+  --real_root results/spatial_test95/stage/real \
+  --gen_root results/spatial_test95/stage/tpaqb \
   --out_root results/fig_s2 \
   --targets 0.11 0.12 0.13 0.14
-```
 
-Fig. 8a–c shows the X, Y, and Z curves at target 0.11. The other targets are
-supplementary. Fig. 8d uses the 6-neighbor face-interface S/V values written by
-the voxel-metric evaluation.
+python scripts/evaluate_pore_network_6panel.py \
+  --config configs/main.yaml \
+  --real-root results/spatial_test95/stage/real \
+  --gen-root results/spatial_test95/stage/tpaqb \
+  --out-root results/fig_pnm \
+  --targets 0.11 0.12 0.13 0.14
 
-## Figure 9: pore-network geometry and topology
-
-```bash
-python scripts/evaluate_pore_network_6panel.py --config configs/main.yaml
 python scripts/evaluate_coordination_euler.py \
-  --real-root <held-out-real-root> \
-  --gen-root data/generated_phi_sets_spatial \
-  --out-root results/fig_pnm
+  --real-root results/spatial_test95/stage/real \
+  --gen-root results/spatial_test95/stage/tpaqb \
+  --out-root results/fig_pnm \
+  --phis phi0p11 phi0p12 phi0p13 phi0p14
+
+python scripts/evaluate_voxel_and_perm.py \
+  --input_root results/spatial_test95/stage/real \
+  --output_csv results/tables/real_voxel_perm.csv \
+  --group_name real --shape 256 256 256 --recursive --extensions .raw
+
+python scripts/evaluate_voxel_and_perm.py \
+  --input_root results/spatial_test95/stage/tpaqb \
+  --output_csv results/tables/generated_voxel_perm.csv \
+  --group_name generated --shape 256 256 256 --recursive --extensions .raw
 ```
 
-The six main-text panels at target 0.11 are pore radius, throat radius, throat
-shape factor, tortuosity, throat length, and coordination number. Results at
-targets 0.12–0.14 are supplementary.
+If Fuel Fig. 8 plots normalized correlation, pass `--normalize_s2` and retain
+the same convention in its source-data table.
 
-## Figure 10: main-sandstone permeability
+## 3. Model and figure identities
 
-Run `scripts/evaluate_voxel_and_perm.py` for the real and generated roots,
-then compare the resulting tables:
+- Fig. 1 references the EMA implementation in the spatial training script,
+  not legacy `src/models/vqvae3d.py`.
+- Fig. 5 requires its own no-condition checkpoint, which is not bundled; its
+  exact released-weight reproduction is therefore blocked.
+- Figs. 4 and 7 require explicit panel/sample IDs. Do not select a crop by
+  directory ordering.
 
-```bash
-python scripts/compare_metric_tables.py \
-  --real-csv results/tables/real_voxel_perm.csv \
-  --gen-csv results/tables/generated_voxel_perm.csv \
-  --output-csv results/tables/permeability_comparison.csv \
-  --source-data-csv results/source_data/fig10_permeability.csv
-```
+## 4. Fontainebleau Fig. 11
 
-Fig. 10a reports Kx, Ky, Kz, and Kgeom at target 0.11. Fig. 10b reports Kgeom
-across targets 0.11–0.14. The laboratory-sandstone voxel size is 3.5 um.
+The Fuel manuscript uses only 0.2041 (training/in-sample reference), 0.1766,
+and 0.1289. The old `fontainebleau_phi0p2045` 80/150 checkpoint is a
+compatibility artifact and must not be presented as reproducing Fig. 11.
 
-## Figures 11–14: Fontainebleau extrapolation
+The candidate final lineage is an epoch-75 checkpoint with an EXT3X sampler,
+but those exact artifacts and their source tables are not currently bundled.
+Accordingly, the proposed `generate_fontainebleau_extrap.py` entry point is not
+published as operational and Fig. 11 remains blocked. The 0.0829 exploratory
+condition is outside the current main manuscript.
 
-Place the three external `480^3` volumes at the paths in
-`configs/fontainebleau_config.yaml`, then run `--mode fontainebleau`. Repository
-labels 0.2045, 0.1743, and 0.1263 correspond to measured whole-volume
-porosities 0.2041, 0.1766, and 0.1289.
+## 5. Training-schedule limitation
 
-- Fig. 11 compares real-crop porosity distributions and identifies the
-  training-patch range 0.1926–0.2215.
-- Fig. 12 shows directional S2 at measured porosity 0.1766.
-- Fig. 13 shows the six pore-network descriptors at 0.1766.
-- Fig. 14 shows permeability at 0.1766 and across all three conditions. Its
-  source table is `results/source_data/fig14_fontainebleau.csv`.
-
-Each condition compares 20 real subvolumes with 20 generated volumes. Results
-for measured porosity 0.1289 are supplementary.
-
-The preceding sentence records the manuscript design, not a claim that the
-public repository currently contains all 20/20 artifacts. The formal
-second-version Fontainebleau checkpoint, complete seed/crop manifests, and
-Fig. 11–14 source bundle are not included. The available
-`savedmodels/fontainebleau_phi0p2045/` files belong to the historical
-compatibility path. Because local evidence contains conflicting 20-sample and
-5-sample provenance for some permeability products, consult
-`docs/fontainebleau_provenance_audit.md`; the current public release cannot
-directly reproduce the final numerical figures without the missing frozen
-artifacts and an author-confirmed provenance selection.
-
-## Summary outputs
-
-```bash
-python src/metrics/summarize_all.py --root results
-python scripts/plot_all.py
-```
-
-See `docs/figure_mapping.md` for the complete figure-to-code registry and
-`docs/spatial_vqaware_workflow.md` for spatial-split and TP-AQB provenance.
+The manuscript states 15 VQ-VAE and 40 DDPM epochs. The released VAE file is
+identified by SHA256, stores zero-based best epoch 12, and embeds an 80-epoch
+configuration; the released DDPM stores zero-based best epoch 34 and embeds a
+40-epoch configuration. Without the complete original training log, exact
+15-versus-80 VQ-VAE training-history provenance is unresolved. Sampling from
+the frozen weights is reproducible, but their exact training history must not
+be claimed as resolved. See
+`savedmodels/spatial_vqaware_v2/MANUSCRIPT_PROVENANCE.json`.

@@ -1,6 +1,6 @@
 # Fontainebleau scientific-provenance audit
 
-Audit date: 2026-10-20. Baseline: `6da2bab`. This is a provenance audit, not a
+Audit updated: 2026-10-26. Original baseline: `6da2bab`. This is a provenance audit, not a
 new experiment. No checkpoint, RAW volume, seed, crop identifier, generated
 sample, or manuscript statistic was changed.
 
@@ -12,7 +12,7 @@ sample, seed, crop, TP-AQB, metric, and figure-source manifests. Local records
 also mix a 20-window TP-AQB-v2 structural evaluation with 5+5 permeability
 inputs for two external conditions. An author decision and missing artifacts
 are required before the release can claim direct numerical reproduction of
-Figs. 11–14 and Table 3.
+Fuel Fig. 11 and Table 3.
 
 ## 20-sample versus 5-sample evidence
 
@@ -44,7 +44,7 @@ The repository currently publishes:
   `savedmodels/fontainebleau_phi0p2045/`.
 
 It does not publish an artifact set that proves the compatibility files are the
-final Fig. 11–14 checkpoint. Therefore they must not be relabelled or silently
+Fuel Fig. 11 checkpoint. Therefore they must not be relabelled or silently
 substituted.
 
 ## Required resolution
@@ -57,7 +57,7 @@ scientific content:
 3. complete REAL crop coordinates and GEN seed manifests;
 4. TP-AQB version/configuration and per-volume identities;
 5. S2, PNM and permeability source tables used by each figure/table;
-6. hashes tying Figs. 11–14, Table 3 and Supplementary Figs. S13–S15 to those
+6. hashes tying Fuel Fig. 11, Table 3 and any supplementary analyses to those
    files.
 
 Until then the repository accurately supports code-level retraining and
