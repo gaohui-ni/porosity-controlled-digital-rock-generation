@@ -200,11 +200,28 @@ python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 
 `--dry-run` is a pipeline logic test. It builds the same ordered command sequence as the selected reproduction run and writes `results/pipeline_<mode>_manifest.json`, but it does not train models, generate samples, or evaluate outputs.
 
-### A. Reproduce the formal second-version Test-95 generation
+### A. Train the second-version model from scratch
+
+```bash
+python run_pipeline.py --mode spatial --config configs/main.yaml
+```
+
+This starts a new 15-epoch VQ-VAE and 40-epoch latent-DDPM training run,
+computes latent statistics, generates the configured condition sweep, and
+applies TP-AQB. It does not generate the formal frozen Test-95 cohort from the
+published weights and does not compute the complete scientific metrics for
+Fuel Figs. 8–10.
+
+The released VQ-VAE embeds an 80-epoch configuration and stores best epoch 12
+(zero-based); because the complete original training log is missing, the
+frozen checkpoint's exact 15-versus-80 training history remains blocked. See
+`savedmodels/spatial_vqaware_v2/MANUSCRIPT_PROVENANCE.json`.
+
+### B. Generate and stage the formal Test-95 cohort from released weights
 
 This is the only released-weight entry point for the manuscript's 95 paired
 main-sandstone samples. First run `git lfs pull`, place the published raw
-volume at the configured path, and execute the fully explicit command:
+volume at the configured path, and execute the fully explicit commands:
 
 ```bash
 python scripts/generate_spatial_test95.py \
@@ -229,33 +246,25 @@ python scripts/evaluate_spatial_test95.py \
   --out-root results/spatial_test95
 ```
 
-The first command reproduces the single probability field and fixed/top-N
-baselines for each crop. The second command applies the manuscript TP-AQB v2
-recipe to those probability fields. The third joins all four branches by
-`crop_id`, preserves top-N as a diagnostic, and stages actual TP-AQB outputs
-as the Fuel manuscript's Gen2 branch.
+The first command reproduces the probability fields and fixed/top-N baselines.
+The second applies TP-AQB v2. The third validates identities, joins branches by
+`crop_id`, and stages the real and generated trees. Despite its filename,
+`evaluate_spatial_test95.py` does not calculate all scientific metrics for
+Figs. 8–10.
 
-The generator binds `ae_best.pth`, `calib_A_scale.pth`, `latent_stats.npz`,
-the frozen 100-crop table and the released seed-base convention. It writes
-local 95-row seed and pair manifests whose identities can be compared with the
-released reference manifests. It validates the formal FiLM checkpoint and
-calibrated `poro_scale=0.011804` before sampling.
+### C. Compute metrics and reproduce manuscript figures
 
-### B. Retrain the second-version model from scratch
+Run the metric-specific commands in
+[docs/figure_reproduction.md](docs/figure_reproduction.md) on the staged
+Test-95 trees. Those commands compute directional `S2`, lineal-path and
+pore-size statistics, pore-network/topology descriptors, and permeability.
+Metric calculation is separate from both `--mode spatial` and Test-95 staging.
 
-```bash
-python run_pipeline.py --mode spatial --config configs/main.yaml
-```
+`src/metrics/summarize_all.py` does not compute scientific metrics or render
+manuscript figures. It only inventories CSV/JSON files that already exist and
+writes paths, row counts, and column names to summary files.
 
-This starts a new 15-epoch VQ-VAE and 40-epoch latent-DDPM training run as
-currently specified by the Fuel manuscript configuration. It is not the
-command for directly regenerating the frozen Test-95 cohort from the published
-weights. The released VQ-VAE embeds an 80-epoch configuration and stores best
-epoch 12 (zero-based); because the complete original training log is missing,
-the frozen checkpoint's exact 15-versus-80 training history remains blocked.
-See `savedmodels/spatial_vqaware_v2/MANUSCRIPT_PROVENANCE.json`.
-
-### C. Historical compatibility inference
+### D. Historical compatibility inference
 
 ```bash
 python run_pipeline.py --mode final --config configs/main.yaml
@@ -299,12 +308,10 @@ The second-version manuscript-scale experiment is configured in [configs/main.ya
 - `results/fig_fontainebleau/`: Fontainebleau validation outputs.
 - `results/tables/`: CSV tables used for manuscript plots.
 
-Current formal workflow commands:
-
-```bash
-python run_pipeline.py --mode spatial --config configs/main.yaml
-python src/metrics/summarize_all.py --root results
-```
+The formal workflow has three separate phases: train from scratch with
+`--mode spatial`, generate/stage Test-95 with the released-weight commands
+above, and then run the metric-specific Fig. 8–10 commands in
+`docs/figure_reproduction.md`. No single command currently performs all three.
 
 The `fontainebleau` mode is retained as a historical compatibility workflow;
 it is not a direct Fuel Fig. 11/Table 3 reproduction entry point. See
@@ -319,7 +326,11 @@ python scripts/plot_all.py
 The `main`, `full`, and `final` modes remain available for compatibility with
 the earlier checkpoint layout.
 
-The summary command writes `results/results_summary.json`, `results/summary.json`, and `results/results_summary.csv`. A short manuscript-to-code map is provided in [docs/figure_mapping.md](docs/figure_mapping.md).
+After metric outputs already exist, `python src/metrics/summarize_all.py --root results`
+writes `results/results_summary.json`, `results/summary.json`, and
+`results/results_summary.csv`. It is an output inventory, not a scientific
+metric calculator. A short manuscript-to-code map is provided in
+[docs/figure_mapping.md](docs/figure_mapping.md).
 
 For a lightweight figure-output sanity check and figure-path helper:
 

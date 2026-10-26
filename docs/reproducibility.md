@@ -8,7 +8,7 @@ for the associated **Fuel** manuscript.
 This repository supports the following levels of reproducibility:
 
 1. **Lightweight functional reproduction**: run the synthetic demonstration and unit tests without raw micro-CT data or trained checkpoints.
-2. **Main-sandstone workflow reproduction through retraining**: use the public Mendeley Data volume, supplied configuration files, and training scripts to retrain the VQ-VAE and latent DDPM, generate porosity-controlled samples, and rerun the main-sandstone evaluation workflow.
+2. **Main-sandstone workflow reproduction through retraining**: use the public Mendeley Data volume, supplied configuration files, and training scripts to retrain the VQ-VAE and latent DDPM, generate condition-sweep samples, and apply TP-AQB. Metric evaluation is a separate stage.
 3. **Statistical manuscript-result reproduction**: independently retrained models are expected to reproduce the reported porosity-control accuracy, structural statistics, pore-network characteristics, and permeability trends within normal stochastic variation.
 
 Compatibility checkpoints and the second-version spatial final-sampling
@@ -41,13 +41,14 @@ python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 Available pipeline modes are:
 
 - `demo`: lightweight synthetic porosity-control check;
-- `spatial`: primary second-version main-sandstone workflow with spatially
-  disjoint splits, calibrated FiLM sampling, and TP-AQB;
+- `spatial`: primary second-version training workflow with spatially disjoint
+  splits, calibrated condition-sweep sampling, and TP-AQB; it does not create
+  the formal released-weight Test-95 cohort or compute Figs. 8–10 metrics;
 - `fontainebleau`: historical Fontainebleau compatibility workflow; it does
   not by itself reproduce Fuel Fig. 11 or Table 3;
 - `main`, `full`, and `final`: earlier-workflow compatibility paths.
 
-## Main Workflow
+## A. Train the model from scratch
 
 The primary second-version main-sandstone workflow is configured in
 `configs/main.yaml`:
@@ -58,8 +59,41 @@ python run_pipeline.py --mode spatial --config configs/main.yaml
 
 This uses `x=[0,512), z=[0,512)` for training, `x=[0,512), z=[544,800)`
 for validation, and `x=[544,800)` for testing, with a 32-voxel exclusion gap.
-The reported evaluation compares 95 held-out real crops with 95 corresponding
-generated samples across target groups 0.11–0.14.
+The command retrains the VQ-VAE and latent DDPM, computes latent statistics,
+generates a configured condition sweep, and applies TP-AQB. It does **not**
+generate the frozen formal Test-95 cohort and does **not** run the complete
+scientific evaluation for Fuel Figs. 8–10.
+
+## B. Generate and stage the formal Test-95 cohort from released weights
+
+```bash
+python scripts/generate_spatial_test95.py \
+  --raw-path data/raw/Bei_800x800x800.raw \
+  --device cuda
+
+python scripts/apply_tp_aqb.py \
+  --input-root outputs/spatial_test95/gen \
+  --output-root data/generated_phi_sets_spatial_test95 \
+  --config configs/tp_aqb_v2.yaml
+
+python scripts/evaluate_spatial_test95.py \
+  --manifest outputs/spatial_test95/FINAL_TEST_PAIR_MANIFEST.csv \
+  --gen-root outputs/spatial_test95/gen \
+  --tpaqb-root data/generated_phi_sets_spatial_test95 \
+  --out-root results/spatial_test95
+```
+
+The last command validates identities and stages real, fixed-threshold, top-N,
+and TP-AQB branches. Despite its filename, it does not calculate the complete
+scientific metrics for Figs. 8–10.
+
+## C. Compute scientific metrics and reproduce figures
+
+Run the metric-specific commands in `docs/figure_reproduction.md` after the
+Test-95 branches have been staged. Those commands compute directional `S2`,
+lineal-path and pore-size statistics, pore-network/topology descriptors, and
+permeability. They are separate from both `--mode spatial` and the Test-95
+staging wrapper.
 
 The following command runs the historical Fontainebleau compatibility
 experiment after its three external volumes are available; it is not asserted
@@ -197,11 +231,15 @@ Verify paths and target values in `configs/main.yaml`; modification of the
 Python source file is not required. The manuscript-scale voxel size is read
 from `configs/main.yaml`.
 
-Summarize generated result files:
+Inventory result files that have already been generated:
 
 ```bash
 python src/metrics/summarize_all.py --root results
 ```
+
+`summarize_all.py` does not compute any scientific metric or regenerate a
+figure. It only scans existing CSV/JSON outputs and writes a compact manifest
+with file paths, row counts, and column names.
 
 For a figure-oriented mapping from manuscript result groups to commands and output folders, see `docs/figure_reproduction.md`.
 
