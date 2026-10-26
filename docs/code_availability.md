@@ -39,7 +39,7 @@ analysis path. The second-version spatial final-sampling weights and frozen
 requires access to three external ANU volumes, which are not redistributed in
 this repository. The public release does not yet include the confirmed
 formal-v2 Fontainebleau checkpoint and complete final sample/figure manifests,
-so Figs. 11–14 cannot currently be reproduced numerically from this repository
+so Fuel Fig. 11 and Table 3 cannot currently be reproduced numerically from this repository
 alone; the exact limitation is disclosed in
 `docs/fontainebleau_provenance_audit.md`. Due to stochastic
 sampling and hardware- or software-dependent numerical differences, generated

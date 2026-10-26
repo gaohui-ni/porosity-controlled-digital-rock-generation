@@ -10,7 +10,7 @@ downloaded file identity.
 
 ## Second-version spatial package
 
-The exact file hashes for all 13 release artifacts are recorded in
+The exact file hashes for all 14 release artifacts are recorded in
 `savedmodels/spatial_vqaware_v2/MANIFEST.sha256`. The principal model files are:
 
 | File | Size bytes | SHA256 |

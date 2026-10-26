@@ -368,7 +368,14 @@ def main():
     ap.add_argument("--r_max", type=int, default=128)
     ap.add_argument("--psd_bins", type=int, default=80)
     ap.add_argument("--psd_r_max", type=float, default=-1.0, help="If <=0, choose automatically from the maximum p99.5 EDT value over real+generated samples for the target.")
-    ap.add_argument("--normalize_s2", action="store_true", help="Recommended: normalize S2 as (S2 - phi^2) / (phi - phi^2).")
+    ap.add_argument(
+        "--normalize_s2",
+        action="store_true",
+        help=(
+            "Optionally normalize S2 as (S2 - phi^2) / (phi - phi^2). "
+            "Omit this flag for the unnormalized statistic used by Fuel Fig. 8."
+        ),
+    )
     ap.add_argument("--normalize_l", action="store_true", help="Recommended: normalize L as L / phi.")
 
     args = ap.parse_args()

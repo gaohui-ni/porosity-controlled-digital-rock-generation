@@ -26,8 +26,9 @@ python run_pipeline.py --mode spatial --config configs/main.yaml
 
 This requires the published sandstone micro-CT data, a CUDA-capable PyTorch installation, and enough memory for 256^3 training.
 
-The separate validation additionally requires access to three external ANU
-Fontainebleau volumes, which are not redistributed:
+The historical compatibility validation additionally requires access to three
+external ANU Fontainebleau volumes, which are not redistributed. This command
+is not asserted to reproduce Fuel Fig. 11 or Table 3:
 
 ```bash
 python run_pipeline.py --mode fontainebleau --config configs/main.yaml

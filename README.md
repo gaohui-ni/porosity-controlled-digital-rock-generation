@@ -149,18 +149,19 @@ Mendeley Data volume:
 python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
-Run `--mode fontainebleau` separately when the three external ANU volumes are
-available. They are not redistributed in this repository. The `full` command
-is retained for the earlier compatibility workflow and should not be confused
-with the second-version `spatial` path.
+Run `--mode fontainebleau` only as the historical compatibility workflow when
+the three external ANU volumes are available. They are not redistributed in
+this repository, and this mode is not asserted to reproduce Fuel Fig. 11 or
+Table 3. The `full` command is likewise retained for compatibility and should
+not be confused with the second-version `spatial` path.
 
 Available modes:
 
 - `demo`: lightweight synthetic porosity-control check;
 - `spatial`: second-version manuscript implementation for spatially separated
   EMA-VQ/DDPM training, calibrated FiLM sampling, and TP-AQB v2;
-- `fontainebleau`: separately trained Fontainebleau validation and
-  porosity-extrapolation workflow;
+- `fontainebleau`: historical separately trained Fontainebleau compatibility
+  workflow; final Fuel Fig. 11/Table 3 provenance is blocked;
 - `main`: compatibility workflow for the earlier main-sandstone checkpoint;
 - `full`: compatibility `main` workflow followed by `fontainebleau`;
 - `final`: inference and evaluation with the compatibility checkpoints under
@@ -294,12 +295,20 @@ The second-version manuscript-scale experiment is configured in [configs/main.ya
 - `results/fig_fontainebleau/`: Fontainebleau validation outputs.
 - `results/tables/`: CSV tables used for manuscript plots.
 
-Current manuscript commands:
+Current formal workflow commands:
 
 ```bash
 python run_pipeline.py --mode spatial --config configs/main.yaml
-python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 python src/metrics/summarize_all.py --root results
+```
+
+The `fontainebleau` mode is retained as a historical compatibility workflow;
+it is not a direct Fuel Fig. 11/Table 3 reproduction entry point. See
+`docs/fontainebleau_provenance_audit.md`.
+
+Synthetic plotting demo only (not a Fuel manuscript-figure reproducer):
+
+```bash
 python scripts/plot_all.py
 ```
 
@@ -436,6 +445,10 @@ See [docs/checkpoints.md](docs/checkpoints.md) for details.
 ## Citation
 
 If you use this repository, please cite the associated manuscript. A machine-readable citation file is provided in [CITATION.cff](CITATION.cff).
+
+`CITATION.cff` describes the current `v0.2.0` release candidate. The latest
+formal GitHub Release remains `v0.1.1`; this repository audit does not create
+or imply a `v0.2.0` Release.
 
 ## License
 

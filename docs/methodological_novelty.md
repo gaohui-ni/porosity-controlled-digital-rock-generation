@@ -103,7 +103,7 @@ generalization.
 | VQ-VAE, conditional DDPM, and TP-AQB schematics | Figs. 1-3 |
 | Generated morphology, FiLM ablation, porosity matching, and slice variation | Figs. 4-7 |
 | Main-sandstone spatial statistics, pore-network descriptors, and permeability | Figs. 8-10 |
-| Fontainebleau porosity ranges, spatial statistics, pore-network descriptors, and permeability | Figs. 11-14 |
+| Fontainebleau permeability comparison | Fuel Fig. 11; exact final provenance remains blocked |
 
 See `docs/figure_mapping.md` for the corresponding scripts and inputs.
 

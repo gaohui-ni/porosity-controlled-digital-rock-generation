@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite the associated manuscript."
+message: "This file describes the v0.2.0 release candidate; the latest formal GitHub Release is v0.1.1. If you use this software, please cite the associated manuscript."
 title: "A Porosity-Controllable Generative Framework for Three-Dimensional Porous Media Based on Discrete Latent-Space Diffusion"
 authors:
   - family-names: Ni
@@ -14,8 +14,9 @@ authors:
     given-names: Xuefeng
   - family-names: Ni
     given-names: Hao
+# This metadata describes the current v0.2.0 release candidate. The latest
+# formal GitHub Release remains v0.1.1; no v0.2.0 Release is asserted here.
 version: 0.2.0
-date-released: 2026-10-20
 license: MIT
 repository-code: "https://github.com/gaohui-ni/porosity-controlled-digital-rock-generation"
 preferred-citation:

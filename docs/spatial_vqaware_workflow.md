@@ -15,15 +15,15 @@ The released compatibility checkpoints retain their original architecture and
 file names. Spatial-workflow checkpoints are written separately under
 `outputs/spatial_vqaware/` and are not interchangeable with those files.
 
-## Delivered training run
+## Delivered checkpoint metadata and unresolved training history
 
-The frozen second-version package records the run that actually produced the
-delivered checkpoints:
+The frozen second-version package identifies the selected checkpoints, but it
+does not contain a complete original training log:
 
-| Module | Actual training schedule | Selected checkpoint |
+| Module | Manuscript/config schedule | Selected checkpoint metadata |
 | --- | ---: | ---: |
-| 3D VQ-VAE | 15 epochs | epoch 13 (one-based; checkpoint `epoch=12`) |
-| Latent DDPM | 40 epochs | epoch 35 (one-based; checkpoint `epoch=34`) |
+| 3D VQ-VAE | 15 epochs | epoch 13 (one-based; checkpoint `epoch=12`), while embedded `epochs_vae=80` |
+| Latent DDPM | 40 epochs | epoch 35 (one-based; checkpoint `epoch=34`) and embedded `epochs_ddpm=40` |
 
 - best VAE validation loss: `0.019152`;
 - best DDPM validation noise loss: `0.052244`;
@@ -31,13 +31,14 @@ delivered checkpoints:
 - DDPM elapsed time: `1.64 h`;
 - total training time: `4.67 h`.
 
-These values come from the frozen training histories and checkpoint metadata.
-Some serialized checkpoint `cfg` fields and
-`optional_precalibration/run_cfg.json` retain exploratory/default maxima such
-as `80` or `150`; they are provenance records, not evidence that the delivered
-models were trained for those maxima. The canonical retraining schedule is
-`epochs_vae: 15` and `epochs_ddpm: 40` under `spatial_vqaware` in
-`configs/main.yaml`. Frozen checkpoint bytes are intentionally unchanged.
+The loss and elapsed-time values are retained manuscript records. The DDPM
+metadata is consistent with 40 epochs, but the VQ-VAE metadata alone cannot
+establish whether 80 was only a configured maximum or whether training stopped
+after 15 epochs. No complete original VQ-VAE training log is bundled, so the
+exact 15-versus-80 history remains **BLOCKED**. The current retraining schedule
+is `epochs_vae: 15` and `epochs_ddpm: 40` under `spatial_vqaware` in
+`configs/main.yaml`; it must not be used retroactively as proof of the released
+checkpoint's history. Frozen checkpoint bytes are intentionally unchanged.
 
 ## Data isolation
 

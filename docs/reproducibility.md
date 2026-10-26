@@ -1,6 +1,7 @@
 # Reproducibility
 
-This repository is organized to support review of the computational workflow for the associated Computers & Geosciences manuscript.
+This repository is organized to support review of the computational workflow
+for the associated **Fuel** manuscript.
 
 ## Reproducibility Levels
 
@@ -42,7 +43,8 @@ Available pipeline modes are:
 - `demo`: lightweight synthetic porosity-control check;
 - `spatial`: primary second-version main-sandstone workflow with spatially
   disjoint splits, calibrated FiLM sampling, and TP-AQB;
-- `fontainebleau`: independent Fontainebleau validation workflow;
+- `fontainebleau`: historical Fontainebleau compatibility workflow; it does
+  not by itself reproduce Fuel Fig. 11 or Table 3;
 - `main`, `full`, and `final`: earlier-workflow compatibility paths.
 
 ## Main Workflow
@@ -59,8 +61,9 @@ for validation, and `x=[544,800)` for testing, with a 32-voxel exclusion gap.
 The reported evaluation compares 95 held-out real crops with 95 corresponding
 generated samples across target groups 0.11–0.14.
 
-Run the separate Fontainebleau experiment after its three external volumes are
-available:
+The following command runs the historical Fontainebleau compatibility
+experiment after its three external volumes are available; it is not asserted
+to reproduce Fuel Fig. 11 or Table 3:
 
 ```bash
 python run_pipeline.py --mode fontainebleau --config configs/main.yaml
