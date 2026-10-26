@@ -220,7 +220,6 @@ def test_code_availability_and_readme_match_release_policy():
     for expected in (
         "# Computer Code Availability",
         "Gaohui Ni",
-        "+86-151-9298-7839",
         "1946978288@qq.com",
         "Year first available:** 2026",
         "Program size:** Approximately 2.81 MiB",
@@ -228,6 +227,9 @@ def test_code_availability_and_readme_match_release_policy():
         "MIT License",
     ):
         assert expected in statement
+
+    assert "+86-151-9298-7839" not in statement
+    assert "telephone:" not in statement.lower()
 
     assert "python run_pipeline.py --mode spatial" in readme
     assert "three external ANU volumes" in readme

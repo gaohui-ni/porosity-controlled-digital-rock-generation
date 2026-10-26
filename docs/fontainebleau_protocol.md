@@ -37,11 +37,12 @@ Fuel Fig. 11 and Table 3.
 
 ## Evaluation design
 
-For each condition, the workflow compares 20 generated `256^3` volumes with
-20 real `256^3` subvolumes. The real crops are subvolumes of one parent rock
-per condition, not 20 independent specimens. Distribution bands therefore
-describe variation among subvolumes and must not be interpreted as uncertainty
-from 20 independent rocks.
+For each condition, the final recorded comparison contains 20 generated
+`256^3` volumes and 20 real `256^3` subvolumes. The real crops are subvolumes
+of one parent rock per condition, not 20 independent specimens. Distribution
+bands therefore describe variation among subvolumes and must not be interpreted
+as uncertainty from 20 independent rocks. Separate 5+5 notes refer to the
+historical precursor batch that was later expanded by 15 samples per arm.
 
 The evaluation covers directional two-point correlation, pore/throat geometry,
 tortuosity, throat length, coordination number, and directional plus
@@ -72,8 +73,10 @@ earlier compatibility workflow. Their role and checksums are recorded in
 The repository does not currently distribute a confirmed formal-v2
 Fontainebleau checkpoint, EXT3X sampler, complete crop/seed manifests, or the
 frozen source-data bundle used for Fuel Fig. 11 and Table 3.
-Local records contain both a later TP-AQB-v2 20-window expansion and a
-five-sample permeability source path. Until the authors select and publish one
-complete provenance chain, the declared 20/20 design must not be interpreted
-as directly reproducible from the public files. No compatibility checkpoint
-may be substituted silently. See `docs/fontainebleau_provenance_audit.md`.
+Local records and inspected tables support the final 20 REAL + 20 GEN count
+per condition and identify the 5+5 material as a historical precursor.
+However, the public release still lacks the hashes and complete manifests that
+tie the final 20+20 table to Fuel Fig. 11 and Table 3. The sample-count record
+is therefore distinct from the still-`BLOCKED` figure-source provenance. No
+compatibility checkpoint may be substituted silently. See
+`docs/fontainebleau_provenance_audit.md`.

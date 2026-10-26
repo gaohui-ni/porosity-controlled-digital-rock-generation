@@ -8,8 +8,9 @@ Gaohui Ni, Yanyan Ma, Shaowei Ma, Yuxin Yang, Xuefeng Liu, and Hao Ni
 
 This repository implements the second-version manuscript workflow for
 porosity-controllable 3D digital rock generation: a spatially separated 3D
-VQ-VAE, a FiLM-conditioned latent DDPM, and topology-preserving adaptive
-quantile binarization (TP-AQB) for precise output porosity matching.
+VQ-VAE, a FiLM-conditioned latent DDPM, and adaptive quantile binarization
+with constrained voxel adjustment and topological consistency checking
+(TP-AQB) for precise output porosity matching.
 
 ## Methodological Contributions
 
@@ -26,9 +27,11 @@ conditions.
 A lightweight 3D VQ-VAE compresses `256^3`-voxel micro-CT volumes into a
 `32 x 64 x 64 x 64` discrete latent tensor. Continuous target porosity
 modulates latent denoising features through FiLM. TP-AQB starts from the
-model's fixed-threshold structure, adjusts the pore count under skeleton,
-throat-neighborhood, and topology constraints, and uses equal-count local
-swaps to reduce specific-surface drift.
+model's fixed-threshold structure, performs constrained voxel adjustment with
+skeleton and throat-neighborhood safeguards, checks topological consistency,
+and uses equal-count local swaps to reduce specific-surface drift. These
+constraints are intended to reduce alterations to critical pore connections;
+they are not a guarantee that topology is invariant.
 
 The main sandstone evaluation uses 95 real samples from the spatially held-out
 test region and 95 generated samples conditioned on their corresponding real
@@ -53,8 +56,9 @@ The repository contains:
 
 - 3D VQ-VAE and vector-quantized latent representation learning.
 - FiLM-conditioned latent DDPM for target-porosity controlled generation.
-- TP-AQB v2 for exact pore-count matching with topology, skeleton,
-  throat-neighborhood, and specific-surface safeguards.
+- TP-AQB v2 for exact pore-count matching with constrained voxel adjustment,
+  topological consistency checks, and skeleton, throat-neighborhood, and
+  specific-surface safeguards.
 - A lightweight top-N quantile implementation retained for demonstrations and
   legacy checkpoint compatibility.
 - A spatially disjoint train/validation/test workflow with EMA vector
@@ -282,7 +286,7 @@ pytest tests/
 ```
 
 The tests cover conventional quantile matching, TP-AQB exact pore counts and
-topology preservation, porosity calculation, directional two-point
+topological consistency checks, porosity calculation, directional two-point
 correlation-function output shapes, and pipeline dry-run behavior.
 
 ## Reproduce Manuscript Outputs
