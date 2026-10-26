@@ -1,6 +1,7 @@
 # Journal Compliance Map
 
-This document maps the repository contents to the Computers & Geosciences code, data, and reproducibility expectations.
+This document maps the repository contents to the code, data, and
+reproducibility expectations for the current **Fuel** submission.
 
 ## Scope Fit
 
@@ -48,8 +49,9 @@ python run_pipeline.py --mode spatial --config configs/main.yaml --dry-run
 python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
-The separate `fontainebleau` workflow additionally requires three external ANU
-Fontainebleau volumes, which are not redistributed in this repository.
+The separate historical `fontainebleau` compatibility workflow additionally
+requires three external ANU Fontainebleau volumes, which are not redistributed
+in this repository; it is not the formal Fuel Fig. 11 reproduction route.
 
 ## Data and Model Limitations
 
@@ -66,7 +68,7 @@ environment.
 The formal main-sandstone Test-95 package is directly verifiable and can be
 regenerated from the released Mendeley volume. Fontainebleau is more limited:
 the repository exposes retraining/evaluation code and historical compatibility
-weights, but not a confirmed formal-v2 checkpoint plus complete Fig. 11–14
+weights, but not a confirmed formal-v2 checkpoint plus complete Fuel Fig. 11
 provenance bundle. This limitation is disclosed rather than treating the
 compatibility checkpoint as the paper's final extrapolation model.
 

@@ -11,12 +11,11 @@ it does not claim that a command was run when only its interface was tested.
   manifest entries after final metadata edits.
 - Git LFS materialization and raw-byte verification: `git lfs pull` followed
   by `sha256sum -c MANIFEST.sha256` passed for all 14 entries.
-- Focused naming, manifest, pipeline, TP-AQB, Test-95 wrapper, and release
-  tests: 29 passed.
-- Full repository test suite: 47 passed.
+- Focused synthetic Test-95 wrapper tests: 8 passed.
+- Full repository test suite: 55 passed.
 - Synthetic Test-95 integration: all 95 small binary fixtures were joined by
-  `crop_id`; actual TP-AQB and historical top-N branches were staged under
-  distinct canonical trees.
+  `crop_id`; actual TP-AQB RAW/NPZ and historical top-N branches were staged
+  under distinct canonical trees without double-counting.
 - Public-text path scan found no `/home/hipeson` or private Windows user paths
   outside checkpoint/NPZ binaries.
 
@@ -41,8 +40,11 @@ it does not claim that a command was run when only its interface was tested.
   no-condition checkpoint is not bundled.
 - Fuel Fig. 11 / Table 3 Fontainebleau reproduction: the candidate epoch-75
   checkpoint, EXT3X implementation, complete seed/crop manifests, and exact
-  source tables are not bundled. The historical 80/150 compatibility weights
-  are not accepted as a substitute.
+  source-data chain are not bundled. A local 20-real/20-generated-per-condition
+  permeability table was found, but its companion notes still attribute the
+  external values to an older 5+5 source and contradict the 20+20 lineage.
+  The historical 80/150 compatibility weights are not accepted as a
+  substitute.
 
 ## Re-run commands
 

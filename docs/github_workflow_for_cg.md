@@ -1,4 +1,7 @@
-# Computers & Geosciences Reproduction Entry Point
+# Fuel Reproduction Entry Point
+
+This filename is retained for historical links. The active submission target
+is **Fuel**, not Computers & Geosciences.
 
 Use the second-version main-sandstone command:
 
@@ -6,8 +9,10 @@ Use the second-version main-sandstone command:
 python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
-The separate Fontainebleau validation requires three external ANU volumes,
-which are not redistributed:
+The historical Fontainebleau compatibility workflow requires three external
+ANU volumes, which are not redistributed. It must not be presented as direct
+reproduction of Fuel Fig. 11 or Table 3 until the final checkpoint and sample
+provenance are available:
 
 ```bash
 python run_pipeline.py --mode fontainebleau --config configs/main.yaml

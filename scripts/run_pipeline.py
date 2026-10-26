@@ -620,7 +620,10 @@ def fontainebleau_pipeline(cfg, train_models=True):
                 "--output-csv",
                 comparison_csv,
                 "--source-data-csv",
-                str(Path(paths["source_data_results"]) / "fig14_fontainebleau.csv"),
+                str(
+                    Path(paths["source_data_results"])
+                    / "fontainebleau_compatibility_permeability.csv"
+                ),
             ],
         ),
         (

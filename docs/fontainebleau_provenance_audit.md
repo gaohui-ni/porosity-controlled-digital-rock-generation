@@ -9,31 +9,34 @@ sample, or manuscript statistic was changed.
 **Status: BLOCKED—SCIENTIFIC PROVENANCE.** The public repository does not
 contain a confirmed formal-v2 Fontainebleau checkpoint plus complete frozen
 sample, seed, crop, TP-AQB, metric, and figure-source manifests. Local records
-also mix a 20-window TP-AQB-v2 structural evaluation with 5+5 permeability
-inputs for two external conditions. An author decision and missing artifacts
-are required before the release can claim direct numerical reproduction of
-Fuel Fig. 11 and Table 3.
+include a 20-real/20-generated permeability table for each of four conditions,
+but its companion README still says that the external permeability values came
+from an older 5+5 table and elsewhere says that the 20+20 paired batch was not
+generated. The table, narrative, and missing final checkpoint/manifests do not
+form a self-consistent provenance chain. An author decision and missing
+artifacts are required before the release can claim direct numerical
+reproduction of Fuel Fig. 11 and Table 3.
 
 ## 20-sample versus 5-sample evidence
 
 | Item | 20-sample record | 5-sample record |
 | --- | --- | --- |
-| Actual REAL count | 20 windows per condition are declared in `BY_POROSITY2_SUMMARY.csv`; windows from each parent overlap and are not independent rocks | 5 external REAL permeability rows per condition are described by `EXT3X_REAL5_GEN5_PERMEABILITY.csv` provenance |
-| Actual GEN count | 20 TP-AQB-v2 seeds per condition are declared; external seeds `2031101400..419` are described | 5 external generated permeability rows per condition |
+| Actual REAL count | Local `BY_POROSITY2_SUMMARY.csv` and `BY_POROSITY2_PERM.csv` copies contain 20 rows per arm and condition; windows from each parent overlap and are not independent rocks | Companion notes describe 5 external REAL permeability rows per condition from an older source |
+| Actual GEN count | The same local tables contain 20 TP-AQB-v2 rows per arm and condition; external seeds `2031101400..419` are described | Companion notes describe 5 external generated permeability rows per condition |
 | Training checkpoint | local notes name `cont80 / ep075`; no confirmed formal-v2 checkpoint is present in this repository | same unresolved local lineage; public `savedmodels/fontainebleau_phi0p2045/` is compatibility-only |
 | Sampling configuration | later note says 15 new seeds were added to the original 5 | original five-seed external sampling |
 | TP-AQB version | local 2026-10-15 note says the expanded set used TP-AQB v2 | older notes include both TP-AQB-v1 history and a five-sample v2 subset; no complete public manifest resolves every artifact |
 | Seed manifest | ranges are described in local notes, but no complete formal manifest is published | not published as a formal release manifest |
 | S2 / PNM data | plotted/cached 20-window products and summaries exist locally | older five-window products are referenced locally |
-| Permeability data | training condition 0.2041 uses 20 REAL and 20 GEN volumes | local plotting README explicitly says external conditions read `EXT3X_REAL5_GEN5_PERMEABILITY.csv` |
+| Permeability data | The inspected local combined table has non-null `Kgeom` for 20 REAL and 20 GEN rows in each condition | The companion README says external conditions read `EXT3X_REAL5_GEN5_PERMEABILITY.csv`, reports a 70-volume merge, and later says a 20+20 paired batch was not generated; the referenced old CSV was not found in the searched local roots |
 | Kgeom statistics | 0.2041 median: REAL 2.2803 D, GEN 2.4833 D | 0.1766: REAL 1.93642 D, GEN 1.4175 D; 0.1289: REAL 0.4473 D, GEN 0.3789 D |
-| Paper mapping | manuscript text declares 20 REAL and 20 GEN per condition | Table 3 external-condition values trace to the documented 5+5 permeability source, while the training condition traces to 20+20 |
+| Paper mapping | Manuscript text declares 20 REAL and 20 GEN per condition | No released hash or manifest ties either local permeability lineage conclusively to Fuel Fig. 11/Table 3 |
 | Complete reproducibility | No: missing public formal checkpoint and end-to-end manifests | No: incomplete public seed/crop/metric provenance |
 
-The six Table 3 values are medians of positive per-volume `Kgeom =
-(Kx*Ky*Kz)^(1/3)` values under the documented plotting convention. The
-available evidence does **not** support describing all three permeability
-conditions as 20-real/20-generated measurements.
+The local tables use per-volume `Kgeom = (Kx*Ky*Kz)^(1/3)` under the documented
+plotting convention. Their row counts establish that a 20+20 permeability
+table exists locally; they do **not** establish that this table, rather than
+the documented older 5+5 lineage, supplied Fuel Fig. 11/Table 3.
 
 ## Public checkpoint audit
 

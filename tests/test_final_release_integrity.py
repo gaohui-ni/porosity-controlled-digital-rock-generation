@@ -285,6 +285,16 @@ def test_pnm_requires_generated_seg_key():
     assert '"n_real_tau_failed"' in source
 
 
+def test_fuel_figure_commands_use_the_validated_tpaqb_format():
+    guide = (ROOT / "docs" / "figure_reproduction.md").read_text(encoding="utf-8")
+
+    assert "--gen_use raw" in guide
+    assert "--gen-root results/spatial_test95/stage/tpaqb_npz" in guide
+    assert "--gen-npz-key seg" in guide
+    assert "--input_root results/spatial_test95/stage/tpaqb" in guide
+    assert "Fuel Fig. 8 uses the unnormalized two-point probability" in guide
+
+
 def test_pnm_outputs_preserve_full_target_porosity(tmp_path):
     root = tmp_path / "pnm"
     root.mkdir()

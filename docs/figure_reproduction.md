@@ -33,7 +33,10 @@ python scripts/evaluate_spatial_test95.py \
 
 The historical `phi_post_aqb`/`*_on.raw` data are exact top-N, not TP-AQB.
 The wrapper preserves them as `stage/topn` and writes separate
-`phi_tpaqb`/`tpaqb_path` fields in its augmented manifest.
+`phi_tpaqb`/`tpaqb_path` fields in its augmented manifest. It stages each
+validated TP-AQB volume twice without adding a second statistical sample:
+`stage/tpaqb/<group>/<crop_id>.raw` for RAW consumers and
+`stage/tpaqb_npz/<group>/<crop_id>.npz` (array key `seg`) for NPZ consumers.
 
 ## 2. Fuel Figs. 8–10
 
@@ -43,13 +46,15 @@ Use the final TP-AQB branch consistently:
 python scripts/evaluate_s2_lineal_edt.py \
   --real_root results/spatial_test95/stage/real \
   --gen_root results/spatial_test95/stage/tpaqb \
+  --gen_use raw \
   --out_root results/fig_s2 \
   --targets 0.11 0.12 0.13 0.14
 
 python scripts/evaluate_pore_network_6panel.py \
   --config configs/main.yaml \
   --real-root results/spatial_test95/stage/real \
-  --gen-root results/spatial_test95/stage/tpaqb \
+  --gen-root results/spatial_test95/stage/tpaqb_npz \
+  --gen-npz-key seg \
   --out-root results/fig_pnm \
   --targets 0.11 0.12 0.13 0.14
 
@@ -70,8 +75,9 @@ python scripts/evaluate_voxel_and_perm.py \
   --group_name generated --shape 256 256 256 --recursive --extensions .raw
 ```
 
-If Fuel Fig. 8 plots normalized correlation, pass `--normalize_s2` and retain
-the same convention in its source-data table.
+Fuel Fig. 8 uses the unnormalized two-point probability
+`S2,d(r) = <I(x) I(x+r e_d)>`. Therefore the command intentionally omits
+`--normalize_s2`; adding that option would change the manuscript statistic.
 
 ## 3. Model and figure identities
 
