@@ -59,10 +59,15 @@ python run_pipeline.py --mode fontainebleau --config configs/main.yaml
 ```
 
 `spatial` is the primary second-version laboratory-sandstone workflow.
-`fontainebleau` covers the independently trained validation experiment using
-three external ANU volumes and `configs/fontainebleau_config.yaml`. The `main`,
-`full`, and `final` modes are retained for compatibility with the earlier
-checkpoint layout.
+`fontainebleau` covers a separately trained, same-lithology cross-sample
+porosity-extrapolation experiment using three independent ANU sandstone
+volumes and `configs/fontainebleau_config.yaml`. One volume with measured
+porosity `0.2041` is used for model training. The other two volumes, with
+measured porosities `0.1766` and `0.1289`, are external validation samples and
+are evaluated without retraining. Thus there are two, not three, external
+validation rocks. This is not zero-shot transfer of the main laboratory-
+sandstone model across lithologies. The `main`, `full`, and `final` modes are
+retained for compatibility with the earlier checkpoint layout.
 
 ## Earlier Compatibility Commands
 

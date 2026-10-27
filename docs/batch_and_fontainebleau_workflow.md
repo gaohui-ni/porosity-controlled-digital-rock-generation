@@ -70,6 +70,15 @@ size of `480 x 480 x 480` voxels. Original file packaging and phase-label
 conventions may vary by provider version. Declare the standardized local paths
 in `configs/fontainebleau_config.yaml`.
 
+The three inputs have distinct roles: the volume with measured porosity
+`0.2041` is used to train the Fontainebleau model, while the `0.1766` and
+`0.1289` volumes are external cross-sample validation rocks evaluated without
+retraining. This is same-lithology porosity extrapolation, not a zero-shot
+cross-lithology application of the main-sandstone model. The final recorded
+design remains 20 REAL subvolumes and 20 GEN volumes per condition; the
+historical compatibility lineage and the still-blocked Fuel Figure 11 source
+lineage must not be conflated.
+
 ## 4. Fontainebleau route A: complete compatibility workflow
 
 The following single command prepares matched real validation patches, trains
