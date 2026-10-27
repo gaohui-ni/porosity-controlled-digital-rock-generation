@@ -9,9 +9,13 @@ cross-lithology transfer.
 
 Three `480 x 480 x 480` digital rocks at `5.68 um/voxel` are used. The rock
 with measured whole-volume porosity `0.2041` is the training rock; the rocks
-at `0.1766` and `0.1289` are lower-porosity external validation rocks. Their
-subvolume porosity distributions lie outside the observed training-patch range
-of `0.1926–0.2215`.
+at `0.1766` and `0.1289` are lower-porosity external validation rocks evaluated
+without retraining. In other words, the design contains one training volume
+and two external validation volumes—not three external validation volumes.
+This tests cross-sample porosity extrapolation within Fontainebleau sandstone;
+it is not direct zero-shot cross-lithology transfer of the main-sandstone
+model. Their subvolume porosity distributions lie outside the observed
+training-patch range of `0.1926–0.2215`.
 
 For compatibility with existing filenames and scripts, the repository uses
 the nominal labels `0.2045`, `0.1743`, and `0.1263`. The mapping is explicit in

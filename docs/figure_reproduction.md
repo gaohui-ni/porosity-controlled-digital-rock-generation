@@ -73,22 +73,76 @@ python scripts/evaluate_voxel_and_perm.py \
   --input_root results/spatial_test95/stage/tpaqb \
   --output_csv results/tables/generated_voxel_perm.csv \
   --group_name generated --shape 256 256 256 --recursive --extensions .raw
+
+python scripts/compare_metric_tables.py \
+  --real-csv results/tables/real_voxel_perm.csv \
+  --gen-csv results/tables/generated_voxel_perm.csv \
+  --output-csv results/tables/fig10_permeability_comparison.csv
 ```
+
+The final command only groups the two permeability CSV files that already
+exist locally; it does not rerun PNM/OpenPNM, regenerate digital rocks, or
+render the manuscript Figure 10. It groups the unchanged Test-95 cohort by
+the four existing target tags (`0.11`, `0.12`, `0.13`, and `0.14`) and writes
+per-group `mean`, `std`, and non-null `count` fields. Directional permeability
+is reported as `Kx`, `Ky`, and `Kz`, and the geometric mean as `Kgeom`, with
+the input table retaining both `_m2` and `_D` units. A failed or
+non-percolating direction is `NaN` and therefore contributes zero to that
+metric's valid count; `Kgeom` is valid only when all three directions are
+valid. The generated comparison CSV is a local derived table and must not be
+committed or presented as an automatically reconstructed final Figure 10.
 
 Fuel Fig. 8 uses the unnormalized two-point probability
 `S2,d(r) = <I(x) I(x+r e_d)>`. Therefore the command intentionally omits
 `--normalize_s2`; adding that option would change the manuscript statistic.
 
-## 3. Model and figure identities
+## 3. Figures 4, 6, and 7
+
+### Figure 4: Avizo post-generation visualization
+
+Figure 4 is not a direct output of the Python evaluation pipeline. Its actual
+preparation sequence was:
+
+1. generate a `256^3` three-dimensional digital rock with a trained model;
+2. obtain the final generated binary volume;
+3. visualize that volume in Avizo;
+4. export the complete 3D morphology, pore-space structure, and 2D slice
+   views separately; and
+5. arrange those exports into manuscript Figure 4.
+
+The four displayed porosity conditions remain `0.11`, `0.12`, `0.13`, and
+`0.14`. No current Python plotting script is claimed to reproduce the final
+Avizo views or panel layout. An Avizo project and exact panel sample IDs are
+not fabricated or required here, and the original figure is unchanged.
+
+### Figures 6–7: existing experiment records
+
+Figure 6 compares the existing Real, Gen1, and Gen2 results. Real denotes the
+real-rock cohort; Gen1 denotes FiLM-conditioned generation binarized at the
+fixed threshold `0.5`; and Gen2 denotes FiLM-conditioned generation followed
+by TP-AQB. This is a binarization-strategy ablation/control comparison, not
+the Figure 5 FiLM-OFF ablation.
+
+Figure 7 retains the representative real and generated samples at
+approximately `phi = 0.13` and their slice-wise porosity curves as shown in
+the paper. `scripts/plot_slice_porosity.py` can plot a specified pair, but the
+repository does not claim one-click exact reconstruction of the historical
+panel when its exact source invocation is unavailable. Do not choose a new
+sample or infer a sample ID from directory order to replace the manuscript
+panel. No retraining, Test-95 regeneration, original-figure replacement, or
+invented source CSV is required for either figure.
+
+## 4. Model identities
 
 - Fig. 1 references the EMA implementation in the spatial training script,
   not legacy `src/models/vqvae3d.py`.
 - Fig. 5 requires its own no-condition checkpoint, which is not bundled; its
   exact released-weight reproduction is therefore blocked.
-- Figs. 4 and 7 require explicit panel/sample IDs. Do not select a crop by
-  directory ordering.
+- Historical figure sample IDs must not be inferred from directory ordering.
+  Preserve the existing manuscript panels when their exact source invocation
+  is unavailable.
 
-## 4. Fontainebleau Fig. 11
+## 5. Fontainebleau Fig. 11
 
 The Fuel manuscript uses only 0.2041 (training/in-sample reference), 0.1766,
 and 0.1289. The old `fontainebleau_phi0p2045` 80/150 checkpoint is a
@@ -100,7 +154,7 @@ Accordingly, the proposed `generate_fontainebleau_extrap.py` entry point is not
 published as operational and Fig. 11 remains blocked. The 0.0829 exploratory
 condition is outside the current main manuscript.
 
-## 5. Training-schedule limitation
+## 6. Training-schedule limitation
 
 The manuscript states 15 VQ-VAE and 40 DDPM epochs. The released VAE file is
 identified by SHA256, stores zero-based best epoch 12, and embeds an 80-epoch

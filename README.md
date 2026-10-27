@@ -154,9 +154,13 @@ python run_pipeline.py --mode spatial --config configs/main.yaml
 ```
 
 Run `--mode fontainebleau` only as the historical compatibility workflow when
-the three external ANU volumes are available. They are not redistributed in
-this repository, and this mode is not asserted to reproduce Fuel Fig. 11 or
-Table 3. The `full` command is likewise retained for compatibility and should
+the three independent ANU sandstone volumes are available. The `0.2041`
+volume is the training rock; the `0.1766` and `0.1289` volumes are the two
+external cross-sample validation rocks evaluated without retraining. They are
+not redistributed in this repository, and this mode is not asserted to
+reproduce Fuel Fig. 11 or Table 3. The experiment is same-lithology porosity
+extrapolation, not zero-shot cross-lithology transfer of the main-sandstone
+model. The `full` command is likewise retained for compatibility and should
 not be confused with the second-version `spatial` path.
 
 Available modes:
